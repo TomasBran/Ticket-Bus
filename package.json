@@ -10,7 +10,7 @@
   "scripts": {
     "build": "npm run build -w frontend",
     "dev:front": "npm run dev -w frontend",
-    "dev:back": "npm run dev -w backend",
+    "dev:back": "npm run debug -w backend",
     "lint:front": "npm run lint -w frontend",
     "lint:back": "npm run lint -w backend",
     "prepare": "husky install",
@@ -24,7 +24,7 @@
     "url": "git+https://github.com/No-Country/s13-06-t-node-react"
   },
   "keywords": [],
-  "author": "c15-07-t-node-react Team at No Country",
+  "author": "s13-06-t-node-react Team at No Country",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/No-Country/s13-06-t-node-react/issues"
