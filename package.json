@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "build": "npm run build -w frontend",
+    "database": "docker-compose up -d",
     "dev:front": "npm run dev -w frontend",
     "dev:back": "npm run debug -w backend",
     "lint:front": "npm run lint -w frontend",
@@ -16,8 +17,7 @@
     "prepare": "husky install",
     "test": "npm run test -w frontend",
     "test:ci": "npm run test:ci -w frontend",
-    "test:coverage": "npm run test:coverage -w frontend",
-    "database": "docker-compose up -d"
+    "test:coverage": "npm run test:coverage -w frontend"
   },
   "repository": {
     "type": "git",
