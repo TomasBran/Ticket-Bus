@@ -3,20 +3,17 @@ import ServicioLogo from '../assets/TravelSteps/servicio.svg';
 import ArriboLogo from '../assets/TravelSteps/arribo.svg';
 import Linea from '../assets/TravelSteps/linea.svg';
 import TravelStepsCard from './TravelStepsCard';
+import TravelStepsHeader from './TravelStepsHeader';
 
-function TravelSteps() {
+function TravelStepsWrapper() {
   return (
     // TODO: cambiar color de text a variable cuando tengamos listos los colores
     <section className='my-16 text-[#1A202C] max-w-[1440px] mx-auto'>
-      <div className='text-center mb-14'>
-        <h1 className='text-5xl text-[#486284] mb-8 font-medium tracking-tight'>
-          Viaja en simples pasos (!)
-        </h1>
-        <p className='text-lg max-w-lg mx-auto'>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et
-        </p>
-      </div>
+      <TravelStepsHeader
+        title='Viaja en simples pasos (!)'
+        description='        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et'
+      />
       <div className='flex text-center justify-between px-20 relative'>
         <TravelStepsCard
           logo={DestinoLogo}
@@ -51,4 +48,4 @@ function TravelSteps() {
   );
 }
 
-export default TravelSteps;
+export default TravelStepsWrapper;
