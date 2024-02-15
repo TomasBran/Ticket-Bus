@@ -1,4 +1,4 @@
-import Profits from './Profits';
+import Profits from './components/Profits';
 
 function App() {
   return (
@@ -7,5 +7,4 @@ function App() {
     </>
   );
 }
-
 export default App;
