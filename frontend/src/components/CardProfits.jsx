@@ -1,8 +1,10 @@
-export default function CardProfits() {
+import PropTypes from 'prop-types';
+
+export default function CardProfits({ name, image, price }) {
   return (
     <div className='bg-gray-200 rounded-lg shadow-md p-2 w-80 relative'>
       <div className='flex justify-between'>
-        <h3 className='text-xl font-semibold mb-2'>Mar de Plata</h3>
+        <h3 className='text-xl font-semibold mb-2'>{name}</h3>
         <button className=' text-red-500'>
           <svg
             xmlns='http://www.w3.org/2000/svg'
@@ -20,16 +22,22 @@ export default function CardProfits() {
       </div>
       {/* Imagen del producto */}
       <img
-        src='https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
+        src={image}
         alt='Imagen del producto'
         className='w-full h-56 object-cover rounded-t-lg'
       />
 
       {/* Botón para comprar */}
       <div className='flex justify-between items-center pt-3'>
-        <h4 className='font-bold pl-2 text-xl'>$10.00</h4>
+        <h4 className='font-bold pl-2 text-xl'>{price}</h4>
         <button className='bg-white py-2 px-4 rounded-lg '>Comprar</button>
       </div>
     </div>
   );
 }
+
+CardProfits.propTypes = {
+  name: PropTypes.string.isRequired,
+  image: PropTypes.string.isRequired,
+  price: PropTypes.number.isRequired
+};
