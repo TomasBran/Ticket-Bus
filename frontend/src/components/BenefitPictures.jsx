@@ -14,3 +14,5 @@ export const BenefitPictures = () => {
     </div>
   );
 };
+
+export default BenefitPictures;
