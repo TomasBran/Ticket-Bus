@@ -4,7 +4,7 @@ import { FaXTwitter } from 'react-icons/fa6';
 
 const Footer = () => {
   return (
-    <div className='bg-[#D3DCE7] text-white cursor-default mt-8 md:mt-0 md:pt-4 text-black'>
+    <div className='bg-[#D3DCE7] cursor-default mt-8 md:mt-0 md:pt-4 text-black'>
       <div className='flex flex-col md:flex-row justify-between md:pb-8 pb-4 md:px-14'>
         <div className='border-b-2 md:hidden border-gray-200 pt-4 bg-white' />
         <div className='w-full md:w-1/4 flex md:flex-col md:items-start items-center justify-around md:bg-[#D3DCE7] bg-white py-8'>
@@ -139,7 +139,7 @@ const Footer = () => {
           <div className='border-b-2 border-slate-500 mt-6 md:hidden'></div>
         </div>
       </div>
-      <div className='flex gap-2 md:gap-0 justify-end items-end md:items-center md:justify-between md:py-4 md:px-14 px-3 flex-col-reverse md:flex-row px-8'>
+      <div className='flex gap-2 md:gap-0 justify-end items-end md:items-center md:justify-between md:py-4 md:px-14 px-3 flex-col-reverse md:flex-row px-8 pb-6'>
         <span className='text-sm font-semibold'>
           @2024 Todos los derechos reservados
         </span>
@@ -152,7 +152,9 @@ const Footer = () => {
           </span>
         </div>
       </div>
-      <br></br>
+      <div className='h-20 md:hidden bg-[#486284] flex items-end justify-center'>
+        <div className='h-1 mb-3 w-3/12 bg-white rounded'></div>
+      </div>
     </div>
   );
 };

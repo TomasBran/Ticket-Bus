@@ -1,0 +1,38 @@
+name: Deploy Frontend
+on:
+  pull_request:
+    types:
+      - closed
+  push:
+    branches: [develop]
+
+jobs:
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Dependencies
+        run: |
+          rm package-lock.json
+          npm install
+
+      - name: Build Frontend
+        run: npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+
+      # Pasos para el deploy en Netlify
+      - name: Install Netlify
+        run: npm i -g netlify-cli
+
+      - name: Deploy
+        run: npm run deploy -w frontend
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
