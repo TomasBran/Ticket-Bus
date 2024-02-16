@@ -9,7 +9,11 @@
   ],
   "scripts": {
     "build": "npm run build -w frontend",
-    "database": "docker-compose up -d",
+    "db:up": "docker-compose up -d",
+    "db:down": "docker-compose down",
+    "migrate": "npm run migrate -w backend",
+    "rollback": "npm run rollback -w backend",
+    "seed": "npm run seed -w backend",
     "dev:front": "npm run dev -w frontend",
     "dev:back": "npm run debug -w backend",
     "lint:front": "npm run lint -w frontend",
