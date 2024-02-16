@@ -9,6 +9,11 @@
   ],
   "scripts": {
     "build": "npm run build -w frontend",
+    "db:up": "docker-compose up -d",
+    "db:down": "docker-compose down",
+    "migrate": "npm run migrate -w backend",
+    "rollback": "npm run rollback -w backend",
+    "seed": "npm run seed -w backend",
     "dev:front": "npm run dev -w frontend",
     "dev:back": "npm run debug -w backend",
     "lint:front": "npm run lint -w frontend",
@@ -16,8 +21,7 @@
     "prepare": "husky install",
     "test": "npm run test -w frontend",
     "test:ci": "npm run test:ci -w frontend",
-    "test:coverage": "npm run test:coverage -w frontend",
-    "database": "docker-compose up -d"
+    "test:coverage": "npm run test:coverage -w frontend"
   },
   "repository": {
     "type": "git",
