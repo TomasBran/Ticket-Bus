@@ -3,17 +3,16 @@ version: '3.7'
 services:
   db:
     image: postgres:latest
-    container_name: ticket-bus
+    container_name: postgres
     restart: always
     ports:
-      - '5433:5432'
+      - '5434:5432'
     environment:
       POSTGRES_DB: ticket-db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: pg1234
-
   pgadmin:
-    container_name: my_pgadmin
+    container_name: pgadmin
     image: dpage/pgadmin4:latest
     restart: always
     ports:
