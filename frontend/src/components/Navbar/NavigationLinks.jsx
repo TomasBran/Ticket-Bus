@@ -8,7 +8,6 @@ export const NavigationLinks = () => {
   ];
 
   return (
-    // <div className='flex gap-6 items-end'>
     <div className='flex flex-col md:flex-row gap-4 md:gap-6 items-center'>
       {links.map((link, index) =>
         link.label === 'Destinos' ? (
