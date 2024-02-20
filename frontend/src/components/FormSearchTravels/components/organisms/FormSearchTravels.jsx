@@ -94,7 +94,7 @@ const FormSearchTravels = () => {
           </div>
           <div className='mb-4 md:ps-4  md:w-full box-border whitespace-nowrap'>
             <label
-              className='block text-gray-700 text-sm font-bold mb-2'
+              className='block text-gray-700 text-sm font-bold mb-2 truncate'
               htmlFor='return_date'
             >
               VUELTA (opcional)
