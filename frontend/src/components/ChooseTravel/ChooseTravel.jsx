@@ -1,4 +1,3 @@
-import { Navbar } from '../Navbar/Navbar';
 import bus from '../../assets/bus-icon.svg';
 import arrow from '../../assets/arrow.svg';
 import Schedule from './Schedule';
@@ -7,10 +6,9 @@ import arrowBack from '../../assets/arrow-back.svg';
 export default function ChooseTravel() {
   return (
     <div>
-      <Navbar />
       <div className='flex items-center justify-evenly lg:flex-row flex-col md:mx-0 mx-2 mt-6'>
         <div className='lg:w-2/5 w-full'>
-          <div className='flex m-7'>
+          <div className='flex my-7'>
             <img src={bus} alt='' />
             <div>
               <p>Elige tu viaje de ida</p>
