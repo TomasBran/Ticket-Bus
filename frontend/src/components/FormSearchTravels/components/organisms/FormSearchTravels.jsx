@@ -10,7 +10,7 @@ const FormSearchTravels = () => {
     destination: '',
     departure_date: '',
     return_date: '',
-    passengers: 0
+    passengers: 1
   });
 
   const handleChange = (e) => {
@@ -34,7 +34,7 @@ const FormSearchTravels = () => {
       destination: '',
       departure_date: '',
       return_date: '',
-      passengers: 0
+      passengers: 1
     });
   };
 
