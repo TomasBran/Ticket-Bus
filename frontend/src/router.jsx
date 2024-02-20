@@ -2,7 +2,8 @@ import { createBrowserRouter } from 'react-router-dom';
 import Home from './pages/Home.jsx';
 import MainLayout from './layouts/MainLayout.jsx';
 import StepsLayout from './layouts/StepsLayout.jsx';
-import ChooseTravel from './components/ChooseTravel/ChooseTravel.jsx';
+import SeatSelection from './pages/SeatSelection.jsx';
+import TravelSelection from './pages/TravelSelection.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -21,23 +22,23 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <ChooseTravel />
+        element: <TravelSelection />
       },
       {
         path: 'seats',
-        element: <ChooseTravel />
+        element: <SeatSelection />
       },
       {
         path: 'passengers',
-        element: <ChooseTravel />
+        element: <p>Passengers</p>
       },
       {
         path: 'summary',
-        element: <ChooseTravel />
+        element: <p>Summary</p>
       },
       {
         path: 'payment',
-        element: <ChooseTravel />
+        element: <p>Payment</p>
       }
     ]
   }
