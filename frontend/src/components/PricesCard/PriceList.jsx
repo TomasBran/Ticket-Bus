@@ -13,10 +13,10 @@ function PriceList() {
         </tr>
       </thead>
       <tbody>
-        <PriceRow src={SeatWithPerson} price='00.000' />
-        <PriceRow src={Seat} price='00.000' />
-        <PriceRow src={Usb} price='00.000' />
-        <PriceRow src={Snowflake} price='00.000' />
+        <PriceRow src={SeatWithPerson} price={6000} />
+        <PriceRow src={Seat} price={8000} />
+        <PriceRow src={Usb} price={0} />
+        <PriceRow src={Snowflake} price={0} />
       </tbody>
     </table>
   );

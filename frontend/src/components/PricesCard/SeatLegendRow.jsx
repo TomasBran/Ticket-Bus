@@ -1,14 +1,20 @@
 import PropTypes from 'prop-types';
 
 SeatLegendRow.propTypes = {
-  color: PropTypes.string.isRequired,
+  colorClass: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired
 };
 
-function SeatLegendRow({ color, text }) {
+function SeatLegendRow({ colorClass, text }) {
   return (
     <div className='flex items-center mb-3'>
-      <div className={`size-5 rounded-md bg-[${color}] mr-2`}></div>
+      <div
+        className={
+          colorClass
+            ? `size-5 rounded-md mr-2 ${colorClass}`
+            : 'size-5 rounded-md mr-2'
+        }
+      ></div>
       <p className='text-[#A0A0A0] font-medium text-sm'>{text}</p>
     </div>
   );
