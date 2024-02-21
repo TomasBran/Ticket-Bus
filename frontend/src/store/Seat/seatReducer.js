@@ -1,5 +1,5 @@
 const initialState = {
-  seatQuantity: 0,
+  seatQuantity: 1,
   seatSelected: [] // Default value
 };
 
