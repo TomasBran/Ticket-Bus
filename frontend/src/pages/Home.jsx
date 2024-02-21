@@ -4,6 +4,7 @@ import Hero from '../components/Hero/Hero.jsx';
 import FormSearchTravels from '../components/FormSearchTravels/components/organisms/FormSearchTravels.jsx';
 import Profits from '../components/Profits/Profits.jsx';
 import TravelBenefitsSection from '../components/TravelBenefits/TravelBenefitsSection.jsx';
+import Reviews from '../components/ReviewsHome/Reviews.jsx';
 
 function Home() {
   return (
@@ -14,6 +15,8 @@ function Home() {
       <Profits />
       <BenefitPictures />
       <TravelBenefitsSection />
+
+      <Reviews />
     </main>
   );
 }
