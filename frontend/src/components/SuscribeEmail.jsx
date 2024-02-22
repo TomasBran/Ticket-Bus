@@ -17,7 +17,7 @@ export default function SuscribeEmail() {
 
   return (
     <>
-      <h2 className='font-bold text-2xl text-center pb-3'>
+      <h2 className='font-bold text-2xl text-center pb-3 md:pt-0 pt-8'>
         ¡Recibí las mejores ofertas en tu email!
       </h2>
       <form
