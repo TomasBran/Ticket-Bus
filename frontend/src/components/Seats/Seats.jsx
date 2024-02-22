@@ -3,6 +3,7 @@ import driver from '../../assets/Seats/driver.svg';
 import wc from '../../assets/Seats/wc.svg';
 import PropTypes from 'prop-types';
 import Toast from './Toast';
+import { useDispatch, useSelector } from 'react-redux';
 
 const SectionA_SeatsId = [
   1, 2, 5, 6, 9, 10, 11, 12, 13, 14, 17, 18, 21, 22, 25, 26, 29, 30, 33, 34, 37,
@@ -20,6 +21,9 @@ const SectionD_SeatsId = [41, 42, 44, 45, 47, 48, 50, 51];
 const SectionE_SeatsId = [43, 46, 49, 52];
 
 const Seats = (props) => {
+  const dispatch = useDispatch();
+  const seatSelected = useSelector((state) => state.seat.seatSelected); // Read from Redux store
+
   const [sectionA, setSectionA] = useState([]);
   const [sectionB, setSectionB] = useState([]);
   const [sectionC, setSectionC] = useState([]);
@@ -30,13 +34,22 @@ const Seats = (props) => {
   const [toastTimerId, setToastTimerId] = useState(null);
   const { tickets = 1 } = props;
 
-  const initializeSection = (setSection, seatAmount, seatsId, section) => {
-    const newArray = Array.from({ length: seatAmount }, (_, index) => ({
-      section,
-      id: seatsId[index],
-      status: 'free'
-      // status: Math.random() < 0.7 ? 'free' : 'occupied' // ESTO ES PARA TESTEAR FUNCIONALIDAD. DESPUES VENDRA DESDE EL BACK
-    }));
+  const initializeSection = (
+    setSection,
+    seatAmount,
+    seatsId,
+    sectionLetter
+  ) => {
+    const newArray = Array.from({ length: seatAmount }, (_, index) => {
+      const isSelected = seatSelected.some(
+        (seat) => seat.id === seatsId[index] && seat.section === sectionLetter
+      );
+      return {
+        section: sectionLetter,
+        id: seatsId[index],
+        status: isSelected ? 'selected' : 'free'
+      };
+    });
 
     setSection(newArray);
   };
@@ -86,15 +99,32 @@ const Seats = (props) => {
     }
 
     setSection((prevState) => {
-      return prevState.map((seat) => {
+      const newState = prevState.map((seat) => {
         if (seat.id === id) {
+          const newStatus = seat.status === 'free' ? 'selected' : 'free';
           return {
             ...seat,
-            status: seat.status === 'free' ? 'selected' : 'free'
+            status: newStatus
           };
         }
         return seat;
       });
+
+      // Dispatch action based on the new state
+      const newSeat = newState.find((seat) => seat.id === id);
+      if (newSeat.status === 'selected') {
+        dispatch({
+          type: 'ADD_SEAT_SELECTED',
+          payload: { id: newSeat.id, section: newSeat.section }
+        });
+      } else if (newSeat.status === 'free') {
+        dispatch({
+          type: 'REMOVE_SEAT_SELECTED',
+          payload: { id: newSeat.id, section: newSeat.section }
+        });
+      }
+
+      return newState;
     });
   };
 
@@ -117,12 +147,14 @@ const Seats = (props) => {
       <div className='flex justify-center gap-6 w-full m-4'>
         <button
           className={`rounded font-semibold transition active:scale-95 px-9 py-3 ${floor === 'first' ? 'bg-green-500 hover:bg-green-400 active:bg-green-300' : 'bg-gray-300 hover:bg-gray-200 active:bg-gray-100'}`}
-          onClick={() => toggleFloor(1)}>
+          onClick={() => toggleFloor(1)}
+        >
           Nivel 1
         </button>
         <button
           className={`rounded font-semibold transition active:scale-95 px-9 py-3 ${floor === 'second' ? 'bg-green-500 hover:bg-green-400 active:bg-green-300' : 'bg-gray-300 hover:bg-gray-200 active:bg-gray-100'}`}
-          onClick={() => toggleFloor(2)}>
+          onClick={() => toggleFloor(2)}
+        >
           Nivel 2
         </button>
       </div>
@@ -148,7 +180,8 @@ const Seats = (props) => {
                         ? 'bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-200 cursor-pointer text-white'
                         : 'bg-orange-500 hover:bg-orange-400 active:bg-orange-300 cursor-pointer text-white'
                   }`}
-                  onClick={() => toggleSeat(seat.id, sectionD, setSectionD)}>
+                  onClick={() => toggleSeat(seat.id, sectionD, setSectionD)}
+                >
                   {String(seat.id).padStart(2, '0')}
                 </div>
               ))}
@@ -164,7 +197,8 @@ const Seats = (props) => {
                         ? 'bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-200 cursor-pointer text-white'
                         : 'bg-orange-500 hover:bg-orange-400 active:bg-orange-300 cursor-pointer text-white'
                   }`}
-                  onClick={() => toggleSeat(seat.id, sectionE, setSectionE)}>
+                  onClick={() => toggleSeat(seat.id, sectionE, setSectionE)}
+                >
                   {String(seat.id).padStart(2, '0')}
                 </div>
               ))}
@@ -186,7 +220,8 @@ const Seats = (props) => {
                       ? 'bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-200 cursor-pointer text-white'
                       : 'bg-orange-500 hover:bg-orange-400 active:bg-orange-300 cursor-pointer text-white'
                 }`}
-                onClick={() => toggleSeat(seat.id, sectionA, setSectionA)}>
+                onClick={() => toggleSeat(seat.id, sectionA, setSectionA)}
+              >
                 {String(seat.id).padStart(2, '0')}
               </div>
             ))}
@@ -203,7 +238,8 @@ const Seats = (props) => {
                         ? 'bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-200 cursor-pointer text-white'
                         : 'bg-orange-500 hover:bg-orange-400 active:bg-orange-300 cursor-pointer text-white'
                   }`}
-                  onClick={() => toggleSeat(seat.id, sectionB, setSectionB)}>
+                  onClick={() => toggleSeat(seat.id, sectionB, setSectionB)}
+                >
                   {String(seat.id).padStart(2, '0')}
                 </div>
               ))}
@@ -219,7 +255,8 @@ const Seats = (props) => {
                         ? 'bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-200 cursor-pointer text-white'
                         : 'bg-orange-500 hover:bg-orange-400 active:bg-orange-300 cursor-pointer text-white'
                   }`}
-                  onClick={() => toggleSeat(seat.id, sectionC, setSectionC)}>
+                  onClick={() => toggleSeat(seat.id, sectionC, setSectionC)}
+                >
                   {String(seat.id).padStart(2, '0')}
                 </div>
               ))}
