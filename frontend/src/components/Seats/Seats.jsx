@@ -117,14 +117,12 @@ const Seats = (props) => {
       <div className='flex justify-center gap-6 w-full m-4'>
         <button
           className={`rounded font-semibold transition active:scale-95 px-9 py-3 ${floor === 'first' ? 'bg-green-500 hover:bg-green-400 active:bg-green-300' : 'bg-gray-300 hover:bg-gray-200 active:bg-gray-100'}`}
-          onClick={() => toggleFloor(1)}
-        >
+          onClick={() => toggleFloor(1)}>
           Nivel 1
         </button>
         <button
           className={`rounded font-semibold transition active:scale-95 px-9 py-3 ${floor === 'second' ? 'bg-green-500 hover:bg-green-400 active:bg-green-300' : 'bg-gray-300 hover:bg-gray-200 active:bg-gray-100'}`}
-          onClick={() => toggleFloor(2)}
-        >
+          onClick={() => toggleFloor(2)}>
           Nivel 2
         </button>
       </div>
@@ -150,8 +148,7 @@ const Seats = (props) => {
                         ? 'bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-200 cursor-pointer text-white'
                         : 'bg-orange-500 hover:bg-orange-400 active:bg-orange-300 cursor-pointer text-white'
                   }`}
-                  onClick={() => toggleSeat(seat.id, sectionD, setSectionD)}
-                >
+                  onClick={() => toggleSeat(seat.id, sectionD, setSectionD)}>
                   {String(seat.id).padStart(2, '0')}
                 </div>
               ))}
@@ -167,8 +164,7 @@ const Seats = (props) => {
                         ? 'bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-200 cursor-pointer text-white'
                         : 'bg-orange-500 hover:bg-orange-400 active:bg-orange-300 cursor-pointer text-white'
                   }`}
-                  onClick={() => toggleSeat(seat.id, sectionE, setSectionE)}
-                >
+                  onClick={() => toggleSeat(seat.id, sectionE, setSectionE)}>
                   {String(seat.id).padStart(2, '0')}
                 </div>
               ))}
@@ -190,8 +186,7 @@ const Seats = (props) => {
                       ? 'bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-200 cursor-pointer text-white'
                       : 'bg-orange-500 hover:bg-orange-400 active:bg-orange-300 cursor-pointer text-white'
                 }`}
-                onClick={() => toggleSeat(seat.id, sectionA, setSectionA)}
-              >
+                onClick={() => toggleSeat(seat.id, sectionA, setSectionA)}>
                 {String(seat.id).padStart(2, '0')}
               </div>
             ))}
@@ -208,8 +203,7 @@ const Seats = (props) => {
                         ? 'bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-200 cursor-pointer text-white'
                         : 'bg-orange-500 hover:bg-orange-400 active:bg-orange-300 cursor-pointer text-white'
                   }`}
-                  onClick={() => toggleSeat(seat.id, sectionB, setSectionB)}
-                >
+                  onClick={() => toggleSeat(seat.id, sectionB, setSectionB)}>
                   {String(seat.id).padStart(2, '0')}
                 </div>
               ))}
@@ -225,8 +219,7 @@ const Seats = (props) => {
                         ? 'bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-200 cursor-pointer text-white'
                         : 'bg-orange-500 hover:bg-orange-400 active:bg-orange-300 cursor-pointer text-white'
                   }`}
-                  onClick={() => toggleSeat(seat.id, sectionC, setSectionC)}
-                >
+                  onClick={() => toggleSeat(seat.id, sectionC, setSectionC)}>
                   {String(seat.id).padStart(2, '0')}
                 </div>
               ))}
