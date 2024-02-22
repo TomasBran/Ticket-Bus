@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar/Navbar.jsx';
 
 function StepsLayout() {
   return (
-    <>
+    <div className='h-screen flex flex-col'>
       {/* TODO: queda un espacio entre md y lg donde falta,  */}
       <div className='md:hidden'>
         <Navbar />
@@ -13,7 +13,7 @@ function StepsLayout() {
       <TravelHeader />
       <Steps />
       <Outlet />
-    </>
+    </div>
   );
 }
 
