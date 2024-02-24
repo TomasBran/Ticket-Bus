@@ -57,11 +57,11 @@ function BusTripDetails() {
       </div>
       <div className='bg-transparent rounded-md p-3 flex-1 mt-2'>
         <div className='h-full flex md:flex-col flex-row items-center md:justify-center justify-between flex-wrap'>
-          <BackButton to='/seats' />
+          <BackButton to='/ticket/seats' />
 
-          <ReturnButton to='/seats' label='Volver' />
+          <ReturnButton to='/ticket/seats' label='Volver' />
 
-          <ContinueButton to='/summary' label='Continuar' />
+          <ContinueButton to='/ticket/summary' label='Continuar' />
         </div>
       </div>
     </div>
