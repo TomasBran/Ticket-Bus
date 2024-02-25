@@ -18,7 +18,7 @@ function TripReservation() {
 
           {/* Columna 3 */}
           <div className='col-span-1 order-last'>
-            <Timer />
+            Contenido de la Columna 3
           </div>
         </div>
       </div>
