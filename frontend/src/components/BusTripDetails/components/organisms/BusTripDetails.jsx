@@ -23,6 +23,7 @@ function BusTripDetails() {
 
   return (
     <div className='flex flex-col h-full'>
+      <div className='mb-3 md:h-16'></div>
       <div className='bg-[#DEE5ED] rounded-md p-3 flex flex-col'>
         <TripDetailsHeader title='Viaje de Ida' />
 
