@@ -1,4 +1,5 @@
 import { BusTripDetails } from '../../components/BusTripDetails';
+import Timer from '../../components/Timer/Timer';
 
 function TripReservation() {
   return (
@@ -16,8 +17,8 @@ function TripReservation() {
           </div>
 
           {/* Columna 3 */}
-          <div className='bg-yellow-200 p-4 col-span-1 order-last'>
-            Contenido de la Columna 3
+          <div className='col-span-1 order-last'>
+            <Timer />
           </div>
         </div>
       </div>
