@@ -1,8 +1,10 @@
-import { resolve } from 'node:path';
-import { readFileSync } from 'node:fs';
+const { resolve } = require('node:path');
+const { readFileSync } = require('node:fs');
+
+const HOST = process.env.API_HOST || 'http://localhost:3300';
 
 const swaggerDefinition = {
-  openapi: '3.0.3',
+  // openapi: '3.0.3',
   info: {
     title: 'Express API for the backend',
     version: '1.0.0',
@@ -20,14 +22,14 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: process.env.API_HOST || 'http://localhost:3300',
+      url: HOST + '/api/v1',
       description: 'Development server'
     }
   ],
   basePath: '/'
 };
 
-export const getSwaggerSpec = () => {
+const getSwaggerSpec = () => {
   try {
     // Get the file path
     const openApiFilePath = resolve('docs', 'api-docs.json');
@@ -48,4 +50,8 @@ export const getSwaggerSpec = () => {
     console.log('error', error);
     return {};
   }
+};
+
+module.exports = {
+  getSwaggerSpec
 };

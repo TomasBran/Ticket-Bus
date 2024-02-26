@@ -56,7 +56,7 @@ const specs = getSwaggerSpec();
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.use('/api-docs.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
-  res.send(getSwaggerSpec);
+  res.send(specs);
 });
 
 // catch 404 and forward to error handler
