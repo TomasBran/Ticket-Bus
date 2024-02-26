@@ -18,7 +18,8 @@ var usersRouter = require('./routes/users');
 const vehiclesRouter = require('./routes/vehicle');
 const routesRouter = require('./routes/route');
 const schedulesRouter = require('./routes/schedules');
-
+const terminalRouter = require('./routes/terminal');
+const cityRouter = require('./routes/city');
 
 var app = express();
 
@@ -82,7 +83,8 @@ app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/vehicles', vehiclesRouter);
 app.use('/api/v1/routes', routesRouter);
 app.use('/api/v1/schedules', schedulesRouter);
-
+app.use('/api/v1/cities', cityRouter);
+app.use('/api/v1/terminals', terminalRouter);
 
 // Swagger specification
 const specs = swaggerJsDoc(options);
@@ -91,7 +93,7 @@ const specs = swaggerJsDoc(options);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.use('/api-docs.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
-  res.send(require('./docs/swaggerDefinitions'));
+  res.send(specs);
 });
 
 // catch 404 and forward to error handler
