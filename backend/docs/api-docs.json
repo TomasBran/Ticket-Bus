@@ -1,0 +1,650 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Express API for the backend",
+    "version": "1.0.0",
+    "description": "Esta es una aplicación de API REST hecha con Express. Recupera datos del backend.",
+    "license": {
+      "name": "Licensed Under MIT",
+      "url": "https://spdx.org/licenses/MIT.html"
+    },
+    "contact": {
+      "name": "Ticket Bus API",
+      "url": "undefined/api-docs",
+      "email": "ticket-db@gmail.com"
+    }
+  },
+  "servers": [
+    { "url": "http://localhost:3300", "description": "Development server" }
+  ],
+  "basePath": "/",
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Inicio de sesión de usuario registrado",
+        "operationId": "loginUser",
+        "requestBody": {
+          "description": "Datos de inicio de sesión",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Login" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "example": {
+                  "status": "success",
+                  "code": 200,
+                  "message": "Usuario autenticado con éxito!",
+                  "body": {
+                    "user": {
+                      "id": 1,
+                      "dni": "01212120384",
+                      "firstName": "Admin",
+                      "lastName": "Admin",
+                      "email": "admin@example.com",
+                      "miles": 0,
+                      "role": "USER"
+                    },
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZjg5ZjEzNjIzNzU4NzQwMzI2YzQ3YiIsImlhdCI6MTYyNjE2NjUyMiwiZXhwIjoxNjI2MjUyOTIyfQ.4Tz6zJl0b1Z0j6h4v9Ww0kx3q9c5hZy3Dm3z9d7v9wA"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Acceso no autorizado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "example": {
+                  "status": "fail",
+                  "code": 401,
+                  "message": "Usuario o contraseña incorrecta."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "example": {
+                  "status": "error",
+                  "code": 500,
+                  "message": "No se pudo autenticar el usuario."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Resgistro de nuevo usuario",
+        "operationId": "registerUser",
+        "requestBody": {
+          "description": "Datos para registrar un nuevo usuario",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Register" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "example": {
+                  "status": "success",
+                  "code": 200,
+                  "message": "Usuario creado con éxito!",
+                  "body": {
+                    "user": {
+                      "id": 1,
+                      "dni": "01245420384",
+                      "firstName": "Angel",
+                      "lastName": "Diaz",
+                      "email": "a.diaz@example.com",
+                      "miles": 0,
+                      "role": "USER"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto en el servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "example": {
+                  "status": "fail",
+                  "code": 409,
+                  "message": "El usuario ya existe."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "example": {
+                  "status": "error",
+                  "code": 500,
+                  "message": "No se pudo registrar el usuario."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cities": {
+      "get": {
+        "tags": ["Cities"],
+        "summary": "Obtener todas las ciudades",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Ciudades obtenidas con éxito!",
+                      "body": {
+                        "cities": [
+                          {
+                            "id": 1,
+                            "name": "Buenos Aires",
+                            "createdAt": "2024-02-26T17:16:01.354Z",
+                            "updatedAt": "2024-02-26T17:16:01.354Z"
+                          },
+                          {
+                            "id": 2,
+                            "name": "Córdoba",
+                            "createdAt": "2024-02-26T17:16:01.354Z",
+                            "updatedAt": "2024-02-26T17:16:01.354Z"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Cities"],
+        "summary": "Crear ciudad",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string", "description": "name" }
+                },
+                "required": ["name"]
+              },
+              "example": { "name": "Palpalá" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Ciudad creada con éxito!",
+                      "body": {
+                        "id": 40,
+                        "name": "Palpalá",
+                        "updatedAt": "2024-02-26T19:00:06.865Z",
+                        "createdAt": "2024-02-26T19:00:06.865Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: Ciudad repetida",
+                    "value": {
+                      "status": "fail",
+                      "code": 409,
+                      "message": "Ya existe una ciudad con el nombre: Rosario"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cities/id/{id}": {
+      "get": {
+        "summary": "Obtener ciudad por ID",
+        "tags": ["Cities"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID que identifica la ciudad",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Ciudad obtenida con éxito!",
+                      "body": {
+                        "id": 1,
+                        "name": "Buenos Aires",
+                        "createdAt": "2024-02-26T17:16:01.354Z",
+                        "updatedAt": "2024-02-26T17:16:01.354Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Exception",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró ciudad con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cities/{id}": {
+      "put": {
+        "summary": "Actualizar ciudad",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Cities"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string", "description": "name" }
+                },
+                "required": ["name"]
+              },
+              "example": { "name": "Buenos Aires" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Ciudad actualizada con éxito!",
+                      "body": {
+                        "id": 1,
+                        "name": "Buenos Aires",
+                        "createdAt": "2024-02-26T17:16:01.354Z",
+                        "updatedAt": "2024-02-26T19:18:30.800Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: ID no encontrado",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró ciudad con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: Nombre repetido",
+                    "value": {
+                      "status": "fail",
+                      "code": 409,
+                      "message": "Ya existe una ciudad con el nombre: Buenos Aires"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar ciudad",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Cities"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "39",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Ciudad eliminada con éxito!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: ID no encontrado",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró ciudad con el ID: 10000"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Obtener todos los usuarios",
+        "operationId": "getAllUsers",
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "example": {
+                  "status": "success",
+                  "code": 200,
+                  "message": "Usuarios obtenidos con éxito!",
+                  "body": {
+                    "users": [
+                      {
+                        "id": 1,
+                        "dni": "01212120384",
+                        "firstName": "Adrian",
+                        "lastName": "Hueto",
+                        "email": "a.hueto@example.com",
+                        "miles": 0,
+                        "role": "USER"
+                      },
+                      {
+                        "id": 2,
+                        "dni": "01212120384",
+                        "firstName": "Lucas",
+                        "lastName": "Lorenzo",
+                        "email": "l.lorenzo@example.com",
+                        "miles": 0,
+                        "role": "USER"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "example": {
+                  "status": "error",
+                  "code": 500,
+                  "message": "Error al obtener los usuarios!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vehicles": {
+      "get": {
+        "tags": ["Vehicles"],
+        "summary": "Obtener todos los vehiculos (buses) y sus amenities (servicios)",
+        "operationId": "getVehiclesAmenities",
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "example": {
+                  "status": "success",
+                  "code": 200,
+                  "message": "Vehiculos obtenidos con éxito!",
+                  "body": {
+                    "vehicles": [
+                      {
+                        "id": 1,
+                        "number": 1,
+                        "plate": "QRST90",
+                        "totalSeats": 60,
+                        "amenities": [
+                          "Cargador USB",
+                          "WiFi",
+                          "Aire Acondicionado"
+                        ]
+                      },
+                      {
+                        "id": 2,
+                        "number": 2,
+                        "plate": "ABCD12",
+                        "totalSeats": 40,
+                        "amenities": ["WiFi", "TV"]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "example": {
+                  "status": "error",
+                  "code": 500,
+                  "message": "Error al obtener los vehiculos!"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": { "type": "apiKey", "name": "Authorization", "in": "header" }
+  },
+  "components": {
+    "schemas": {
+      "Login": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string", "example": "usuario@mail.com" },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "C0ntr4s3ñ4s3gur4"
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "LoginResponse": { "type": "object" },
+      "Register": {
+        "type": "object",
+        "properties": {
+          "dni": { "type": "string", "example": "01212120384" },
+          "firstName": { "type": "string", "example": "Dani" },
+          "lastName": { "type": "string", "example": "Garcia" },
+          "email": { "type": "string", "example": "d.garcia@gxmail.com" },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "C0ntr4s3ñ4s3gur4"
+          }
+        },
+        "required": ["dni", "firstName", "lastName", "email", "password"]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 14 },
+          "dni": { "type": "string", "example": "01245420384" },
+          "firstName": { "type": "string", "example": "Angel" },
+          "lastName": { "type": "string", "example": "Diaz" },
+          "email": { "type": "string", "example": "a.diaz@example.com" },
+          "miles": { "type": "integer", "example": 0 },
+          "role": { "type": "string", "example": "USER" }
+        }
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" },
+          "code": { "type": "integer" },
+          "message": { "type": "string" },
+          "body": { "type": "object" }
+        },
+        "required": ["status", "code", "message"]
+      }
+    }
+  },
+  "tags": [
+    { "name": "Auth", "description": "Autenticación de usuarios" },
+    { "name": "Users", "description": "Gestión de usuarios" }
+  ]
+}
