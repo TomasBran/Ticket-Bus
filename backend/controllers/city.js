@@ -96,6 +96,12 @@ const updateCity = catchAsync(async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
 
+    const city = await getCityByIdService(id);
+
+    if (!city) {
+      throw new ErrorObject(`No se encontró ciudad con el ID: ${id}`, 404);
+    }
+
     const cityExists = await checkCityExistsByName(name);
 
     if (cityExists) {
@@ -127,6 +133,12 @@ const updateCity = catchAsync(async (req, res) => {
 const deleteCity = catchAsync(async (req, res) => {
   try {
     const { id } = req.params;
+
+    const city = await getCityByIdService(id);
+
+    if (!city) {
+      throw new ErrorObject(`No se encontró ciudad con el ID: ${id}`, 404);
+    }
 
     await deleteCityService(id);
 

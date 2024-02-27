@@ -10,7 +10,6 @@ import BusPrice from '../atoms/BusPrice';
 import BusSeatInfo from '../molecules/BusSeatInfo';
 import ServiceLabel from '../atoms/ServiceLabel';
 import BackButton from '../atoms/BackButton';
-import ReturnButton from '../atoms/ReturnButton';
 import ContinueButton from '../atoms/ContinueButton';
 
 function BusTripDetails() {
@@ -23,6 +22,7 @@ function BusTripDetails() {
 
   return (
     <div className='flex flex-col h-full'>
+      <div className='mb-3 md:h-16'></div>
       <div className='bg-[#DEE5ED] rounded-md p-3 flex flex-col'>
         <TripDetailsHeader title='Viaje de Ida' />
 
@@ -56,10 +56,8 @@ function BusTripDetails() {
         <ServiceLabel text='Servicio CAMA' />
       </div>
       <div className='bg-transparent rounded-md p-3 flex-1 mt-2'>
-        <div className='h-full flex md:flex-col flex-row items-center md:justify-center justify-between flex-wrap'>
+        <div className='h-full flex sm:flex-col flex-row items-center md:justify-center justify-between flex-wrap'>
           <BackButton to='/ticket/seats' />
-
-          <ReturnButton to='/ticket/seats' label='Volver' />
 
           <ContinueButton to='/ticket/summary' label='Continuar' />
         </div>

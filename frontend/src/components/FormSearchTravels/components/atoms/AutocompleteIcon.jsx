@@ -1,7 +1,11 @@
-const AutocompleteIcon = () => {
+import PropTypes from 'prop-types';
+
+const AutocompleteIcon = ({ isOpen }) => {
   return (
     <svg
-      className='h-6 w-6 absolute right-2 top-2/4 transform -translate-y-2/4 pointer-events-none text-gray-400'
+      className={`h-6 w-6 absolute right-2 top-2/4 transform -translate-y-2/4 pointer-events-none text-gray-400 ${
+        isOpen ? 'transform rotate-180' : ''
+      }`}
       xmlns='http://www.w3.org/2000/svg'
       viewBox='0 0 20 20'
       fill='currentColor'
@@ -13,6 +17,10 @@ const AutocompleteIcon = () => {
       />
     </svg>
   );
+};
+
+AutocompleteIcon.propTypes = {
+  isOpen: PropTypes.bool.isRequired
 };
 
 export default AutocompleteIcon;
