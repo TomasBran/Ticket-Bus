@@ -6,7 +6,6 @@ var cookieParser = require('cookie-parser');
 const passport = require('passport');
 var logger = require('morgan');
 const swaggerUi = require('swagger-ui-express');
-const swaggerJsDoc = require('swagger-jsdoc');
 const corsOptions = require('./config/cors');
 
 const dotenv = require('dotenv');
@@ -20,41 +19,9 @@ const routesRouter = require('./routes/route');
 const schedulesRouter = require('./routes/schedules');
 const terminalRouter = require('./routes/terminal');
 const cityRouter = require('./routes/city');
+const { getSwaggerSpec } = require('./config/swagger');
 
 var app = express();
-
-// Swagger definition
-const swaggerDefinition = {
-  openapi: '3.0.3',
-  info: {
-    title: 'Express API for the backend',
-    version: '1.0.0',
-    description:
-      'Esta es una aplicación de API REST hecha con Express. Recupera datos del backend.',
-    license: {
-      name: 'Licensed Under MIT',
-      url: 'https://spdx.org/licenses/MIT.html'
-    },
-    contact: {
-      name: 'Ticket Bus API',
-      url: 'undefined/api-docs',
-      email: 'ticket-db@gmail.com'
-    }
-  },
-  servers: [
-    {
-      url: process.env.API_HOST || 'http://localhost:3300',
-      description: 'Development server'
-    }
-  ],
-  basePath: '/'
-};
-
-// Swagger options
-const options = {
-  swaggerDefinition,
-  apis: ['./routes/*.js', './docs/swaggerDefinitions.js']
-};
 
 // Passport middleware
 app.use(passport.initialize());
@@ -87,7 +54,7 @@ app.use('/api/v1/cities', cityRouter);
 app.use('/api/v1/terminals', terminalRouter);
 
 // Swagger specification
-const specs = swaggerJsDoc(options);
+const specs = getSwaggerSpec();
 
 // Swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
