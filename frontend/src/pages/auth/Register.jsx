@@ -124,7 +124,7 @@ function Register() {
             </div>
             <div className='flex flex-wrap justify-between'>
               <button
-                type='submit'
+                type='button'
                 disabled={registerMutation.isLoading}
                 className='flex justify-center bg-white w-full max-w-[170px] lg:max-w-[190px] rounded items-center lg:w-1/2'
               >
@@ -134,7 +134,7 @@ function Register() {
                 <img src={googleIcon} />
               </button>
               <button
-                type='button'
+                type='submit'
                 disabled={registerMutation.isLoading}
                 className='bg-[#27C277] w-full max-w-[164px] lg:max-w-[190px] lg:w-1/2 rounded text-white font-semibold'
               >
