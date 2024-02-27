@@ -3,12 +3,13 @@ import { BusTripDetails } from '../../components/BusTripDetails';
 import ReturnButton from '../../components/BusTripDetails/components/atoms/ReturnButton';
 import { PassengerForm } from '../../components/PassengerForm';
 import ContinueButton from '../../components/PassengerForm/components/atoms/ContinueButton';
+import PassengersClub from '../../components/PassengersClub/PassengersClub';
 import { PromoRegister } from '../../components/PromoRegister';
 import SignUpSection from '../../components/PromoRegister/components/molecules/SignUpSection';
 
 
 function TripReservation() {
-  const auth = false; // Si inicio sesión
+  const auth = true; // Si inicio sesión
 
   return (
     <div className='sm:bg-[#CED7E4] bg-[#F1F1F1] flex-grow w-full relative'>
@@ -50,7 +51,7 @@ function TripReservation() {
                 </div>
               </>
             ) : (
-              <p>Component MemberClubMiles</p>
+              <PassengersClub accumulatedKm={3800} additionalKm={600} />
             )}
 
           </div>

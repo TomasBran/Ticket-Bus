@@ -14,12 +14,12 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'routeId',
         onDelete: 'CASCADE'
       });
-      Schedule.belongsTo(models.Vehicle, {
-        foreignKey: 'vehicleId',
-        as: 'vehicles',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE'
-      });
+      // Añadir cuando esté listo Vehicle
+      //   Schedule.belongsTo(models.Vehicle, {
+      //     as: 'vehicle',
+      //     foreignKey: 'vehicleId',
+      //     onDelete: 'CASCADE'
+      //   });
     }
   }
   Schedule.init(
@@ -46,17 +46,17 @@ module.exports = (sequelize, DataTypes) => {
       },
       vehicleId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Vehicles',
-          key: 'id'
-        }
+        allowNull: false
+        // AÑADIR CUANDO ESTE LISTO VEHICLE
+        // references: {
+        //   model: 'Vehicle',
+        //   key: 'id'
+        // }
       }
     },
     {
       sequelize,
-      modelName: 'Schedule',
-      timestamps: false
+      modelName: 'Schedule'
     }
   );
   return Schedule;

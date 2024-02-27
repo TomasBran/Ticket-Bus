@@ -31,11 +31,12 @@ module.exports = {
       },
       vehicleId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Vehicles',
-          key: 'id'
-        }
+        allowNull: false
+        // AÑADIR CUANDO ESTE LISTO VEHICLE
+        // references: {
+        //   model: 'Vehicle',
+        //   key: 'id'
+        // }
       },
       createdAt: {
         allowNull: false,

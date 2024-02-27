@@ -9,7 +9,7 @@ const createCity = async (name) =>
     name
   });
 
-const updateCity = async (cityId, name) => {
+const updateCity = async (cityId, name) =>
   await City.update(
     {
       name
@@ -18,8 +18,6 @@ const updateCity = async (cityId, name) => {
       where: { id: cityId }
     }
   );
-  return await getCityById(cityId);
-};
 
 const deleteCity = async (cityId) =>
   // TODO Posible error for foreign keys

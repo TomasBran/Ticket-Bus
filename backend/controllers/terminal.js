@@ -4,8 +4,7 @@ const {
   deleteTerminal: deleteTerminalService,
   getTerminals: getTerminalsService,
   updateTerminal: updateTerminalService,
-  checkTerminalExistsByCode,
-  checkTerminalExistsByCodeNoId
+  checkTerminalExistsByCode
 } = require('../services/terminal');
 const { catchAsync } = require('../helpers/catchAsync');
 const { endpointResponse } = require('../helpers/success');
@@ -106,16 +105,7 @@ const updateTerminal = catchAsync(async (req, res) => {
     const { id } = req.params;
     const { lat, lon, cityId, terminalName, terminalCode } = req.body;
 
-    const terminal = await getTerminalByIdService(id);
-
-    if (!terminal) {
-      throw new ErrorObject(`No se encontró terminal con el ID: ${id}`, 404);
-    }
-
-    const terminalExists = await checkTerminalExistsByCodeNoId(
-      terminalCode,
-      id
-    );
+    const terminalExists = await checkTerminalExistsByCode(terminalCode);
 
     if (terminalExists) {
       throw new ErrorObject(
@@ -156,14 +146,6 @@ const updateTerminal = catchAsync(async (req, res) => {
 const deleteTerminal = catchAsync(async (req, res) => {
   try {
     const { id } = req.params;
-
-    const terminal = await getTerminalByIdService(id);
-
-    if (!terminal) {
-      throw new ErrorObject(`No se encontró terminal con el ID: ${id}`, 404);
-    }
-
-    // TODO Review for foreign relations
 
     await deleteTerminalService(id);
 

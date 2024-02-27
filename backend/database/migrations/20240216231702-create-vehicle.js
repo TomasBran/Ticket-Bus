@@ -11,8 +11,7 @@ module.exports = {
       },
       number: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        unique: true
+        allowNull: false
       },
       plate: {
         type: Sequelize.STRING(8),
