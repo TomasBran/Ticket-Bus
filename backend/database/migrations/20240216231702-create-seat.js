@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Vehicles', {
+    await queryInterface.createTable('Seats', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -10,32 +10,34 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       number: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
+      seatPrice: {
+        type: Sequelize.FLOAT
+      },
+      vehicleId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        unique: true
+        references: {
+          model: 'Vehicles',
+          key: 'id'
+        }
       },
-      plate: {
-        type: Sequelize.STRING(8),
-        allowNull: false,
-        unique: true
-      },
-      totalSeats: {
-        type: Sequelize.INTEGER,
-        allowNull: false
+      category: {
+        type: Sequelize.ENUM('standard', 'semi-cama', 'cama')
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        type: Sequelize.DATE
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        type: Sequelize.DATE
       }
     });
   },
   async down(queryInterface) {
-    await queryInterface.dropTable('Vehicles');
+    await queryInterface.dropTable('Seats');
   }
 };
