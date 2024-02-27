@@ -1,13 +1,14 @@
 {
-  "openapi": "3.0.1",
-  "info": { "title": "ticket-bus", "description": "", "version": "1.0.0" },
+  "openapi": "3.1.0",
+  "info": { "title": "ticket-bus1", "description": "", "version": "1.0.0" },
   "tags": [
     { "name": "Auth" },
     { "name": "Cities" },
     { "name": "Users" },
     { "name": "Vehicles" },
     { "name": "Routes" },
-    { "name": "Schedules" }
+    { "name": "Schedules" },
+    { "name": "Terminal" }
   ],
   "paths": {
     "/auth/login": {
@@ -525,6 +526,286 @@
         "security": []
       }
     },
+    "/terminals": {
+      "get": {
+        "summary": "Obtener todas las terminales",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Terminal"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "terminals": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": { "type": "integer" },
+                              "lat": { "type": "number" },
+                              "lon": { "type": "number" },
+                              "cityId": { "type": "integer" },
+                              "terminalName": { "type": "string" },
+                              "terminalCode": { "type": "integer" },
+                              "createdAt": { "type": "string" },
+                              "updatedAt": { "type": "string" },
+                              "city": {
+                                "type": "object",
+                                "properties": {
+                                  "id": { "type": "integer" },
+                                  "name": { "type": "string" },
+                                  "createdAt": { "type": "string" },
+                                  "updatedAt": { "type": "string" }
+                                },
+                                "required": [
+                                  "id",
+                                  "name",
+                                  "createdAt",
+                                  "updatedAt"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "lat",
+                              "lon",
+                              "cityId",
+                              "terminalName",
+                              "terminalCode",
+                              "createdAt",
+                              "updatedAt",
+                              "city"
+                            ]
+                          }
+                        }
+                      },
+                      "required": ["terminals"]
+                    }
+                  },
+                  "required": ["status", "code", "message", "body"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Terminales obtenidas con éxito!",
+                      "body": {
+                        "terminals": [
+                          {
+                            "id": 1,
+                            "lat": -34.586038978354786,
+                            "lon": -58.373904326868484,
+                            "cityId": 1,
+                            "terminalName": "Retiro",
+                            "terminalCode": 101,
+                            "createdAt": "2024-02-26T17:16:01.397Z",
+                            "updatedAt": "2024-02-26T17:16:01.397Z",
+                            "city": {
+                              "id": 1,
+                              "name": "Buenos Aires",
+                              "createdAt": "2024-02-26T17:16:01.354Z",
+                              "updatedAt": "2024-02-26T19:18:30.800Z"
+                            }
+                          },
+                          {
+                            "id": 2,
+                            "lat": -31.422642411115337,
+                            "lon": -64.1752754681699,
+                            "cityId": 2,
+                            "terminalName": "Cordoba",
+                            "terminalCode": 201,
+                            "createdAt": "2024-02-26T17:16:01.397Z",
+                            "updatedAt": "2024-02-26T17:16:01.397Z",
+                            "city": {
+                              "id": 2,
+                              "name": "Córdoba",
+                              "createdAt": "2024-02-26T17:16:01.354Z",
+                              "updatedAt": "2024-02-26T17:16:01.354Z"
+                            }
+                          },
+                          {
+                            "id": 3,
+                            "lat": -31.424131932362194,
+                            "lon": -64.17253998369662,
+                            "cityId": 2,
+                            "terminalName": "Nueva",
+                            "terminalCode": 202,
+                            "createdAt": "2024-02-26T17:16:01.397Z",
+                            "updatedAt": "2024-02-26T17:16:01.397Z",
+                            "city": {
+                              "id": 2,
+                              "name": "Córdoba",
+                              "createdAt": "2024-02-26T17:16:01.354Z",
+                              "updatedAt": "2024-02-26T17:16:01.354Z"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "Crear nueva terminal",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Terminal"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "lat": { "type": "number" },
+                  "lon": { "type": "number" },
+                  "cityId": { "type": "integer" },
+                  "terminalName": { "type": "string" },
+                  "terminalCode": { "type": "integer" }
+                },
+                "required": [
+                  "lat",
+                  "lon",
+                  "cityId",
+                  "terminalName",
+                  "terminalCode"
+                ]
+              },
+              "example": {
+                "lat": -34.586038978354786,
+                "lon": -58.373904326868484,
+                "cityId": 1,
+                "terminalName": "Nueva Terminal",
+                "terminalCode": 211
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "integer" },
+                        "lat": { "type": "number" },
+                        "lon": { "type": "number" },
+                        "cityId": { "type": "integer" },
+                        "terminalName": { "type": "string" },
+                        "terminalCode": { "type": "integer" },
+                        "updatedAt": { "type": "string" },
+                        "createdAt": { "type": "string" },
+                        "city": {
+                          "type": "object",
+                          "properties": {
+                            "id": { "type": "integer" },
+                            "name": { "type": "string" },
+                            "createdAt": { "type": "string" },
+                            "updatedAt": { "type": "string" }
+                          },
+                          "required": ["id", "name", "createdAt", "updatedAt"]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "lat",
+                        "lon",
+                        "cityId",
+                        "terminalName",
+                        "terminalCode",
+                        "createdAt",
+                        "updatedAt",
+                        "city"
+                      ]
+                    }
+                  },
+                  "required": ["status", "code", "message", "body"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Terminal creada con éxito!",
+                      "body": {
+                        "id": 6,
+                        "lat": -34.586038978354786,
+                        "lon": -58.373904326868484,
+                        "cityId": 1,
+                        "terminalName": "Nueva Terminal",
+                        "terminalCode": 211,
+                        "createdAt": "2024-02-27T00:46:22.191Z",
+                        "updatedAt": "2024-02-27T00:46:22.191Z",
+                        "city": {
+                          "id": 1,
+                          "name": "Buenos Aires",
+                          "createdAt": "2024-02-26T17:16:01.354Z",
+                          "updatedAt": "2024-02-26T19:18:30.800Z"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" }
+                  },
+                  "required": ["status", "code", "message"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: Código términal repetido",
+                    "value": {
+                      "status": "fail",
+                      "code": 409,
+                      "message": "Ya existe una terminal con el código: 101"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
     "/cities/id/{id}": {
       "get": {
         "summary": "Obtener ciudad por ID",
@@ -806,6 +1087,103 @@
         "security": []
       }
     },
+    "/terminals/id/{id}": {
+      "get": {
+        "summary": "Obtener terminal por ID",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Terminal"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "integer" },
+                        "lat": { "type": "number" },
+                        "lon": { "type": "number" },
+                        "cityId": { "type": "integer" },
+                        "terminalName": { "type": "string" },
+                        "terminalCode": { "type": "integer" },
+                        "createdAt": { "type": "string" },
+                        "updatedAt": { "type": "string" },
+                        "city": {
+                          "type": "object",
+                          "properties": {
+                            "id": { "type": "integer" },
+                            "name": { "type": "string" },
+                            "createdAt": { "type": "string" },
+                            "updatedAt": { "type": "string" }
+                          },
+                          "required": ["id", "name", "createdAt", "updatedAt"]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "lat",
+                        "lon",
+                        "cityId",
+                        "terminalName",
+                        "terminalCode",
+                        "createdAt",
+                        "updatedAt",
+                        "city"
+                      ]
+                    }
+                  },
+                  "required": ["status", "code", "message", "body"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Terminal obtenida con éxito!",
+                      "body": {
+                        "id": 1,
+                        "lat": -34.586038978354786,
+                        "lon": -58.373904326868484,
+                        "cityId": 1,
+                        "terminalName": "Retiro",
+                        "terminalCode": 101,
+                        "createdAt": "2024-02-26T17:16:01.397Z",
+                        "updatedAt": "2024-02-26T17:16:01.397Z",
+                        "city": {
+                          "id": 1,
+                          "name": "Buenos Aires",
+                          "createdAt": "2024-02-26T17:16:01.354Z",
+                          "updatedAt": "2024-02-26T19:18:30.800Z"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
     "/routes/{id}": {
       "put": {
         "summary": "UpdateRouteById",
@@ -879,26 +1257,6 @@
             "schema": { "type": "integer" }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": { "type": "object", "properties": {} }
-              }
-            }
-          }
-        },
-        "security": []
-      }
-    },
-    "/cities/lat": {
-      "get": {
-        "summary": "Obtener por latitud",
-        "deprecated": false,
-        "description": "",
-        "tags": ["Cities"],
-        "parameters": [],
         "responses": {
           "200": {
             "description": "Success",
@@ -991,6 +1349,256 @@
             "content": {
               "application/json": {
                 "schema": { "type": "object", "properties": {} }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/terminals/{id}": {
+      "put": {
+        "summary": "Actualizar terminal",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Terminal"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "1000",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "lat": { "type": "number" },
+                  "lon": { "type": "number" },
+                  "cityId": { "type": "integer" },
+                  "terminalName": { "type": "string" },
+                  "terminalCode": { "type": "integer" }
+                },
+                "required": [
+                  "lat",
+                  "lon",
+                  "cityId",
+                  "terminalName",
+                  "terminalCode"
+                ]
+              },
+              "example": {
+                "lat": -34.586038978354786,
+                "lon": -58.373904326868484,
+                "cityId": 1,
+                "terminalName": "Nueva Terminal",
+                "terminalCode": 211
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "integer" },
+                        "lat": { "type": "number" },
+                        "lon": { "type": "number" },
+                        "cityId": { "type": "integer" },
+                        "terminalName": { "type": "string" },
+                        "terminalCode": { "type": "integer" },
+                        "createdAt": { "type": "string" },
+                        "updatedAt": { "type": "string" },
+                        "city": {
+                          "type": "object",
+                          "properties": {
+                            "id": { "type": "integer" },
+                            "name": { "type": "string" },
+                            "createdAt": { "type": "string" },
+                            "updatedAt": { "type": "string" }
+                          },
+                          "required": ["id", "name", "createdAt", "updatedAt"]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "lat",
+                        "lon",
+                        "cityId",
+                        "terminalName",
+                        "terminalCode",
+                        "createdAt",
+                        "updatedAt",
+                        "city"
+                      ]
+                    }
+                  },
+                  "required": ["status", "code", "message", "body"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Terminal actualizada con éxito!",
+                      "body": {
+                        "id": 6,
+                        "lat": -34.586038978354786,
+                        "lon": -58.373904326868484,
+                        "cityId": 1,
+                        "terminalName": "Nueva Terminal",
+                        "terminalCode": 211,
+                        "createdAt": "2024-02-27T00:46:22.191Z",
+                        "updatedAt": "2024-02-27T01:12:24.200Z",
+                        "city": {
+                          "id": 1,
+                          "name": "Buenos Aires",
+                          "createdAt": "2024-02-26T17:16:01.354Z",
+                          "updatedAt": "2024-02-26T19:18:30.800Z"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" }
+                  },
+                  "required": ["status", "code", "message"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: ID no encontrado",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró terminal con el ID: 1000"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" }
+                  },
+                  "required": ["status", "code", "message"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: Codigo de terminal ya usado",
+                    "value": {
+                      "status": "fail",
+                      "code": 409,
+                      "message": "Ya existe una terminal con el código: 210"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "delete": {
+        "summary": "Eliminar terminal",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Terminal"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "6",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" }
+                  },
+                  "required": ["status", "code", "message"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Terminal eliminada con éxito!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" }
+                  },
+                  "required": ["status", "code", "message"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró terminal con el ID: 1000"
+                    }
+                  }
+                }
               }
             }
           }
