@@ -1,8 +1,6 @@
 const { resolve } = require('node:path');
 const { readFileSync } = require('node:fs');
 
-const HOST = process.env.API_HOST || 'http://localhost:3300';
-
 const swaggerDefinition = {
   // openapi: '3.0.3',
   info: {
@@ -22,7 +20,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: HOST + '/api/v1',
+      url: process.env.API_HOST || 'http://localhost:3300/api/v1',
       description: 'Development server'
     }
   ],
