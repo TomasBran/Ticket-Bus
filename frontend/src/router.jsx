@@ -5,6 +5,7 @@ import StepsLayout from './layouts/StepsLayout.jsx';
 import SeatSelection from './pages/SeatSelection.jsx';
 import TravelSelection from './pages/TravelSelection.jsx';
 import TripReservation from './pages/ticket/TripReservation.jsx';
+import Register from './pages/auth/Register.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ export const router = createBrowserRouter([
         element: <p>Payment</p>
       }
     ]
+  },
+  {
+    path: '/register',
+    element: <Register />
   }
 ]);
 
