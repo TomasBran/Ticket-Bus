@@ -10,7 +10,7 @@ const createCity = async (name) =>
   });
 
 const updateCity = async (cityId, name) => {
-  const [cityID] = await City.update(
+  await City.update(
     {
       name
     },
