@@ -13,6 +13,7 @@ import BackButton from '../atoms/BackButton';
 import ContinueButton from '../atoms/ContinueButton';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 function BusTripDetails() {
   const seatQuantity = useSelector((state) => state.seat.seatQuantity); //cantidad de pasajeros
@@ -27,25 +28,26 @@ function BusTripDetails() {
   // Filtrar el array seatData para obtener solo la cantidad deseada según seatQuantity
   const filteredSeatData = seatData.slice(0, seatQuantity);
 
+  const location = useLocation();
+
   useEffect(() => {
-    window.addEventListener('load', () => {
-      const ajustarAlturaYMargen = () => {
-        const container = document.getElementById('container');
-        if (!container) return;
+    const ajustarAlturaYMargen = () => {
+      const container = document.getElementById('container');
+      if (!container) return;
 
-        const testingHeight = container.offsetHeight;
-        const bottomPosition = testingHeight - 65;
+      const testingHeight = container.offsetHeight;
+      const bottomPosition = testingHeight - 58;
 
-        // Seleccionar todos los elementos con la clase ".bottom-md"
-        const bottomMdElements = document.querySelectorAll('.bottom-md');
-        bottomMdElements.forEach((bottomMdElement) => {
-          bottomMdElement.style.bottom = `${bottomPosition}px`;
-        });
-      };
+      // Seleccionar todos los elementos con la clase ".bottom-md"
+      const bottomMdElements = document.querySelectorAll('.bottom-md');
+      bottomMdElements.forEach((bottomMdElement) => {
+        bottomMdElement.style.bottom = `${bottomPosition}px`;
+      });
+    };
 
-      ajustarAlturaYMargen();
-    });
-  }, []);
+    // Llama a la función de ajuste cuando cambia la ubicación de la página
+    ajustarAlturaYMargen();
+  }, [location]);
 
   return (
     <div className='flex flex-col h-full'>
