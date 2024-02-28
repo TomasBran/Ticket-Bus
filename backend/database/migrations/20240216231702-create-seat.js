@@ -27,16 +27,6 @@ module.exports = {
       category: {
         type: Sequelize.ENUM('standard', 'semi-cama', 'cama')
       },
-      isAvailable: {
-        allowNull: false,
-        type: Sequelize.BOOLEAN,
-        defaultValue: true
-      },
-      blockedByUser: {
-        allowNull: true,
-        type: Sequelize.INTEGER,
-        defaultValue: null
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -48,8 +38,34 @@ module.exports = {
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
     });
+
+    await queryInterface.createTable('BlockedSeats', {
+      seatId: {
+        allowNull: false,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Seats',
+          key: 'id'
+        }
+      },
+      scheduleId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Schedules',
+          key: 'id'
+        }
+      },
+      date: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      }
+    })
   },
   async down(queryInterface) {
+    await queryInterface.dropTable('BlockedSeats');
     await queryInterface.dropTable('Seats');
   }
+  
 };

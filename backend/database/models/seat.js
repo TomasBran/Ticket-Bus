@@ -36,18 +36,6 @@ module.exports = (sequelize, DataTypes) => {
       category: {
         type: DataTypes.STRING,
         allowNull: false
-      },
-
-      isAvailable: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true
-      },
-
-      blockedByUser: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        defaultValue: null
       }
     },
     {
