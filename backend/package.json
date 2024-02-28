@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
-    "debug": "npm run dev",
+    "debug": "DEBUG=backend:* npm run dev",
     "migrate": "npx sequelize-cli db:migrate",
     "rollback": "npx sequelize-cli db:migrate:undo:all",
     "seed": "npx sequelize-cli db:seed:all",
