@@ -55,8 +55,8 @@ const Register = () => {
             <p className='mt-2 text-sm leading-6 text-gray-500'>
               Ya tenes una cuenta?
               <Link
-                to='/'
-                className='font-semibold text-blue-600 hover:text-blue-500 ml-1'
+                to='/login'
+                className='font-semibold text-[#27C277] hover:text-[#27C277] ml-1'
               >
                 Inicia sesion
               </Link>
@@ -139,7 +139,7 @@ const Register = () => {
                 <div>
                   <button
                     type='submit'
-                    className='flex w-full justify-center rounded-md bg-[#27C277] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
+                    className='flex w-full justify-center rounded-md bg-[#27C277] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#27C277] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2'
                   >
                     Iniciar sesion
                   </button>
