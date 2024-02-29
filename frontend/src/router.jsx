@@ -10,6 +10,7 @@ import UserLayout from './layouts/UserLayout.jsx';
 import MyPurchases from './pages/auth/user/MyPurchases.jsx';
 import UserSettings from './pages/auth/user/UserSettings.jsx';
 import UserTravelDistance from './pages/auth/user/UserTravelDistance.jsx';
+import Summary from './pages/ticket/Summary.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -40,7 +41,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'summary',
-        element: <p>Summary</p>
+        element: <Summary />
       },
       {
         path: 'payment',

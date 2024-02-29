@@ -20,7 +20,9 @@ function ContinueButton() {
   const isButtonDisabled =
     location.pathname === '/ticket/seats'
       ? !areSeatsSelected
-      : isTravelSelectedEmpty;
+      : location.pathname === '/ticket/summary'
+        ? false
+        : isTravelSelectedEmpty;
 
   //   TODO: agregar mas casos mientras vayamos agregando vistas
   function handleClick() {
@@ -33,6 +35,13 @@ function ContinueButton() {
           navigate('/ticket/passengers');
         }
         break;
+      case 'ticket/passengers':
+        navigate('/ticket/summary');
+        break;
+      case '/ticket/summary':
+        navigate('/ticket/payment');
+        break;
+
       default:
         break;
     }

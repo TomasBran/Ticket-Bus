@@ -10,7 +10,7 @@ function TripReservation() {
   const auth = false; // Si inicio sesión
 
   return (
-    <div className='sm:bg-[#CED7E4] bg-[#F1F1F1] flex-grow w-full relative'>
+    <div className='bg-background-light flex-grow w-full relative'>
       <div className='h-full mx-auto lg:max-w-screen-xl p-4 overflow-hidden'>
         <div className='grid lg:grid-cols-4 md:grid-cols-5 sm:grid-cols-5 grid-cols-1 h-full lg:gap-4 gap-2 mx-auto relative'>
           {/* Columna 1 */}
