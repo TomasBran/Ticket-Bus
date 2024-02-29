@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import registerImage from '../../assets/Register/registerImage.webp';
-import SelectForm from '../../components/Register/SelectForm.jsx';
+
 import TextInput from '../../components/Register/TextInput.jsx';
 import PasswordInput from '../../components/Register/PasswordInput.jsx';
 import MailInput from '../../components/Register/MailInput.jsx';
@@ -9,11 +9,6 @@ import { useRegister } from '../../hooks/useRegister.js';
 import googleIcon from '../../assets/Register/google-icon.svg';
 
 function Register() {
-  const options = [
-    { value: 'dni', option: 'DNI' },
-    { value: 'passport', option: 'Pasaporte' }
-  ];
-
   const registerMutation = useRegister();
 
   const [form, setForm] = useState({
@@ -82,7 +77,6 @@ function Register() {
               onChange={(e) => handleChange(e)}
               required
             />
-            <SelectForm options={options} />
             <NumberInput
               id='dni'
               placeholder='N° DE DOCUMENTO'
