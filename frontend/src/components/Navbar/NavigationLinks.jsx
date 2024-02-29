@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export const NavigationLinks = () => {
   const links = [
     { label: 'Destinos', url: '#' },
@@ -11,18 +13,18 @@ export const NavigationLinks = () => {
     <div className='flex flex-col md:flex-row gap-4 md:gap-6 items-center'>
       {links.map((link, index) =>
         link.label === 'Destinos' ? (
-          <a key={index} href={link.url} className='font-semibold text-xl'>
+          <Link key={index} to={link.url} className='font-semibold text-xl'>
             {link.label}
-          </a>
+          </Link>
         ) : (
-          <a key={index} href={link.url} className='text-lg text-[#566e8d]'>
+          <Link key={index} to={link.url} className='text-lg text-[#566e8d]'>
             {link.label}
-          </a>
+          </Link>
         )
       )}
-      <a href='#' className='hover:underline text-lg text-[#566e8d]'>
+      <Link to='/register' className='hover:underline text-lg text-[#566e8d]'>
         Regístrame
-      </a>
+      </Link>
     </div>
   );
 };
