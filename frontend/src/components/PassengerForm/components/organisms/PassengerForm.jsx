@@ -35,7 +35,7 @@ function PassengerForm({ auth }) {
   const filteredPassengers = passengers.slice(0, seatQuantity);
 
   return (
-    <div className='sm:bg-[#CED7E4] bg-[#F1F1F1] flex flex-col h-full relative'>
+    <div className='bg-background-light flex flex-col h-full relative'>
       <TitleSubtitle />
       <div className='w-full'>
         <form
