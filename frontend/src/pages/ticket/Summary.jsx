@@ -3,6 +3,7 @@ import ArrowRightSVG from '../../assets/TravelHeader/Arrow Right.svg';
 import BackButton from '../../components/BackButton.jsx';
 import DataForm from '../../components/DataForm/DataForm.jsx';
 import ContinueButton from '../../components/ContinueButton.jsx';
+import { PaymentMethod } from '../../components/PaymentMethod/PaymentMethod.jsx';
 
 function Summary() {
   return (
@@ -46,16 +47,9 @@ function Summary() {
           {/* Columna 3 */}
           <div className='md:col-span-1 sm:col-span-1 col-span-1 relative order-last'>
             <div className=''>
-              <TripDetailsCard
-                title='Viaje de Ida'
-                startLocation='Buenos Aires'
-                endLocation='Mar del Plata'
-                arrowImage={ArrowRightSVG}
-                departureDate='Jueves 14 Mar'
-                arrivalDate='Jueves 14 Mar'
-                startTime='08:00'
-                endTime='12:00'
-              />
+              <div className='mb-4'>
+                <PaymentMethod />
+              </div>
               <TripDetailsCard
                 title='Viaje de Regreso'
                 startLocation='Buenos Aires'
