@@ -13,13 +13,13 @@ const Register = () => {
   const registerMutation = useRegister(setErrorMessage);
 
   const [form, setForm] = useState({
-    firstName: 'Pepe',
-    lastName: 'Pepe',
-    email: 'pepe@pepe.com',
+    firstName: '',
+    lastName: '',
+    email: '',
     documentType: '',
-    dni: '12345678',
-    password: 'Test123',
-    confirmPassword: 'Test123',
+    dni: '',
+    password: '',
+    confirmPassword: '',
     acceptTerms: false
   });
 
