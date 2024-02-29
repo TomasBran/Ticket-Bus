@@ -7,6 +7,7 @@ import asientos from '../../assets/Steps/asientos.svg';
 import pago from '../../assets/Steps/pago.svg';
 import greenArrow from '../../assets/Steps/greenArrow.svg';
 import blueArrow from '../../assets/Steps/blueArrow.svg';
+import { Link } from 'react-router-dom';
 
 export const Steps = () => {
   const location = useLocation();
@@ -41,10 +42,20 @@ export const Steps = () => {
     pago
   };
 
+  // Mapear cada seccion a su respectivo link
+  const pageLinks = {
+    viajes: '/ticket',
+    pasajeros: '/ticket/passengers',
+    asientos: '/ticket/seats',
+    resumen: '/ticket/summary',
+    pago: '/ticket/payment'
+  };
+
   return (
     <div className='flex items-center justify-between w-full border-2 md:border-[#486284] shadow rounded-r-full rounded-l-3xl'>
       {sections.map((section, index) => (
-        <div
+        <Link
+          to={pageLinks[section]}
           key={index}
           className={`flex items-center justify-around w-full ${
             index < activeIndex
@@ -56,7 +67,7 @@ export const Steps = () => {
                   : 'hidden'
           } md:flex`}
         >
-          <div className='flex gap-4 sm:ml-8 ml-3'>
+          <div className='flex gap-4 ml-7 font-semibold text-[24px] text-[#3A556A] items-center'>
             <img src={icons[section]} alt={''} className='w-6 h-6 ' />
             <p className={`${index === activeIndex + 1 ? '' : 'block'}`}>
               {section.charAt(0).toUpperCase() + section.slice(1)}
@@ -75,7 +86,7 @@ export const Steps = () => {
               className={`h-14 w-14 pr-2  ${index <= activeIndex ? 'hidden' : 'block'}`}
             />
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   );
