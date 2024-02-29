@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 function HorizontalLabelPair({ leftLabel, rightLabel }) {
   return (
-    <div className='flex justify-between items-center text-[#486284] text-sm font-medium mb-2'>
+    <div className='flex justify-between items-center text-[#486284] text-[15px] font-medium mb-2'>
       <p>{leftLabel}</p>
       <p className='text-end'>{rightLabel}</p>
     </div>

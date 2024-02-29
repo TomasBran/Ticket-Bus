@@ -16,11 +16,11 @@ function TripDetailsCard({
   endTime
 }) {
   return (
-    <div className='bg-[#DEE5ED] rounded-md p-3 flex flex-col mb-8'>
+    <div className='bg-[#DEE5ED] rounded-md p-3 flex flex-col mb-8 max-w-[304px] w-full'>
       <TripDetailsHeader title={title} />
 
       <HorizontalLabelPair leftLabel='Salida' rightLabel='Llegada' />
-      <div className='grid grid-cols-3'>
+      <div className='grid grid-cols-3 mb-4'>
         <div className='col-span-3'>
           <LocationArrowRow
             startLocation={startLocation}

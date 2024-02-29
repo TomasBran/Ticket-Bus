@@ -1,7 +1,8 @@
 import TitleForm from '../PassengerForm/components/atoms/TitleForm';
 import TextInput from '../PassengerForm/components/atoms/TextInput';
-import SelectForm from '../PassengerForm/components/atoms/SelectForm';
+// import SelectForm from '../PassengerForm/components/atoms/SelectForm';
 import { useState } from 'react';
+import SelectForm from '../PassengerForm/components/atoms/SelectForm';
 
 export default function DataForm() {
   const options = [
@@ -21,7 +22,7 @@ export default function DataForm() {
 
       <div>
         <form
-          className=' bg-[#D3DCE7] rounded-md lg:px-24 md:pt-12 md:pb-7 pt-4 pb-2 px-4 shadow'
+          className=' bg-[#D3DCE7] rounded-md lg:px-24 md:pt-12 md:pb-7 pt-4 pb-2 px-4 shadow font-medium'
           autoComplete='off'
         >
           <TextInput id='name' placeholder='NOMBRE' />
@@ -40,7 +41,10 @@ export default function DataForm() {
             placeholder='CONFIRMA TU CORREO ELECTRONICO'
           />
           <div className='pt-3'>
-            <a href='' className='text-[#007AFF]'>
+            <a
+              href=''
+              className='text-[#007AFF] text-xs tracking-tight font-medium'
+            >
               ¿TIENES UN DESCUENTO?
             </a>
           </div>
@@ -58,8 +62,8 @@ export default function DataForm() {
             htmlFor='termsAndConditions'
             className='ml-2 block text-gray-900'
           >
-            Aceptar{' '}
-            <a href='' className='text-[#007AFF]'>
+            Aceptar
+            <a href='' className='text-[#007AFF] ml-2'>
               Términos y condiciones
             </a>
           </label>
