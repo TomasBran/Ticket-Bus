@@ -23,7 +23,7 @@ export const Navbar = () => {
           <img src={hamburgerBar} />
         </button>
         <button className='md:hidden ml-4 align-middle'>
-          <img src={person} className='align-' />
+          <img src={person} className='' />
         </button>
         <div
           className={`md:flex ${isMenuOpen ? 'flex' : 'hidden'} md:items-center md:justify-end flex-col md:flex-row`}
