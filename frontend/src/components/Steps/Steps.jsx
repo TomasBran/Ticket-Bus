@@ -42,6 +42,7 @@ export const Steps = () => {
     pago
   };
 
+  // TODO: añadir que no te deje clickear segun lo que esta en el contexto, si el usuario relleno las pasadas
   // Mapear cada seccion a su respectivo link
   const pageLinks = {
     viajes: '/ticket',
