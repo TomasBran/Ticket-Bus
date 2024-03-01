@@ -4,8 +4,13 @@ import daisyui from 'daisyui';
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
+    fontFamily: {
+      jakarta: ['Plus Jakarta Sans', 'sans-serif']
+    },
+
     extend: {
       colors: {
+        'background-light': '#EFF0F0',
         'meadow-green': '#27C277',
         'ocean-blue': '#84BCDA',
         'pastel-sky-blue': '#A5CCE0',

@@ -59,13 +59,12 @@ module.exports = {
       },
       date: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: Sequelize.DATE
       }
-    })
+    });
   },
   async down(queryInterface) {
     await queryInterface.dropTable('BlockedSeats');
     await queryInterface.dropTable('Seats');
   }
-  
 };
