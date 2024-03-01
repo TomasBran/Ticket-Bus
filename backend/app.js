@@ -22,6 +22,7 @@ const terminalRouter = require('./routes/terminal');
 const passengerRouter = require('./routes/passenger');
 const cityRouter = require('./routes/city');
 const reservationRouter = require('./routes/reservation');
+const ticketRouter = require('./routes/ticket');
 
 const app = express();
 
@@ -56,6 +57,7 @@ app.use('/api/v1/cities', cityRouter);
 app.use('/api/v1/terminals', terminalRouter);
 app.use('/api/v1/passengers', passengerRouter);
 app.use('/api/v1/reservations', reservationRouter);
+app.use('/api/v1/tickets', ticketRouter);
 
 // Swagger specification
 const specs = getSwaggerSpec();

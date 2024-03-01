@@ -163,8 +163,7 @@ module.exports = {
       endpointResponse({
         res,
         status: 'success',
-        message: 'Reserva eliminada correctamente!',
-        body: { reservation }
+        message: 'Reserva eliminada correctamente!'
       });
     } catch (error) {
       endpointResponse({
