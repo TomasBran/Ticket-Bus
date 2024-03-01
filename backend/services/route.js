@@ -2,7 +2,7 @@ const { Route } = require('../database/models');
 
 // Obtener todas las rutas
 const getAll = async () => {
-  return await Route.findAll({ include: { all: true, nested: true } });
+  return await Route.findAll({ include: { all: true, nested: false } });
 };
 
 // Obtener una ruta por su id
