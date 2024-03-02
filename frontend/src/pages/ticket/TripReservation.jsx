@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom';
 import { BusTripDetails } from '../../components/BusTripDetails';
 import ReturnButton from '../../components/BusTripDetails/components/atoms/ReturnButton';
 import { PassengerForm } from '../../components/PassengerForm';
@@ -7,17 +8,20 @@ import { PromoRegister } from '../../components/PromoRegister';
 import SignUpSection from '../../components/PromoRegister/components/molecules/SignUpSection';
 
 function TripReservation() {
-  const auth = false; // Si inicio sesión
+  const auth = true; // Si inicio sesión
+  const location = useLocation();
+
+  const queryParams = location.search;
 
   return (
     <div className='bg-background-light flex-grow w-full relative'>
-      <div className='h-full mx-auto lg:max-w-screen-xl p-4 overflow-hidden'>
-        <div className='grid lg:grid-cols-4 md:grid-cols-5 sm:grid-cols-5 grid-cols-1 h-full lg:gap-4 gap-2 mx-auto relative'>
+      <div className='h-full p-4 overflow-hidden'>
+        <div className='grid lg:grid-cols-4 md:grid-cols-5 sm:grid-cols-5 grid-cols-1 h-full lg:gap-8 gap-2 mx-auto relative'>
           {/* Columna 1 */}
           <div className='lg:col-span-1 md:col-span-2 sm:col-span-2 col-span-1 relative order-2 sm:order-1'>
             <BusTripDetails />
             <div className='hidden sm:block absolute bottom-1/3 left-1/2 transform -translate-x-1/2 bottom-md'>
-              <ReturnButton to='/ticket/seats' label='Volver' />
+              <ReturnButton to={`/ticket/seats${queryParams}`} label='Volver' />
             </div>
           </div>
 
@@ -27,7 +31,7 @@ function TripReservation() {
             <div className='hidden sm:block absolute bottom-1/3 left-1/2 transform -translate-x-1/2 bottom-md'>
               <ContinueButton
                 label='Continuar'
-                to='/ticket/summary'
+                to={`/ticket/summary${queryParams}`}
                 disabled={false}
               />
             </div>

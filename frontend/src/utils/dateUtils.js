@@ -20,3 +20,27 @@ export const getUpcomingYears = () => {
   });
   return years;
 };
+
+export const formatDate = (dateString) => {
+  // Split the date string into year, month, and day
+  const [year, month, day] = dateString.split('-');
+
+  // Create a new Date object without time
+  const date = new Date(year, month - 1, day);
+
+  const options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  };
+
+  // Use 'es-ES' locale and options to format the date
+  let formattedDate = new Intl.DateTimeFormat('es-ES', options).format(date);
+
+  // Capitalize the first letter of the formatted date
+  formattedDate =
+    formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+
+  return formattedDate;
+};

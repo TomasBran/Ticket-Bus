@@ -13,6 +13,8 @@ export const Steps = () => {
   const location = useLocation();
   const [activeSection, setActiveSection] = useState('');
 
+  const queryParams = location.search;
+
   const determineActiveSection = () => {
     const pathname = location.pathname;
     if (pathname.includes('seats')) {
@@ -45,11 +47,11 @@ export const Steps = () => {
   // TODO: añadir que no te deje clickear segun lo que esta en el contexto, si el usuario relleno las pasadas
   // Mapear cada seccion a su respectivo link
   const pageLinks = {
-    viajes: '/ticket',
-    pasajeros: '/ticket/passengers',
-    asientos: '/ticket/seats',
-    resumen: '/ticket/summary',
-    pago: '/ticket/payment'
+    viajes: `/ticket${queryParams}`,
+    pasajeros: `/ticket/passengers${queryParams}`,
+    asientos: `/ticket/seats${queryParams}`,
+    resumen: `/ticket/summary${queryParams}`,
+    pago: `/ticket/payment${queryParams}`
   };
 
   return (

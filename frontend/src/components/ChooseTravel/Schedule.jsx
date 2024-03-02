@@ -6,7 +6,13 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import isEqual from 'lodash-es/isEqual';
 
-export default function Schedule({ departure, arrival, origin, destination }) {
+export default function Schedule({
+  departure,
+  arrival,
+  origin,
+  destination,
+  price
+}) {
   const dispatch = useDispatch();
   const travelSelected = useSelector((state) => state.travel.travelSelected);
 
@@ -15,7 +21,8 @@ export default function Schedule({ departure, arrival, origin, destination }) {
     departure: departure,
     arrival: arrival,
     origin: origin,
-    destination: destination
+    destination: destination,
+    price: price
   };
 
   const handleSelect = () => {
@@ -50,7 +57,7 @@ export default function Schedule({ departure, arrival, origin, destination }) {
         </div>
 
         <div className='bg-emerald-500 px-5 py-0 rounded-[10px] h-11 flex items-center w-40 justify-center md:static absolute bottom-2 right-2 '>
-          <p> $00.000-</p>
+          <p> ${price}</p>
         </div>
       </div>
     </button>
@@ -61,5 +68,6 @@ Schedule.propTypes = {
   departure: PropTypes.string.isRequired,
   arrival: PropTypes.string.isRequired,
   origin: PropTypes.string.isRequired,
-  destination: PropTypes.string.isRequired
+  destination: PropTypes.string.isRequired,
+  price: PropTypes.string.isRequired
 };

@@ -5,6 +5,8 @@ function BackButton() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const queryParams = location.search;
+
   //   TODO: agregar mas casos mientras vayamos agregando vistas
   function handleClick() {
     switch (location.pathname) {
@@ -12,16 +14,16 @@ function BackButton() {
         navigate('/');
         break;
       case '/ticket/seats':
-        navigate('/ticket');
+        navigate(`/ticket${queryParams}`);
         break;
       case '/ticket/passengers':
-        navigate('/ticket/seats');
+        navigate(`/ticket/seats${queryParams}`);
         break;
       case '/ticket/summary':
-        navigate('/ticket/passengers');
+        navigate(`/ticket/passengers${queryParams}`);
         break;
       case '/ticket/payment':
-        navigate('/ticket/summary');
+        navigate(`/ticket/summary${queryParams}`);
         break;
       default:
         break;

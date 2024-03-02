@@ -3,8 +3,47 @@ import arrow from '../../assets/arrow.svg';
 import Schedule from './Schedule';
 import BackButton from '../BackButton';
 import ContinueButton from '../ContinueButton';
+import { useFetchSchedules } from '../../hooks/useSchedules';
+import { formatDate } from '../../utils/dateUtils';
+import { formatTime } from '../../utils/formatUtils';
+import { useLocation } from 'react-router-dom';
 
 export default function ChooseTravel() {
+  const location = useLocation();
+
+  // reads from searchParams to make the fetch, this is a way of
+  // retaining the information through refreshes in a way that
+  // doesn't use redux or localStorage for server side things, which avoids data duplication and issues with sync
+
+  let queryParams = new URLSearchParams(location.search);
+  queryParams = {
+    origin: queryParams.get('origin'),
+    destination: queryParams.get('destination'),
+    date: queryParams.get('date')
+  };
+
+  const {
+    data: schedules,
+    error: errorSchedule,
+    isLoading: isLoadingSchedule
+  } = useFetchSchedules(
+    queryParams.origin,
+    queryParams.destination,
+    queryParams.date
+  );
+
+  // format to look like design
+  console.log(queryParams);
+  const formattedDate = formatDate(queryParams.date);
+
+  if (isLoadingSchedule) {
+    return <div>Loading...</div>;
+  }
+
+  if (errorSchedule) {
+    return <div>Error: {errorSchedule.message}</div>;
+  }
+
   return (
     <div className='flex items-center justify-evenly lg:flex-row flex-col md:mx-0 mx-2 mt-6'>
       <div className='lg:w-2/5 w-full'>
@@ -15,25 +54,28 @@ export default function ChooseTravel() {
               Elige tu viaje de ida
             </h2>
             <p className='flex gap-4 justify-center text-[#486284] font-medium'>
-              Buenos Aires <img src={arrow} alt='' /> Mar del Plata
+              {queryParams.origin} <img src={arrow} alt='' />{' '}
+              {queryParams.destination}
             </p>
           </div>
         </div>
 
         <div>
-          <p className='font-semibold text-xl mb-4'>Jueves 14 de Marzo 2024 </p>
-          <Schedule
-            departure={'8:00PM'}
-            arrival={'12:45PM'}
-            origin={'Buenos Aires'}
-            destination={'Mar del Plata'}
-          />
-          <Schedule
-            departure={'12:00PM'}
-            arrival={'4:45AM'}
-            origin={'Mar del Plata'}
-            destination={'Buenos Aires'}
-          />
+          <p className='font-semibold text-xl mb-4'>{formattedDate}</p>
+          {schedules.map((schedule, index) => {
+            const formattedDepartureTime = formatTime(schedule.departureTime);
+            return (
+              <Schedule
+                key={index}
+                id={schedule.id}
+                departure={formattedDepartureTime}
+                arrival={'00:00'}
+                origin={queryParams.origin}
+                destination={queryParams.destination}
+                price={schedule.cost}
+              />
+            );
+          })}
         </div>
         <div className='flex justify-between mt-5'>
           <BackButton />

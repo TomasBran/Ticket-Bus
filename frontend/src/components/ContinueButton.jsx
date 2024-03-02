@@ -5,6 +5,8 @@ function ContinueButton() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const queryParams = location.search;
+
   // Access states from the Redux store
   const travelSelected = useSelector((state) => state.travel.travelSelected);
   const seatSelected = useSelector((state) => state.seat.seatSelected);
@@ -28,18 +30,18 @@ function ContinueButton() {
   function handleClick() {
     switch (location.pathname) {
       case '/ticket':
-        if (!isTravelSelectedEmpty) navigate('/ticket/seats');
+        if (!isTravelSelectedEmpty) navigate(`/ticket/seats${queryParams}`);
         break;
       case '/ticket/seats':
         if (areSeatsSelected) {
-          navigate('/ticket/passengers');
+          navigate(`/ticket/passengers${queryParams}`);
         }
         break;
       case 'ticket/passengers':
-        navigate('/ticket/summary');
+        navigate(`/ticket/summary${queryParams}`);
         break;
       case '/ticket/summary':
-        navigate('/ticket/payment');
+        navigate(`/ticket/payment${queryParams}`);
         break;
 
       default:
