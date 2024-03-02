@@ -9,7 +9,9 @@ const getAll = async () => {
 
 // Obtener un horario por su id
 const getById = async (id) => {
-  const schedule = await Schedule.findByPk(id);
+  const schedule = await Schedule.findByPk(id, {
+    include: { all: true, nested: false }
+  });
   return schedule;
 };
 
