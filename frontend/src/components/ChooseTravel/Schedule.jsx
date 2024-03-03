@@ -36,6 +36,7 @@ export default function Schedule({
   //formatting
   const formattedDepartureTime = formatTime(departureTime);
   const formattedDuration = formatDuration(duration);
+  const formattedPrice = parseFloat(price).toString();
 
   return (
     // TODO: button encompasando cambia los estilos, son aplicados por defecto a los elementos button
@@ -62,7 +63,7 @@ export default function Schedule({
         </div>
 
         <div className='bg-emerald-500 px-5 py-0 rounded-[10px] h-11 flex items-center w-40 justify-center md:static absolute bottom-2 right-2 '>
-          <p> ${price}</p>
+          <p> ${formattedPrice}</p>
         </div>
       </div>
     </button>

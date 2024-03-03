@@ -2,7 +2,7 @@ import Bus from '../../assets/Itinerary/bus.svg';
 import Arrow from '../../assets/Itinerary/arrow.svg';
 import ItinerarySchedule from './ItinerarySchedule.jsx';
 import PropTypes from 'prop-types';
-import { formatTime } from '../../utils/dateUtils.js';
+import { calculateArrivalTime, formatTime } from '../../utils/dateUtils.js';
 import { useQueryParams } from '../../hooks/useQueryParams.js';
 
 Itinerary.propTypes = {
@@ -12,10 +12,13 @@ Itinerary.propTypes = {
 function Itinerary({ travelSelected }) {
   const queryParams = useQueryParams();
 
-  //formatting
+  //formatting and calcs
   const formattedDepartureTime = formatTime(travelSelected.departureTime);
-  // endpoint not ready for this yet TODO:
-  // const formattedArrivalTime = formatTime(travelSelected.arrivalTime);
+  const calculatedArrivalTime = calculateArrivalTime(
+    travelSelected.departureTime,
+    travelSelected.route.duration
+  );
+  const formattedPrice = parseFloat(travelSelected.route.price).toString();
 
   return (
     <div className='text-center mt-24'>
@@ -35,13 +38,15 @@ function Itinerary({ travelSelected }) {
         <ItinerarySchedule
           departingDay={'need BE'}
           arrivalDay={'need BE'}
-          arrivalHour={formattedDepartureTime}
-          departingHour={'need to pass as prop'}
+          arrivalHour={calculatedArrivalTime}
+          departingHour={formattedDepartureTime}
         />
         <img src={Bus} className='mx-auto mt-7 mb-14' alt='Icono de Autobus' />
-        <h1 className='font-bold text-xl text-[#1A202C] text-left'>
-          ${travelSelected.cost} -
-        </h1>
+        <div className='pb-8'>
+          <h1 className='font-bold text-xl text-[#1A202C] text-center'>
+            ${formattedPrice}
+          </h1>
+        </div>
       </section>
     </div>
   );

@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import Schedule from '../components/ChooseTravel/Schedule.jsx';
 import { useFetchScheduleById } from '../hooks/useSchedules.js';
 import { useQueryParams } from '../hooks/useQueryParams.js';
+import { calculateArrivalTime } from '../utils/dateUtils.js';
 
 function SeatSelection() {
   const seatQuantity = useSelector((state) => state.seat.seatQuantity);
@@ -21,6 +22,13 @@ function SeatSelection() {
   );
 
   if (data) {
+    //formatting and calcs
+    const calculatedArrivalTime = calculateArrivalTime(
+      data.departureTime,
+      data.route.duration
+    );
+    const formattedPrice = parseFloat(data.route.price).toString();
+
     return (
       <main className='flex px-10 justify-between pt-8 max-w-[1440px] mx-auto flex-col md:flex-row items-center'>
         <div className='md:flex flex-col justify-between items-center  hidden '>
@@ -36,11 +44,11 @@ function SeatSelection() {
             <Schedule
               id={data.id}
               departureTime={data.departureTime}
-              arrivalTime={'dunno, need BE endpoint updated'}
+              arrivalTime={calculatedArrivalTime}
               origin={queryParams.origin}
               destination={queryParams.destination}
-              price={data.cost}
-              duration={'no tengo en este endpoint'}
+              price={formattedPrice}
+              duration={data.route.duration}
             />
           </div>
 

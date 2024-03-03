@@ -25,9 +25,10 @@ export default function ChooseTravel() {
     queryParams.date
   );
 
-  // format to look like design
-  const formattedDate = queryParams.date ? formatDate(queryParams.date) : '';
+  // formatting
+  const formattedDate = formatDate(queryParams.date);
 
+  // TODO: make real loading modals/placeholders
   if (isLoadingSchedule) {
     return <div>Loading...</div>;
   }
@@ -56,7 +57,7 @@ export default function ChooseTravel() {
           <p className='font-semibold text-xl mb-4'>{formattedDate}</p>
           {schedules.map((schedule, index) => {
             console.log(schedule);
-            const arrivalTime = calculateArrivalTime(
+            const calculatedArrivalTime = calculateArrivalTime(
               schedule.departureTime,
               schedule.route.duration
             );
@@ -65,7 +66,7 @@ export default function ChooseTravel() {
                 key={index}
                 id={schedule.id}
                 departureTime={schedule.departureTime}
-                arrivalTime={arrivalTime}
+                arrivalTime={calculatedArrivalTime}
                 origin={queryParams.origin}
                 destination={queryParams.destination}
                 price={schedule.route.price}
