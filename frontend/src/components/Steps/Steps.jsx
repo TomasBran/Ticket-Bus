@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import viajes from '../../assets/Steps/viajes.svg';
 import pasajeros from '../../assets/Steps/pasajero.svg';
 import resumen from '../../assets/Steps/resumen.svg';
@@ -13,7 +13,7 @@ export const Steps = () => {
   const location = useLocation();
   const [activeSection, setActiveSection] = useState('');
 
-  const queryParams = location.search;
+  const [searchParams] = useSearchParams();
 
   const determineActiveSection = () => {
     const pathname = location.pathname;
@@ -47,11 +47,11 @@ export const Steps = () => {
   // TODO: añadir que no te deje clickear segun lo que esta en el contexto, si el usuario relleno las pasadas
   // Mapear cada seccion a su respectivo link
   const pageLinks = {
-    viajes: `/ticket${queryParams}`,
-    pasajeros: `/ticket/passengers${queryParams}`,
-    asientos: `/ticket/seats${queryParams}`,
-    resumen: `/ticket/summary${queryParams}`,
-    pago: `/ticket/payment${queryParams}`
+    viajes: `/ticket?${searchParams}`,
+    pasajeros: `/ticket/passengers?${searchParams}`,
+    asientos: `/ticket/seats?${searchParams}`,
+    resumen: `/ticket/summary?${searchParams}`,
+    pago: `/ticket/payment?${searchParams}`
   };
 
   return (

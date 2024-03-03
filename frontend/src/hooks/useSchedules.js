@@ -1,13 +1,14 @@
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
-import { useNavigate } from 'react-router-dom';
-import { fetchSpecificSchedules } from '../services/schedules.js';
-import { useDispatch } from 'react-redux';
-import { setQueryParams } from '../store/QueryParams/queryParamsActions.js';
+import {
+  fetchSpecificSchedules,
+  fetchSpecificScheduleById
+} from '../services/schedules.js';
+import queryString from 'query-string';
 
 export function useFetchSchedules(originCity, destinationCity, date, enabled) {
   const navigate = useNavigate();
-
-  const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
 
   return useQuery(
     ['specificSchedule', originCity, destinationCity, date],
@@ -15,18 +16,23 @@ export function useFetchSchedules(originCity, destinationCity, date, enabled) {
     {
       retry: false,
       enabled: enabled,
+      refetchOnWindowFocus: false,
       onSuccess: () => {
+        // Create an object with the new search parameters
+        const newParams = {
+          origin: originCity,
+          destination: destinationCity,
+          date: date,
+          scheduleId: searchParams.has('scheduleId')
+            ? searchParams.get('scheduleId') // Use get method to retrieve the value
+            : ''
+        };
+
+        // Stringify the params object back into a query string
+        const newSearch = queryString.stringify(newParams);
+
         // Navigate to "/ticket" when the query is successful
-        dispatch(
-          setQueryParams({
-            origin: originCity,
-            destination: destinationCity,
-            date
-          })
-        );
-        navigate(
-          `/ticket?origin=${originCity}&destination=${destinationCity}&date=${date}`
-        );
+        navigate(`/ticket?${newSearch}`);
       },
       onError: (error) => {
         return error;
@@ -35,29 +41,29 @@ export function useFetchSchedules(originCity, destinationCity, date, enabled) {
   );
 }
 
-// TODO: idea is to use a fetch by ID here for a certain schedule, but gotta have an endpoint avaliable
-export function useFetchScheduleTemp(
+export function useFetchScheduleById(
   originCity,
   destinationCity,
   date,
+  scheduleId,
   enabled
 ) {
-  const dispatch = useDispatch();
+  const [, setSearchParams] = useSearchParams();
 
   return useQuery(
-    ['specificSchedule', originCity, destinationCity, date],
-    () => fetchSpecificSchedules(originCity, destinationCity, date),
+    ['specificScheduleById', originCity, destinationCity, date, scheduleId],
+    () =>
+      fetchSpecificScheduleById(originCity, destinationCity, date, scheduleId),
     {
       retry: false,
       enabled: enabled,
+      refetchOnWindowFocus: false,
       onSuccess: () => {
-        dispatch(
-          setQueryParams({
-            origin: originCity,
-            destination: destinationCity,
-            date
-          })
-        );
+        // Parse the current search params into an object
+        const params = queryString.parse(window.location.search);
+
+        // Update the search params in the URL
+        setSearchParams(params);
       },
       onError: (error) => {
         return error;

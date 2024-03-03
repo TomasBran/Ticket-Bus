@@ -1,19 +1,17 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 function ContinueButton() {
   const navigate = useNavigate();
   const location = useLocation();
-
-  const queryParams = location.search;
+  const [searchParams] = useSearchParams();
 
   // Access states from the Redux store
-  const travelSelected = useSelector((state) => state.travel.travelSelected);
   const seatSelected = useSelector((state) => state.seat.seatSelected);
   const seatQuantity = useSelector((state) => state.seat.seatQuantity);
 
-  // Check if the travelSelected object is empty
-  const isTravelSelectedEmpty = Object.keys(travelSelected).length === 0;
+  // Check if the scheduleId is empty
+  const isScheduleIdEmpty = searchParams.get('scheduleId') === '';
 
   // Check if the required number of seats have been selected
   const areSeatsSelected = seatSelected.length == seatQuantity;
@@ -24,26 +22,26 @@ function ContinueButton() {
       ? !areSeatsSelected
       : location.pathname === '/ticket/summary'
         ? false
-        : isTravelSelectedEmpty;
+        : isScheduleIdEmpty;
 
-  //   TODO: agregar mas casos mientras vayamos agregando vistas
   function handleClick() {
     switch (location.pathname) {
       case '/ticket':
-        if (!isTravelSelectedEmpty) navigate(`/ticket/seats${queryParams}`);
+        if (!isScheduleIdEmpty) {
+          navigate(`/ticket/seats?${searchParams}`);
+        }
         break;
       case '/ticket/seats':
         if (areSeatsSelected) {
-          navigate(`/ticket/passengers${queryParams}`);
+          navigate(`/ticket/passengers?${searchParams}`);
         }
         break;
-      case 'ticket/passengers':
-        navigate(`/ticket/summary${queryParams}`);
+      case '/ticket/passengers':
+        navigate(`/ticket/summary?${searchParams}`);
         break;
       case '/ticket/summary':
-        navigate(`/ticket/payment${queryParams}`);
+        navigate(`/ticket/payment?${searchParams}`);
         break;
-
       default:
         break;
     }

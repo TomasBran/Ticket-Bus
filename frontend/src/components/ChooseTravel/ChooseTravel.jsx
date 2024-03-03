@@ -5,22 +5,15 @@ import BackButton from '../BackButton';
 import ContinueButton from '../ContinueButton';
 import { useFetchSchedules } from '../../hooks/useSchedules';
 import { formatDate } from '../../utils/dateUtils';
-import { formatTime } from '../../utils/formatUtils';
-import { useLocation } from 'react-router-dom';
+import { calculateArrivalTime } from '../../utils/dateUtils';
+import { useQueryParams } from '../../hooks/useQueryParams';
 
 export default function ChooseTravel() {
-  const location = useLocation();
-
-  // reads from searchParams to make the fetch, this is a way of
+  // reads from URL Params to make the fetch, this is a way of
   // retaining the information through refreshes in a way that
   // doesn't use redux or localStorage for server side things, which avoids data duplication and issues with sync
 
-  let queryParams = new URLSearchParams(location.search);
-  queryParams = {
-    origin: queryParams.get('origin'),
-    destination: queryParams.get('destination'),
-    date: queryParams.get('date')
-  };
+  const queryParams = useQueryParams();
 
   const {
     data: schedules,
@@ -33,8 +26,7 @@ export default function ChooseTravel() {
   );
 
   // format to look like design
-  console.log(queryParams);
-  const formattedDate = formatDate(queryParams.date);
+  const formattedDate = queryParams.date ? formatDate(queryParams.date) : '';
 
   if (isLoadingSchedule) {
     return <div>Loading...</div>;
@@ -63,16 +55,21 @@ export default function ChooseTravel() {
         <div>
           <p className='font-semibold text-xl mb-4'>{formattedDate}</p>
           {schedules.map((schedule, index) => {
-            const formattedDepartureTime = formatTime(schedule.departureTime);
+            console.log(schedule);
+            const arrivalTime = calculateArrivalTime(
+              schedule.departureTime,
+              schedule.route.duration
+            );
             return (
               <Schedule
                 key={index}
                 id={schedule.id}
-                departure={formattedDepartureTime}
-                arrival={'00:00'}
+                departureTime={schedule.departureTime}
+                arrivalTime={arrivalTime}
                 origin={queryParams.origin}
                 destination={queryParams.destination}
                 price={schedule.cost}
+                duration={schedule.route.duration}
               />
             );
           })}

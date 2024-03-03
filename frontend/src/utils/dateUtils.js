@@ -24,7 +24,6 @@ export const getUpcomingYears = () => {
 export const formatDate = (dateString) => {
   // Split the date string into year, month, and day
   const [year, month, day] = dateString.split('-');
-
   // Create a new Date object without time
   const date = new Date(year, month - 1, day);
 
@@ -34,7 +33,6 @@ export const formatDate = (dateString) => {
     month: 'long',
     day: 'numeric'
   };
-
   // Use 'es-ES' locale and options to format the date
   let formattedDate = new Intl.DateTimeFormat('es-ES', options).format(date);
 
@@ -44,3 +42,44 @@ export const formatDate = (dateString) => {
 
   return formattedDate;
 };
+
+export function formatTime(timeString) {
+  // Split the time string into hours, minutes, and seconds
+  const [hours, minutes] = timeString.split(':');
+
+  // Return the formatted time
+  return `${hours}:${minutes}`;
+}
+
+export function calculateArrivalTime(departureTime, duration) {
+  // Convert departureTime and duration to seconds
+  const [departureHours, departureMinutes] = departureTime
+    .split(':')
+    .map(Number);
+  const [durationHours, durationMinutes] = duration.split(':').map(Number);
+  const departureSeconds = departureHours * 3600 + departureMinutes * 60;
+  const durationSeconds = durationHours * 3600 + durationMinutes * 60;
+
+  // Calculate arrivalSeconds by adding durationSeconds to departureSeconds
+  let arrivalSeconds = departureSeconds + durationSeconds;
+
+  // If arrivalSeconds is greater than the number of seconds in a day, subtract the number of seconds in a day
+  if (arrivalSeconds >= 86400) {
+    arrivalSeconds -= 86400;
+  }
+
+  // Convert arrivalSeconds back to a time string
+  const arrivalHours = Math.floor(arrivalSeconds / 3600);
+  const arrivalMinutes = Math.floor((arrivalSeconds % 3600) / 60);
+  const arrivalTime = `${arrivalHours.toString().padStart(2, '0')}:${arrivalMinutes.toString().padStart(2, '0')}`;
+
+  return arrivalTime;
+}
+
+export function formatDuration(duration) {
+  // Split the duration string into hours, minutes, and seconds
+  const [hours, minutes] = duration.split(':');
+
+  // Return the formatted duration
+  return `${parseInt(hours)} hrs ${parseInt(minutes)} min`;
+}
