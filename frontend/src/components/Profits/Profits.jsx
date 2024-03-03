@@ -6,10 +6,12 @@ export default function Profits() {
 
   return (
     <div className='flex flex-col justify-center items-center p-2'>
-      <h2 className='text-5xl pb-5 text-center'>Nuestros Destinos</h2>
-      <p className='pb-5 pl-2'>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et
+      <h2 className='text-5xl pb-5 text-center text-midnight-slate font-medium'>
+        Nuestros destinos
+      </h2>
+      <p className='pb-5 pl-2 text-lg  text-color-dark max-w-lg text-center'>
+        Conoce lugares, especies, eventos, comida y personajes de nuestro
+        hermoso país.
       </p>
 
       <div className='flex items-center justify-center'>
