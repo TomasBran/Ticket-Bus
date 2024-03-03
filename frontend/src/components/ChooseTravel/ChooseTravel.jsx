@@ -68,7 +68,7 @@ export default function ChooseTravel() {
                 arrivalTime={arrivalTime}
                 origin={queryParams.origin}
                 destination={queryParams.destination}
-                price={schedule.cost}
+                price={schedule.route.price}
                 duration={schedule.route.duration}
               />
             );
