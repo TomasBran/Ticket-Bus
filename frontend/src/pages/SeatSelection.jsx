@@ -53,12 +53,12 @@ function SeatSelection() {
           </div>
 
           <div className='hidden md:block mt-6'>
-            <ContinueButton />
+            <ContinueButton text='Continuar' />
           </div>
         </div>
         <div className='flex justify-between mt-5 w-full  md:hidden'>
           <BackButton />
-          <ContinueButton />
+          <ContinueButton text='Continuar' />
         </div>
       </main>
     );

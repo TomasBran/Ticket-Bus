@@ -1,9 +1,6 @@
 import BackButton from '../BackButton';
 import ContinueButton from '../ContinueButton';
-import {
-  useFetchReturnSchedules,
-  useFetchSchedules
-} from '../../hooks/useSchedules';
+import { useFetchSchedulesWithoutRedirect } from '../../hooks/useSchedules';
 import { formatDate } from '../../utils/dateUtils';
 import { useQueryParams } from '../../hooks/useQueryParams';
 import ScheduleList from './ScheduleList';
@@ -21,23 +18,21 @@ export default function ChooseTravel() {
     data: departureSchedules,
     error: errorDepartureSchedules,
     isLoading: isLoadingDepartureSchedules
-  } = useFetchSchedules({
+  } = useFetchSchedulesWithoutRedirect({
     originCity: queryParams.origin,
     destinationCity: queryParams.destination,
     date: queryParams.date,
-    returnDate: queryParams.returnDate, // Add this line
+    returnDate: queryParams.returnDate,
     enabled: true
   });
 
-  const isReturnDateEmpty = queryParams.searchParams.get('returnDate') === '';
-  console.log(isReturnDateEmpty);
-
   // Fetch the return schedules if a return date is specified
+  const isReturnDateEmpty = queryParams.searchParams.get('returnDate') === '';
   const {
     data: returnSchedules,
     error: errorReturnSchedules,
     isLoading: isLoadingReturnSchedules
-  } = useFetchReturnSchedules({
+  } = useFetchSchedulesWithoutRedirect({
     originCity: queryParams.destination,
     destinationCity: queryParams.origin,
     date: queryParams.returnDate,
@@ -92,7 +87,7 @@ export default function ChooseTravel() {
 
         <div className='flex justify-between mt-5'>
           <BackButton />
-          <ContinueButton />
+          <ContinueButton text='Continuar' />
         </div>
       </div>
       <div className='lg:w-2/5 w-full'>

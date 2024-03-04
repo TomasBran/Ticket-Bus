@@ -8,7 +8,7 @@ import { PromoRegister } from '../../components/PromoRegister';
 import SignUpSection from '../../components/PromoRegister/components/molecules/SignUpSection';
 
 function TripReservation() {
-  const auth = true; // Si inicio sesión
+  const auth = false; // Si inicio sesión
   const location = useLocation();
 
   const queryParams = location.search;
