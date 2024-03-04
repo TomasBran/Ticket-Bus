@@ -10,7 +10,7 @@ const getSeatsByScheduleId = async (id, date) => {
   const purchasedSeats = await Ticket.findAll({
     where: {
       scheduleId: id,
-      departureDate: new Date(date)
+      departureDate: date
     }
   });
 
@@ -23,7 +23,7 @@ const getSeatsByScheduleId = async (id, date) => {
   const blockedSeats = await BlockedSeat.findAll({
     where: {
       scheduleId: id,
-      date: new Date(date)
+      date
     }
   });
 
