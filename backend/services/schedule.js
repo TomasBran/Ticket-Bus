@@ -4,12 +4,14 @@ const { getDayName } = require('../helpers/getDayName');
 
 // Obtener todos los horarios
 const getAll = async () => {
-  return await Schedule.findAll({ include: { all: true, nested: true } });
+  return await Schedule.findAll({ include: { all: true, nested: false } });
 };
 
 // Obtener un horario por su id
 const getById = async (id) => {
-  const schedule = await Schedule.findByPk(id);
+  const schedule = await Schedule.findByPk(id, {
+    include: { all: true, nested: false }
+  });
   return schedule;
 };
 
@@ -82,7 +84,8 @@ const getAvailableSchedules = async (
     where: {
       routeId: routeIds,
       day: getDayName(dayOfWeek)
-    }
+    },
+    include: { all: true, nested: false }
   });
   return schedules;
 };
