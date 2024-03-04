@@ -1,7 +1,7 @@
 'use strict';
-const { Model } = require('sequelize');
+const { Model, UUIDV4 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Reservation extends Model {
+  class Ticket extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,44 +9,51 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Reservation.hasMany(models.Ticket, {
+      Ticket.belongsTo(models.Reservation, {
         foreignKey: 'reservationId',
-        as: 'tickets',
+        as: 'reservation',
         onDelete: 'CASCADE'
       });
-      Reservation.belongsTo(models.Schedule, {
+      Ticket.belongsTo(models.Seat, {
+        foreignKey: 'seatId',
+        as: 'seat',
+        onDelete: 'CASCADE'
+      });
+      Ticket.belongsTo(models.Schedule, {
         foreignKey: 'scheduleId',
         as: 'schedule',
         onDelete: 'CASCADE'
       });
-      Reservation.belongsTo(models.User, {
-        foreignKey: 'userClientId',
-        as: 'user',
-        onDelete: 'CASCADE'
-      });
     }
   }
-  Reservation.init(
+  Ticket.init(
     {
-      userClientId: {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: UUIDV4,
+        primaryKey: true
+      },
+      reservationId: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: false,
         references: {
-          model: 'User',
+          model: 'Reservation',
           key: 'id'
         }
       },
-      email: {
-        type: DataTypes.STRING,
+      firstName: { type: DataTypes.STRING, allowNull: false },
+      lastName: { type: DataTypes.STRING, allowNull: false },
+      dni: {
+        type: DataTypes.STRING(15),
         allowNull: false
       },
-      totalSeats: {
+      seatId: {
         type: DataTypes.INTEGER,
-        allowNull: false
-      },
-      totalPrice: {
-        type: DataTypes.FLOAT,
-        allowNull: false
+        allowNull: false,
+        references: {
+          model: 'Seat',
+          key: 'id'
+        }
       },
       scheduleId: {
         type: DataTypes.INTEGER,
@@ -56,16 +63,17 @@ module.exports = (sequelize, DataTypes) => {
           key: 'id'
         }
       },
-      dateReservation: {
+      departureDate: {
         type: DataTypes.DATE,
         allowNull: false
       }
     },
     {
       sequelize,
-      modelName: 'Reservation',
+      modelName: 'Ticket',
+      tableName: 'Tickets',
       timestamps: false
     }
   );
-  return Reservation;
+  return Ticket;
 };
