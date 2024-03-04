@@ -45,6 +45,10 @@ module.exports = {
           key: 'id'
         }
       },
+      departureDate: {
+        type: Sequelize.DATE,
+        allowNull: false
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

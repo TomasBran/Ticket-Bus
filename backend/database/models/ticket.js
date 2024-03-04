@@ -62,6 +62,10 @@ module.exports = (sequelize, DataTypes) => {
           model: 'Schedule',
           key: 'id'
         }
+      },
+      departureDate: {
+        type: DataTypes.DATE,
+        allowNull: false
       }
     },
     {
