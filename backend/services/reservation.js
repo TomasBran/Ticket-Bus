@@ -69,9 +69,7 @@ const getAll = async () => {
 
 // Obtener una reserva por su id
 const getById = async (id) => {
-  const reservation = await Reservation.findByPk(id, {
-    include: { all: true, nested: true }
-  });
+  const reservation = await Reservation.findByPk(id);
   return reservation;
 };
 
