@@ -31,6 +31,7 @@ function Summary() {
     // If ReturnDate is empty then don't fetch ReturnSchedules
     enabled: !isReturnDateEmpty
   });
+
   //formatting
   const departureTimeDetails = getScheduleTimeDetails(
     departureSchedules,
@@ -66,16 +67,18 @@ function Summary() {
                 startTime={departureTimeDetails.formattedDepartureTime}
                 endTime={departureTimeDetails.calculatedArrivalTime}
               />
-              <TripDetailsCard
-                title='Viaje de Regreso'
-                startLocation={queryParams.destination}
-                endLocation={queryParams.origin}
-                arrowImage={ArrowRightSVG}
-                departureDate={returnTimeDetails.departureDate}
-                arrivalDate={returnTimeDetails.arrivalDate}
-                startTime={returnTimeDetails.formattedDepartureTime}
-                endTime={returnTimeDetails.calculatedArrivalTime}
-              />
+              {returnSchedules && (
+                <TripDetailsCard
+                  title='Viaje de Regreso'
+                  startLocation={queryParams.destination}
+                  endLocation={queryParams.origin}
+                  arrowImage={ArrowRightSVG}
+                  departureDate={returnTimeDetails.departureDate}
+                  arrivalDate={returnTimeDetails.arrivalDate}
+                  startTime={returnTimeDetails.formattedDepartureTime}
+                  endTime={returnTimeDetails.calculatedArrivalTime}
+                />
+              )}
               <div className='flex md:justify-center'>
                 <BackButton />
               </div>
