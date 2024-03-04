@@ -83,3 +83,57 @@ export function formatDuration(duration) {
   // Return the formatted duration
   return `${parseInt(hours)} hrs ${parseInt(minutes)} min`;
 }
+
+export function calculateTravelDates(
+  departureDateString,
+  departureTimeString,
+  duration
+) {
+  // Create a new Date object for the departure date
+  const [departureYear, departureMonth, departureDay] =
+    departureDateString.split('-');
+  const departureDate = new Date(
+    departureYear,
+    departureMonth - 1,
+    departureDay
+  );
+
+  // Calculate the arrival time
+  const arrivalTimeString = calculateArrivalTime(departureTimeString, duration);
+
+  // If the arrival time is earlier than the departure time, add one day to the departure date
+  if (arrivalTimeString < departureTimeString) {
+    departureDate.setDate(departureDate.getDate() + 1);
+  }
+
+  // Format the departure and arrival dates
+  const formattedDepartureDate = formatSpanishDate(departureDateString);
+  const formattedArrivalDate = formatSpanishDate(
+    departureDate.toISOString().split('T')[0]
+  );
+
+  return {
+    departureDate: formattedDepartureDate,
+    arrivalDate: formattedArrivalDate
+  };
+}
+
+function formatSpanishDate(dateString) {
+  const date = new Date(dateString);
+  const options = { weekday: 'long', day: 'numeric', month: 'long' };
+  let formattedDate = date.toLocaleDateString('es-ES', options);
+
+  // Split the string into an array ['weekday', 'day', 'de', 'month']
+  let dateParts = formattedDate.split(' ');
+
+  // Cut the first three letters of the weekday and month, and capitalize them
+  dateParts[0] =
+    dateParts[0].slice(0, 3).charAt(0).toUpperCase() + dateParts[0].slice(1, 3);
+  dateParts[3] =
+    dateParts[3].slice(0, 3).charAt(0).toUpperCase() + dateParts[3].slice(1, 3);
+
+  // Join the parts back together into a string
+  formattedDate = dateParts.join(' ');
+
+  return formattedDate;
+}

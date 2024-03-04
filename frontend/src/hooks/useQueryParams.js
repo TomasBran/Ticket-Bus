@@ -15,6 +15,7 @@ export function useQueryParams() {
     returnDate: searchParams.has('returnDate')
       ? searchParams.get('returnDate') // Use get method to retrieve the value
       : '',
+    returnScheduleId: searchParams.get('returnScheduleId'),
     searchParams: searchParams
   };
 }

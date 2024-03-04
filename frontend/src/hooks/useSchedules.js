@@ -1,4 +1,4 @@
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import {
   fetchSpecificSchedules,
@@ -21,6 +21,7 @@ export function useFetchSchedules({
       retry: false,
       enabled: enabled,
       refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 5, // data is fresh for 5 minutes
       onSuccess: () => {
         redirectToTicketPage(
           navigate,
@@ -37,18 +38,35 @@ export function useFetchSchedules({
   );
 }
 
-export function useFetchReturnSchedules({
-  originCity,
-  destinationCity,
-  date,
-  enabled
-}) {
-  // const navigate = useNavigate();
-  // const [searchParams] = useSearchParams();
+// export function useFetchReturnSchedules({
+//   originCity,
+//   destinationCity,
+//   date,
+//   enabled
+// }) {
+//   // const navigate = useNavigate();
+//   // const [searchParams] = useSearchParams();
 
+//   return useQuery(
+//     ['specificSchedule', originCity, destinationCity, date],
+//     () => fetchSpecificSchedules(originCity, destinationCity, date),
+//     {
+//       retry: false,
+//       enabled: enabled,
+//       refetchOnWindowFocus: false,
+//       staleTime: 1000 * 60 * 5, // data is fresh for 5 minutes
+//       onSuccess: () => {},
+//       onError: (error) => {
+//         return error;
+//       }
+//     }
+//   );
+// }
+
+export function useFetchScheduleById({ scheduleId, enabled }) {
   return useQuery(
-    ['specificSchedule', originCity, destinationCity, date],
-    () => fetchSpecificSchedules(originCity, destinationCity, date),
+    ['specificScheduleById', scheduleId],
+    () => fetchSpecificScheduleById(scheduleId),
     {
       retry: false,
       enabled: enabled,
@@ -61,29 +79,23 @@ export function useFetchReturnSchedules({
   );
 }
 
-export function useFetchScheduleById(
+export function useFetchSchedulesWithoutRedirect({
   originCity,
   destinationCity,
   date,
-  scheduleId,
+  returnDate,
   enabled
-) {
-  const [, setSearchParams] = useSearchParams();
-
+}) {
   return useQuery(
-    ['specificScheduleById', originCity, destinationCity, date, scheduleId],
-    () =>
-      fetchSpecificScheduleById(originCity, destinationCity, date, scheduleId),
+    ['specificSchedule', originCity, destinationCity, date, returnDate],
+    () => fetchSpecificSchedules(originCity, destinationCity, date, returnDate),
     {
       retry: false,
       enabled: enabled,
       refetchOnWindowFocus: false,
-      onSuccess: () => {
-        // Parse the current search params into an object
-        const params = queryString.parse(window.location.search);
-
-        // Update the search params in the URL
-        setSearchParams(params);
+      staleTime: 1000 * 60 * 5, // data is fresh for 5 minutes
+      onSuccess: (data) => {
+        console.log(data);
       },
       onError: (error) => {
         return error;
