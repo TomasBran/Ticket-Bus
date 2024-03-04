@@ -4,5 +4,4 @@ export const API_DEPLOY_URL =
 export const REGISTER_URL = `${API_DEPLOY_URL}/auth/register`;
 export const ROUTES_URL = `${API_DEPLOY_URL}/routes`;
 export const CITIES_URL = `${API_DEPLOY_URL}/cities`;
-// switched
-export const SCHEDULES_URL = `${API_LOCALHOST_URL}/schedules`;
+export const SCHEDULES_URL = `${API_DEPLOY_URL}/schedules`;
