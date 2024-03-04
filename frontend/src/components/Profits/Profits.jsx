@@ -1,5 +1,9 @@
 import { useState } from 'react';
 import CardProfits from './CardProfits.jsx';
+import img1 from '../../assets/Profits/Bariloche.png';
+import img2 from '../../assets/Profits/MarPlata.png';
+import img3 from '../../assets/Profits/Merlo.png';
+import img4 from '../../assets/Profits/VillaCarlos.png';
 
 export default function Profits() {
   const [selectedTab, setSelectedTab] = useState('yes'); // Estado para almacenar la pestaña seleccionada
@@ -63,97 +67,38 @@ export default function Profits() {
         {selectedTab === 'yes' && (
           <>
             <div className='hidden md:flex flex-wrap gap-5 items-center justify-center'>
+              <CardProfits name={'Bariloche'} image={img1} price={'$100.00'} />
               <CardProfits
                 name={'Mar de plata'}
-                image={
-                  'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                }
-                price={'$10.00'}
+                image={img2}
+                price={'$15.00'}
               />
+              <CardProfits name={'Merlo'} image={img3} price={'$10.00'} />
               <CardProfits
-                name={'Mar de plata'}
-                image={
-                  'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                }
-                price={'$10.00'}
-              />
-              <CardProfits
-                name={'Mar de plata'}
-                image={
-                  'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                }
-                price={'$10.00'}
-              />
-              <CardProfits
-                name={'Mar de plata'}
-                image={
-                  'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                }
-                price={'$10.00'}
+                name={'Villa Carlos Paz'}
+                image={img4}
+                price={'$20.00'}
               />
             </div>
             <div className='daisy-carousel daisy-carousel-center  max-w-md p-4 space-x-4  rounded-box md:hidden'>
               <div className='daisy-carousel-item'>
-                <CardProfits
-                  name={'Mar de plata'}
-                  image={
-                    'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                  }
-                  price={'$10.00'}
-                />
+                <CardProfits name={'Bariloche'} image={img1} price={'$30.00'} />
               </div>
               <div className='daisy-carousel-item'>
                 <CardProfits
                   name={'Mar de plata'}
-                  image={
-                    'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                  }
-                  price={'$10.00'}
+                  image={img2}
+                  price={'$35.00'}
                 />
               </div>
               <div className='daisy-carousel-item'>
-                <CardProfits
-                  name={'Mar de plata'}
-                  image={
-                    'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                  }
-                  price={'$10.00'}
-                />
+                <CardProfits name={'Merlo'} image={img3} price={'$70.00'} />
               </div>
               <div className='daisy-carousel-item'>
                 <CardProfits
-                  name={'Mar de plata'}
-                  image={
-                    'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                  }
-                  price={'$10.00'}
-                />
-              </div>
-              <div className='daisy-carousel-item'>
-                <CardProfits
-                  name={'Mar de plata'}
-                  image={
-                    'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                  }
-                  price={'$10.00'}
-                />
-              </div>
-              <div className='daisy-carousel-item'>
-                <CardProfits
-                  name={'Mar de plata'}
-                  image={
-                    'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                  }
-                  price={'$10.00'}
-                />
-              </div>
-              <div className='daisy-carousel-item'>
-                <CardProfits
-                  name={'Mar de plata'}
-                  image={
-                    'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                  }
-                  price={'$10.00'}
+                  name={'Villa Carlos Paz'}
+                  image={img4}
+                  price={'$100.00'}
                 />
               </div>
             </div>
@@ -162,97 +107,38 @@ export default function Profits() {
         {selectedTab === 'no' && (
           <>
             <div className='hidden md:flex flex-wrap gap-5 items-center justify-center'>
+              <CardProfits name={'Bariloche'} image={img1} price={'$10.00'} />
               <CardProfits
                 name={'Mar de plata'}
-                image={
-                  'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                }
-                price={'$10.00'}
+                image={img2}
+                price={'$24.00'}
               />
+              <CardProfits name={'Merlo'} image={img3} price={'$30.00'} />
               <CardProfits
-                name={'Mar de plata'}
-                image={
-                  'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                }
-                price={'$10.00'}
-              />
-              <CardProfits
-                name={'Mar de plata'}
-                image={
-                  'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                }
-                price={'$10.00'}
-              />
-              <CardProfits
-                name={'Mar de plata'}
-                image={
-                  'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                }
-                price={'$10.00'}
+                name={'Villa Carlos Paz'}
+                image={img4}
+                price={'$20.00'}
               />
             </div>
             <div className='daisy-carousel daisy-carousel-center  max-w-md p-4 space-x-4  rounded-box md:hidden'>
               <div className='daisy-carousel-item'>
-                <CardProfits
-                  name={'Mar de plata'}
-                  image={
-                    'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                  }
-                  price={'$10.00'}
-                />
+                <CardProfits name={'Bariloche'} image={img1} price={'$20.00'} />
               </div>
               <div className='daisy-carousel-item'>
                 <CardProfits
                   name={'Mar de plata'}
-                  image={
-                    'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                  }
-                  price={'$10.00'}
+                  image={img2}
+                  price={'$35.00'}
                 />
               </div>
               <div className='daisy-carousel-item'>
-                <CardProfits
-                  name={'Mar de plata'}
-                  image={
-                    'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                  }
-                  price={'$10.00'}
-                />
+                <CardProfits name={'Merlo'} image={img3} price={'$35.00'} />
               </div>
               <div className='daisy-carousel-item'>
                 <CardProfits
-                  name={'Mar de plata'}
-                  image={
-                    'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                  }
-                  price={'$10.00'}
-                />
-              </div>
-              <div className='daisy-carousel-item'>
-                <CardProfits
-                  name={'Mar de plata'}
-                  image={
-                    'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                  }
-                  price={'$10.00'}
-                />
-              </div>
-              <div className='daisy-carousel-item'>
-                <CardProfits
-                  name={'Mar de plata'}
-                  image={
-                    'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                  }
-                  price={'$10.00'}
-                />
-              </div>
-              <div className='daisy-carousel-item'>
-                <CardProfits
-                  name={'Mar de plata'}
-                  image={
-                    'https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-                  }
-                  price={'$10.00'}
+                  name={'Villa Carlos Paz'}
+                  image={img4}
+                  price={'$100.00'}
                 />
               </div>
             </div>
