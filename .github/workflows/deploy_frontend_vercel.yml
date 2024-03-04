@@ -7,19 +7,19 @@ on:
     branches:
       - develop
     paths:
-      - "frontend/**"
+      - 'frontend/**'
 jobs:
   Deploy-Production:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        
+
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '18'
-          
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
@@ -29,5 +29,4 @@ jobs:
       - name: Deploy to Vercel
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }} # Configura la variable de entorno
-        run: npm run deploy:vercel -w frontend  
-      
+        run: npm run deploy:vercel -w frontend
