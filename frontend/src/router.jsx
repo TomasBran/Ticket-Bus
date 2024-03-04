@@ -13,6 +13,7 @@ import MyPurchases from './pages/auth/user/MyPurchases.jsx';
 import UserSettings from './pages/auth/user/UserSettings.jsx';
 import UserTravelDistance from './pages/auth/user/UserTravelDistance.jsx';
 import Summary from './pages/ticket/Summary.jsx';
+import RedirectIfMissingRequiredParams from './hoc/RedirectIfMissingRequiredParams.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -31,23 +32,44 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <TravelSelection />
+        element: (
+          <RedirectIfMissingRequiredParams>
+            <TravelSelection />
+          </RedirectIfMissingRequiredParams>
+        )
       },
       {
         path: 'seats',
-        element: <SeatSelection />
+        element: (
+          <RedirectIfMissingRequiredParams>
+            <SeatSelection />
+          </RedirectIfMissingRequiredParams>
+        )
       },
       {
         path: 'passengers',
-        element: <TripReservation />
+        element: (
+          <RedirectIfMissingRequiredParams>
+            <TripReservation />
+          </RedirectIfMissingRequiredParams>
+        )
       },
       {
         path: 'summary',
-        element: <Summary />
+
+        element: (
+          <RedirectIfMissingRequiredParams>
+            <Summary />
+          </RedirectIfMissingRequiredParams>
+        )
       },
       {
         path: 'payment',
-        element: <Payment />
+        element: (
+          <RedirectIfMissingRequiredParams>
+            <Payment />
+          </RedirectIfMissingRequiredParams>
+        )
       }
     ]
   },
