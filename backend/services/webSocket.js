@@ -105,7 +105,17 @@ const toggleSeatState = async (seatId, scheduleId, date) => {
   }
 };
 
+const checkScheduleExistsById = async (scheduleId) =>
+  Boolean(
+    await Schedule.findOne({
+      where: {
+        id: scheduleId
+      }
+    })
+  );
+
 module.exports = {
   getSeatsByScheduleId,
-  toggleSeatState
+  toggleSeatState,
+  checkScheduleExistsById
 };
