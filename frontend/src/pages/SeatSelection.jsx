@@ -85,9 +85,9 @@ function SeatSelection() {
         {departureSchedule && calculatedArrivalTimeDeparture && (
           <Itinerary
             departureTime={departureTimeDetails.formattedDepartureTime}
-            origin={queryParams.destination}
+            origin={queryParams.origin}
             arrivalTime={calculatedArrivalTimeDeparture}
-            destination={queryParams.origin}
+            destination={queryParams.destination}
             typeOfTravel={'Viaje de Ida'}
             price={formattedPriceDeparture}
             duration={departureSchedule.route.duration}
