@@ -10,7 +10,7 @@ const getSeatsByScheduleId = async (id, date) => {
   const purchasedSeats = await Ticket.findAll({
     where: {
       scheduleId: id,
-      departureDate: new Date(date)
+      departureDate: date
     }
   });
 
@@ -23,7 +23,7 @@ const getSeatsByScheduleId = async (id, date) => {
   const blockedSeats = await BlockedSeat.findAll({
     where: {
       scheduleId: id,
-      date: new Date(date)
+      date
     }
   });
 
@@ -73,38 +73,6 @@ const getSeatsByScheduleId = async (id, date) => {
   return availableSeats;
 };
 
-const toggleSeatState = async (seatId, scheduleId, date) => {
-  const checkSeatExists = await BlockedSeat.findOne({
-    where: {
-      seatId
-    }
-  });
-
-  if (checkSeatExists) {
-    await BlockedSeat.destroy({
-      where: {
-        seatId
-      }
-    });
-  } else {
-    await BlockedSeat.create({
-      seatId,
-      scheduleId,
-      date
-    });
-    console.log('Seat locked');
-    setTimeout(async () => {
-      await BlockedSeat.destroy({
-        where: {
-          seatId
-        }
-      });
-      console.log('Seat unlocked');
-    }, 20 * 1000);
-    //TODO Añadir 5 minutos al setTimeout
-  }
-};
-
 const checkScheduleExistsById = async (scheduleId) =>
   Boolean(
     await Schedule.findOne({
@@ -114,8 +82,39 @@ const checkScheduleExistsById = async (scheduleId) =>
     })
   );
 
+const isSeatLocked = async (seatId, scheduleId, date) =>
+  Boolean(
+    await BlockedSeat.findOne({
+      where: {
+        seatId,
+        scheduleId,
+        date
+      }
+    })
+  );
+
+const lockSeat = async (seatId, scheduleId, date) => {
+  await BlockedSeat.create({
+    seatId,
+    scheduleId,
+    date
+  });
+};
+
+const unlockSeat = async (seatId, scheduleId, date) => {
+  await BlockedSeat.destroy({
+    where: {
+      seatId,
+      scheduleId,
+      date
+    }
+  });
+};
+
 module.exports = {
   getSeatsByScheduleId,
-  toggleSeatState,
-  checkScheduleExistsById
+  checkScheduleExistsById,
+  lockSeat,
+  unlockSeat,
+  isSeatLocked
 };
