@@ -12,22 +12,38 @@ function ContinueButton() {
 
   // Check if the scheduleId is empty
   const isScheduleIdEmpty = searchParams.get('scheduleId') === '';
+  const isReturnScheduleIdEmpty = searchParams.get('returnScheduleId') === '';
+  const isReturnDateEmpty = searchParams.get('returnDate') === '';
 
   // Check if the required number of seats have been selected
   const areSeatsSelected = seatSelected.length == seatQuantity;
 
   // Determine whether the button should be disabled
-  const isButtonDisabled =
-    location.pathname === '/ticket/seats'
-      ? !areSeatsSelected
-      : location.pathname === '/ticket/summary'
-        ? false
-        : isScheduleIdEmpty;
+  let isButtonDisabled;
+  if (location.pathname === '/ticket/seats') {
+    isButtonDisabled = !areSeatsSelected;
+  } else if (location.pathname === '/ticket/summary') {
+    isButtonDisabled = false;
+  } else {
+    if (isReturnDateEmpty) {
+      // One-way trip: button is disabled if scheduleId is empty or does not exist in the URL
+      isButtonDisabled = isScheduleIdEmpty || !searchParams.has('scheduleId');
+    } else {
+      // Two-way trip: button is disabled if either scheduleId or returnScheduleId is empty or does not exist in the URL
+      isButtonDisabled =
+        isScheduleIdEmpty ||
+        isReturnScheduleIdEmpty ||
+        !searchParams.has('scheduleId') ||
+        !searchParams.has('returnScheduleId');
+    }
+  }
 
   function handleClick() {
     switch (location.pathname) {
       case '/ticket':
-        if (!isScheduleIdEmpty) {
+        if (!isScheduleIdEmpty && isReturnDateEmpty) {
+          navigate(`/ticket/seats?${searchParams}`);
+        } else if (!isScheduleIdEmpty && !isReturnScheduleIdEmpty) {
           navigate(`/ticket/seats?${searchParams}`);
         }
         break;

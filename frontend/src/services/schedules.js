@@ -10,6 +10,8 @@ export async function fetchSpecificSchedules(
   url.searchParams.append('destinationCity', destinationCity);
   url.searchParams.append('date', date);
 
+  console.log('this is fetch:', url);
+
   const response = await fetch(url);
   const data = await response.json();
 

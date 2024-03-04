@@ -102,12 +102,13 @@ const FormSearchTravels = () => {
   useCities(setCityOptions);
 
   // we fetch this here so it tells us if there are empty routes and it doesn't redirect the user to another page
-  const { error: errorSchedule } = useFetchSchedules(
-    origin,
-    destination,
-    formData.departure_date,
-    isFormSubmitted
-  );
+  const { error: errorSchedule } = useFetchSchedules({
+    originCity: origin,
+    destinationCity: destination,
+    date: formData.departure_date,
+    returnDate: returnDate,
+    enabled: isFormSubmitted
+  });
 
   return (
     <>

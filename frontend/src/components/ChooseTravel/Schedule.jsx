@@ -12,26 +12,48 @@ export default function Schedule({
   origin,
   destination,
   price,
-  duration
+  duration,
+  isReturn
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const handleSelect = () => {
-    // Get the current scheduleId from the search params
-    const currentScheduleId = searchParams.get('scheduleId');
+    if (isReturn) {
+      // Get the current returnScheduleId from the search params
+      const currentReturnScheduleId = searchParams.get('returnScheduleId');
 
-    // Only call setSearchParams if the id has changed
-    if (currentScheduleId !== id.toString()) {
-      // Update the scheduleId in the search params
-      searchParams.set('scheduleId', id);
+      // Only call setSearchParams if the id has changed
+      if (currentReturnScheduleId !== id.toString()) {
+        // Update the returnScheduleId in the search params
+        searchParams.set('returnScheduleId', id);
 
-      // Update the search params in the URL
-      setSearchParams(searchParams);
+        // Update the search params in the URL
+        setSearchParams(searchParams);
+      }
+    } else {
+      // Get the current returnScheduleId from the search params
+      const currentScheduleId = searchParams.get('scheduleId');
+
+      // Only call setSearchParams if the id has changed
+      if (currentScheduleId !== id.toString()) {
+        // Update the returnScheduleId in the search params
+        searchParams.set('scheduleId', id);
+
+        // Update the search params in the URL
+        setSearchParams(searchParams);
+      }
     }
   };
 
-  // Check if the current Schedule component is active
-  const isActive = searchParams.get('scheduleId') === id.toString();
+  let isActive;
+
+  if (isReturn) {
+    // Check if the current Schedule component is active
+    isActive = searchParams.get('returnScheduleId') === id.toString();
+  } else {
+    // Check if the current Schedule component is active
+    isActive = searchParams.get('scheduleId') === id.toString();
+  }
 
   //formatting
   const formattedDepartureTime = formatTime(departureTime);
@@ -77,5 +99,6 @@ Schedule.propTypes = {
   origin: PropTypes.string.isRequired,
   destination: PropTypes.string.isRequired,
   price: PropTypes.string.isRequired,
-  duration: PropTypes.string.isRequired
+  duration: PropTypes.string.isRequired,
+  isReturn: PropTypes.bool.isRequired
 };

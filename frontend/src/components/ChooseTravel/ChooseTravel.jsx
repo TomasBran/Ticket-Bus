@@ -1,12 +1,12 @@
-import bus from '../../assets/bus-icon.svg';
-import arrow from '../../assets/arrow.svg';
-import Schedule from './Schedule';
 import BackButton from '../BackButton';
 import ContinueButton from '../ContinueButton';
-import { useFetchSchedules } from '../../hooks/useSchedules';
+import {
+  useFetchReturnSchedules,
+  useFetchSchedules
+} from '../../hooks/useSchedules';
 import { formatDate } from '../../utils/dateUtils';
-import { calculateArrivalTime } from '../../utils/dateUtils';
 import { useQueryParams } from '../../hooks/useQueryParams';
+import ScheduleList from './ScheduleList';
 
 export default function ChooseTravel() {
   // reads from URL Params to make the fetch, this is a way of
@@ -14,67 +14,82 @@ export default function ChooseTravel() {
   // doesn't use redux or localStorage for server side things, which avoids data duplication and issues with sync
 
   const queryParams = useQueryParams();
+  console.log(queryParams.origin);
 
+  // Fetch the departure schedules
   const {
-    data: schedules,
-    error: errorSchedule,
-    isLoading: isLoadingSchedule
-  } = useFetchSchedules(
-    queryParams.origin,
-    queryParams.destination,
-    queryParams.date
-  );
+    data: departureSchedules,
+    error: errorDepartureSchedules,
+    isLoading: isLoadingDepartureSchedules
+  } = useFetchSchedules({
+    originCity: queryParams.origin,
+    destinationCity: queryParams.destination,
+    date: queryParams.date,
+    returnDate: queryParams.returnDate, // Add this line
+    enabled: true
+  });
+
+  const isReturnDateEmpty = queryParams.searchParams.get('returnDate') === '';
+  console.log(isReturnDateEmpty);
+
+  // Fetch the return schedules if a return date is specified
+  const {
+    data: returnSchedules,
+    error: errorReturnSchedules,
+    isLoading: isLoadingReturnSchedules
+  } = useFetchReturnSchedules({
+    originCity: queryParams.destination,
+    destinationCity: queryParams.origin,
+    date: queryParams.returnDate,
+    // If ReturnDate is empty then don't fetch ReturnSchedules
+    enabled: !isReturnDateEmpty
+  });
 
   // formatting
   const formattedDate = formatDate(queryParams.date);
+  let formattedReturnDate;
+  if (!isReturnDateEmpty) {
+    formattedReturnDate = formatDate(queryParams.returnDate);
+  }
 
   // TODO: make real loading modals/placeholders
-  if (isLoadingSchedule) {
+  if (isLoadingDepartureSchedules) {
     return <div>Loading...</div>;
   }
 
-  if (errorSchedule) {
-    return <div>Error: {errorSchedule.message}</div>;
+  if (isLoadingReturnSchedules) {
+    return <div>Loading...</div>;
+  }
+
+  if (errorDepartureSchedules) {
+    return <div>Error: {errorDepartureSchedules.message}</div>;
   }
 
   return (
     <div className='flex items-center justify-evenly lg:flex-row flex-col md:mx-0 mx-2 mt-6'>
       <div className='lg:w-2/5 w-full'>
-        <div className='flex my-7'>
-          <img src={bus} alt='' className='mr-5' />
-          <div>
-            <h2 className='font-bold text-xl tracking-tight'>
-              Elige tu viaje de ida
-            </h2>
-            <p className='flex gap-4 justify-center text-[#486284] font-medium'>
-              {queryParams.origin} <img src={arrow} alt='' />{' '}
-              {queryParams.destination}
-            </p>
-          </div>
-        </div>
+        <ScheduleList
+          title='Elige tu viaje de ida'
+          origin={queryParams.origin}
+          destination={queryParams.destination}
+          formattedDate={formattedDate}
+          schedules={departureSchedules}
+          isReturn={false}
+          isLoading={isLoadingDepartureSchedules}
+          error={errorDepartureSchedules}
+        />
 
-        <div>
-          <p className='font-semibold text-xl mb-4'>{formattedDate}</p>
-          {schedules.map((schedule, index) => {
-            console.log(schedule);
-            const calculatedArrivalTime = calculateArrivalTime(
-              schedule.departureTime,
-              schedule.route.duration
-            );
-            return (
-              <Schedule
-                key={index}
-                id={schedule.id}
-                departureTime={schedule.departureTime}
-                arrivalTime={calculatedArrivalTime}
-                origin={queryParams.origin}
-                destination={queryParams.destination}
-                price={schedule.route.price}
-                duration={schedule.route.duration}
-              />
-            );
-          })}
-        </div>
+        <ScheduleList
+          title='Elige tu viaje de vuelta'
+          origin={queryParams.destination}
+          destination={queryParams.origin}
+          formattedDate={formattedReturnDate}
+          schedules={returnSchedules}
+          isReturn={true}
+          isLoading={isLoadingReturnSchedules}
+          error={errorReturnSchedules}
+        />
+
         <div className='flex justify-between mt-5'>
           <BackButton />
           <ContinueButton />
