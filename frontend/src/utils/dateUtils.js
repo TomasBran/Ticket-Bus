@@ -137,3 +137,29 @@ function formatSpanishDate(dateString) {
 
   return formattedDate;
 }
+
+export function formatDateForTravelHeader(dateString) {
+  // Parse the date
+  let date = new Date(dateString);
+
+  // Array of month names in Spanish
+  let monthNames = [
+    'Enero',
+    'Febrero',
+    'Marzo',
+    'Abril',
+    'Mayo',
+    'Junio',
+    'Julio',
+    'Agosto',
+    'Septiembre',
+    'Octubre',
+    'Noviembre',
+    'Diciembre'
+  ];
+
+  // Format the date
+  let formattedDate = date.getDate() + ' de ' + monthNames[date.getMonth()];
+
+  return formattedDate;
+}
