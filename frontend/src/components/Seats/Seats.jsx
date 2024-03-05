@@ -4,6 +4,8 @@ import wc from '../../assets/Seats/wc.svg';
 import PropTypes from 'prop-types';
 import Toast from './Toast';
 import { useDispatch, useSelector } from 'react-redux';
+import { useQueryParams } from '../../hooks/useQueryParams';
+import useWebSocket from 'react-use-websocket';
 
 const SectionA_SeatsId = [
   1, 2, 5, 6, 9, 10, 11, 12, 13, 14, 17, 18, 21, 22, 25, 26, 29, 30, 33, 34, 37,
@@ -20,215 +22,6 @@ const SectionD_SeatsId = [41, 42, 44, 45, 47, 48, 50, 51];
 
 const SectionE_SeatsId = [43, 46, 49, 52];
 
-const json = {
-  status: 'update',
-  message: 'Asientos actualizados!',
-  body: {
-    seats: [
-      {
-        number: 1,
-        id: 61,
-        status: 'free'
-      },
-      {
-        number: 2,
-        id: 62,
-        status: 'free'
-      },
-      {
-        number: 3,
-        id: 63,
-        status: 'free'
-      },
-      {
-        number: 4,
-        id: 64,
-        status: 'free'
-      },
-      {
-        number: 5,
-        id: 65,
-        status: 'free'
-      },
-      {
-        number: 6,
-        id: 66,
-        status: 'free'
-      },
-      {
-        number: 7,
-        id: 67,
-        status: 'free'
-      },
-      {
-        number: 8,
-        id: 68,
-        status: 'free'
-      },
-      {
-        number: 9,
-        id: 69,
-        status: 'free'
-      },
-      {
-        number: 10,
-        id: 70,
-        status: 'free'
-      },
-      {
-        number: 11,
-        id: 71,
-        status: 'free'
-      },
-      {
-        number: 12,
-        id: 72,
-        status: 'free'
-      },
-      {
-        number: 13,
-        id: 73,
-        status: 'free'
-      },
-      {
-        number: 14,
-        id: 74,
-        status: 'free'
-      },
-      {
-        number: 15,
-        id: 75,
-        status: 'free'
-      },
-      {
-        number: 16,
-        id: 76,
-        status: 'free'
-      },
-      {
-        number: 17,
-        id: 77,
-        status: 'free'
-      },
-      {
-        number: 18,
-        id: 78,
-        status: 'free'
-      },
-      {
-        number: 19,
-        id: 79,
-        status: 'free'
-      },
-      {
-        number: 20,
-        id: 80,
-        status: 'free'
-      },
-      {
-        number: 21,
-        id: 81,
-        status: 'free'
-      },
-      {
-        number: 22,
-        id: 82,
-        status: 'free'
-      },
-      {
-        number: 23,
-        id: 83,
-        status: 'free'
-      },
-      {
-        number: 24,
-        id: 84,
-        status: 'free'
-      },
-      {
-        number: 25,
-        id: 85,
-        status: 'free'
-      },
-      {
-        number: 26,
-        id: 86,
-        status: 'free'
-      },
-      {
-        number: 27,
-        id: 87,
-        status: 'free'
-      },
-      {
-        number: 28,
-        id: 88,
-        status: 'free'
-      },
-      {
-        number: 29,
-        id: 89,
-        status: 'free'
-      },
-      {
-        number: 30,
-        id: 90,
-        status: 'free'
-      },
-      {
-        number: 31,
-        id: 91,
-        status: 'free'
-      },
-      {
-        number: 32,
-        id: 92,
-        status: 'free'
-      },
-      {
-        number: 33,
-        id: 93,
-        status: 'free'
-      },
-      {
-        number: 34,
-        id: 94,
-        status: 'free'
-      },
-      {
-        number: 35,
-        id: 95,
-        status: 'free'
-      },
-      {
-        number: 36,
-        id: 96,
-        status: 'free'
-      },
-      {
-        number: 37,
-        id: 97,
-        status: 'free'
-      },
-      {
-        number: 38,
-        id: 98,
-        status: 'free'
-      },
-      {
-        number: 39,
-        id: 99,
-        status: 'free'
-      },
-      {
-        number: 40,
-        id: 100,
-        status: 'free'
-      }
-    ]
-  }
-};
-
 const Seats = (props) => {
   const dispatch = useDispatch();
   const seatSelected = useSelector((state) => state.seat.seatSelected); // Read from Redux store
@@ -237,6 +30,14 @@ const Seats = (props) => {
   const [floor, setFloor] = useState('first');
   const [showToast, setShowToast] = useState(false);
   const { tickets = 1 } = props;
+
+  const queryParams = useQueryParams();
+  const scheduleId = queryParams.scheduleId;
+  const date = queryParams.date;
+
+  const socketUrl = `wss://ticket-bus-api-dev.up.railway.app/ws/v1/seats/schedule?scheduleId=${scheduleId}&date=${date}`;
+
+  const { lastMessage } = useWebSocket(socketUrl);
 
   // Create a map from the seats array for efficient lookup
   const seatsMap = new Map(seats.map((seat) => [seat.number, seat]));
@@ -249,11 +50,11 @@ const Seats = (props) => {
         // If the seat is in the JSON data, use it
         return seat;
       } else {
-        // If the seat is not in the JSON data, add it as 'occupied'
+        // If the seat is not in the JSON data, add it as 'locked'
         return {
           number: seatNumber,
           id: seatNumber, // Use seatNumber as id for simplicity
-          status: 'occupied'
+          status: 'locked'
         };
       }
     });
@@ -281,11 +82,18 @@ const Seats = (props) => {
     setSeats(newArray);
   };
 
+  // useEffect(() => {
+  //   // Assume fetchSeatsData is a function that fetches data from the endpoint
+  //   const seatsData = json.body.seats;
+  //   initializeSeats(seatsData);
+  // }, []);
+
   useEffect(() => {
-    // Assume fetchSeatsData is a function that fetches data from the endpoint
-    const seatsData = json.body.seats;
-    initializeSeats(seatsData);
-  }, []);
+    if (lastMessage !== null) {
+      const seatsData = JSON.parse(lastMessage.data).body.seats;
+      initializeSeats(seatsData);
+    }
+  }, [lastMessage]);
 
   const toggleFloor = (floor) => {
     setFloor(floor === 1 ? 'first' : 'second');
@@ -294,7 +102,7 @@ const Seats = (props) => {
   const toggleSeat = (number) => {
     const currentSeat = seats.find((seat) => seat.number === number);
 
-    if (currentSeat.status === 'occupied') {
+    if (currentSeat.status === 'locked') {
       return;
     }
 
@@ -379,7 +187,7 @@ const Seats = (props) => {
                 <div
                   key={seat.number}
                   className={`flex justify-center items-center w-10 h-10 rounded-lg transition ${
-                    seat.status === 'occupied'
+                    seat.status === 'locked'
                       ? 'bg-gray-400 cursor-default text-gray-300 '
                       : seat.status === 'free'
                         ? 'bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-200 cursor-pointer text-white'
@@ -396,7 +204,7 @@ const Seats = (props) => {
                 <div
                   key={seat.number}
                   className={`flex justify-center items-center w-10 h-10 rounded-lg transition ${
-                    seat.status === 'occupied'
+                    seat.status === 'locked'
                       ? 'bg-gray-400 cursor-default text-gray-300 '
                       : seat.status === 'free'
                         ? 'bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-200 cursor-pointer text-white'
@@ -419,7 +227,7 @@ const Seats = (props) => {
               <div
                 key={seat.number}
                 className={`flex justify-center items-center w-10 h-10 rounded-lg transition ${
-                  seat.status === 'occupied'
+                  seat.status === 'locked'
                     ? 'bg-gray-400 cursor-default text-gray-300 '
                     : seat.status === 'free'
                       ? 'bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-200 cursor-pointer text-white'
@@ -437,7 +245,7 @@ const Seats = (props) => {
                 <div
                   key={seat.number}
                   className={`flex justify-center items-center w-10 h-10 rounded-lg transition ${
-                    seat.status === 'occupied'
+                    seat.status === 'locked'
                       ? 'bg-gray-400 cursor-default text-gray-300 '
                       : seat.status === 'free'
                         ? 'bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-200 cursor-pointer text-white'
@@ -454,7 +262,7 @@ const Seats = (props) => {
                 <div
                   key={seat.number}
                   className={`flex justify-center items-center w-10 h-10 rounded-lg transition ${
-                    seat.status === 'occupied'
+                    seat.status === 'locked'
                       ? 'bg-gray-400 cursor-default text-gray-300 '
                       : seat.status === 'free'
                         ? 'bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-200 cursor-pointer text-white'
