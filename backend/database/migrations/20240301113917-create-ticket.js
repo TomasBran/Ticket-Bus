@@ -2,32 +2,40 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Reservations', {
+    await queryInterface.createTable('Tickets', {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4
       },
-      userClientId: {
+      reservationId: {
         type: Sequelize.INTEGER,
-        allowNull: true,
+        allowNull: false,
         references: {
-          model: 'Users',
+          model: 'Reservations',
           key: 'id'
         }
       },
-      email: {
+      firstName: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      totalSeats: {
-        type: Sequelize.INTEGER,
+      lastName: {
+        type: Sequelize.STRING,
         allowNull: false
       },
-      totalPrice: {
-        type: Sequelize.FLOAT,
+      dni: {
+        type: Sequelize.STRING(15),
         allowNull: false
+      },
+      seatId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Seats',
+          key: 'id'
+        }
       },
       scheduleId: {
         type: Sequelize.INTEGER,
@@ -37,9 +45,9 @@ module.exports = {
           key: 'id'
         }
       },
-      dateReservation: {
+      departureDate: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
@@ -54,6 +62,6 @@ module.exports = {
     });
   },
   async down(queryInterface) {
-    await queryInterface.dropTable('Reservations');
+    await queryInterface.dropTable('Tickets');
   }
 };

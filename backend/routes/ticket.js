@@ -2,33 +2,31 @@ const express = require('express');
 
 const {
   getAll,
-  getByEmail,
   getById,
+  getByEmail,
   create,
   update,
   remove
-} = require('../controllers/user');
+} = require('../controllers/ticket');
 
 const router = express.Router();
 
-// const auth = passport.authenticate('jwt', { session: false });
-
-/* GET users listing. */
+/* GET tickets listing. */
 router.get('/', getAll);
 
-/* GET user by email. */
-router.get('/email/:email', getByEmail);
-
-/* GET user by id. */
+/* GET ticket by id. */
 router.get('/id/:id', getById);
 
-/* POST new user. */
+/* GET ticket by email. */
+router.get('/email/:email', getByEmail);
+
+/* POST new ticket. */
 router.post('/', create);
 
-/* PUT user by id. */
+/* PUT ticket by id. */
 router.put('/:id', update);
 
-/* DELETE user by id. */
+/* DELETE ticket by id. */
 router.delete('/:id', remove);
 
 module.exports = router;
