@@ -36,7 +36,10 @@ module.exports = {
       const vehicle = await VehicleService.getVehicleById(id);
 
       if (!vehicle) {
-        throw new ErrorObject('No se encontro ningún vehiculo', 404);
+        throw new ErrorObject(
+          `No se encontro ningún vehiculo con el id: ${id}`,
+          404
+        );
       }
 
       const vehicleAmenity = await VehicleService.getVehicleAmenityById(id);
@@ -110,7 +113,7 @@ module.exports = {
         res,
         status: error.status || 'error',
         code: error.statusCode || 500,
-        message: error.message || 'Error al obtener el vehiculo!'
+        message: error || 'Error al obtener el vehiculo!'
       });
     }
   }),
@@ -293,7 +296,7 @@ module.exports = {
       const { id } = req.params;
       const existingVehicle = await VehicleService.getVehicleById(id);
       if (!existingVehicle) {
-        throw new ErrorObject(`El vehiculo no existe!`, 404);
+        throw new ErrorObject(`No se encontró vehiculo con el ID: ${id}`, 404);
       }
 
       await VehicleService.deleteVehicleAmenity(id);

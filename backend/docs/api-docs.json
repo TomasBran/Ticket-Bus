@@ -28,7 +28,7 @@
             "application/json": {
               "schema": { "$ref": "#/components/schemas/Login" },
               "example": {
-                "email": "usuariomail.com",
+                "email": "usuario@dominio.com",
                 "password": "C0ntr4s3ñ4s3gur4"
               }
             }
@@ -58,6 +58,34 @@
                           "role": "USER"
                         },
                         "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZjg5ZjEzNjIzNzU4NzQwMzI2YzQ3YiIsImlhdCI6MTYyNjE2NjUyMiwiZXhwIjoxNjI2MjUyOTIyfQ.4Tz6zJl0b1Z0j6h4v9Ww0kx3q9c5hZy3Dm3z9d7v9wA"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error de validación",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Solicitud incorrecta",
+                    "value": {
+                      "status": "fail",
+                      "code": 400,
+                      "message": "Error de validación",
+                      "body": {
+                        "errors": [
+                          {
+                            "validation": "email",
+                            "code": "invalid_string",
+                            "message": "Email inválido",
+                            "path": ["email"]
+                          }
+                        ]
                       }
                     }
                   }
@@ -209,7 +237,7 @@
             "application/json": {
               "schema": { "$ref": "#/components/schemas/Google" },
               "example": {
-                "idToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjIwY..."
+                "token": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjIwY..."
               }
             }
           }
@@ -324,7 +352,15 @@
         "description": "",
         "operationId": "registerUser",
         "tags": ["Users"],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Adjuntar token JWT Bearer de autenticación",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -404,7 +440,11 @@
             }
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/users/{id}": {
@@ -1194,8 +1234,8 @@
         "summary": "Obtener todos los vehiculos y sus amenities",
         "deprecated": false,
         "description": "",
-        "operationId": "getVehiclesAmenities",
-        "tags": ["Vehicles", "Vehicles"],
+        "operationId": "getVehicles",
+        "tags": ["Vehicles"],
         "parameters": [],
         "responses": {
           "200": {
@@ -1250,6 +1290,445 @@
                       "status": "error",
                       "code": 500,
                       "message": "Error al obtener los vehiculos!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "Registro de nuevo vehiculo",
+        "deprecated": false,
+        "description": "",
+        "operationId": "createVehicle",
+        "tags": ["Vehicles"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Vehicle" },
+              "example": {
+                "number": 3,
+                "plate": "ABCD12",
+                "totalSeats": 40,
+                "amenities": ["WiFi", "TV"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Vehiculo creado con éxito!",
+                      "body": {
+                        "vehicle": {
+                          "id": 3,
+                          "number": 3,
+                          "plate": "ABCD12",
+                          "totalSeats": 40,
+                          "amenities": ["WiFi", "TV"]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto en el servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "fail",
+                      "code": 409,
+                      "message": "El vehiculo ya existe."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "No se pudo registrar el vehiculo."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/vehicles/{id}": {
+      "get": {
+        "summary": "Obtener un vehiculo por su ID",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getVehicleByID",
+        "tags": ["Vehicles"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del vehiculo",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Vehiculo obtenido con éxito!",
+                      "body": {
+                        "vehicle": {
+                          "id": 1,
+                          "number": 1,
+                          "plate": "QRST90",
+                          "totalSeats": 60,
+                          "amenities": [
+                            "Cargador USB",
+                            "WiFi",
+                            "Aire Acondicionado"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro no encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "ENo se encontró ningún vehiculo con el ID: 1",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró vehiculo con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "Error al obtener el vehiculo!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "put": {
+        "summary": "Actualizar vehiculo",
+        "deprecated": false,
+        "description": "",
+        "operationId": "updateVehicle",
+        "tags": ["Vehicles"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del vehiculo",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Vehicle" },
+              "example": {
+                "number": 1,
+                "plate": "QRST90",
+                "totalSeats": 60,
+                "amenities": ["Cargador USB", "WiFi", "Aire Acondicionado"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Vehiculo actualizado con éxito!",
+                      "body": {
+                        "vehicle": {
+                          "id": 1,
+                          "number": 1,
+                          "plate": "QRST90",
+                          "totalSeats": 60,
+                          "amenities": [
+                            "Cargador USB",
+                            "WiFi",
+                            "Aire Acondicionado"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro no encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "ENo se encontró ningún vehiculo con el ID: 1",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró vehiculo con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "No se pudo actualizar el vehiculo."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "security": []
+        }
+      },
+      "delete": {
+        "summary": "Eliminar vehiculo",
+        "deprecated": false,
+        "description": "",
+        "operationId": "deleteVehicle",
+        "tags": ["Vehicles"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del vehiculo",
+            "required": true,
+            "example": 1,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Vehiculo eliminado con éxito!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro no encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "No se encontró el vehiculo",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró vehiculo con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "No se pudo eliminar el vehiculo."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/vehicles/plate/{plate}": {
+      "get": {
+        "summary": "Obtener un vehiculo por su placa",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getVehicleByPlate",
+        "tags": ["Vehicles"],
+        "parameters": [
+          {
+            "name": "plate",
+            "in": "path",
+            "description": "Placa del vehiculo",
+            "required": true,
+            "example": "QRST90",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Vehiculo obtenido con éxito!",
+                      "body": {
+                        "vehicle": {
+                          "id": 1,
+                          "number": 1,
+                          "plate": "QRST90",
+                          "totalSeats": 60,
+                          "amenities": [
+                            "Cargador USB",
+                            "WiFi",
+                            "Aire Acondicionado"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro no encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "No se encontró ningún vehiculo con la placa: QRST90",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró vehiculo con la placa: QRST90"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "Error al obtener el vehiculo!"
                     }
                   }
                 }
@@ -2628,26 +3107,7 @@
             "description": "Success",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": { "type": "string" },
-                    "code": { "type": "integer" },
-                    "message": { "type": "string" },
-                    "body": {
-                      "type": "object",
-                      "properties": {
-                        "amenity": {
-                          "type": "object",
-                          "properties": { "name": { "type": "string" } },
-                          "required": ["name"]
-                        }
-                      },
-                      "required": ["amenity"]
-                    }
-                  },
-                  "required": ["status", "code", "message", "body"]
-                },
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
                 "examples": {
                   "1": {
                     "summary": "Success",
@@ -2682,6 +3142,277 @@
             "security": []
           }
         }
+      }
+    },
+    "/amenities/{id}": {
+      "get": {
+        "summary": "Obtener servicio por ID",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Amenities"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "integer" },
+                        "name": { "type": "string" }
+                      },
+                      "required": ["id", "name"]
+                    }
+                  },
+                  "required": ["status", "code", "message", "body"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Servicio obtenido con éxito!",
+                      "body": { "id": 1, "name": "Cargador USB" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" }
+                  },
+                  "required": ["status", "code", "message"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró servicio con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "put": {
+        "summary": "Actualizar servicio",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Amenities"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": { "name": { "type": "string" } },
+                "required": ["name"]
+              },
+              "example": { "name": "Cargador USB" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "integer" },
+                        "name": { "type": "string" }
+                      },
+                      "required": ["id", "name"]
+                    }
+                  },
+                  "required": ["status", "code", "message", "body"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Servicio actualizado con éxito!",
+                      "body": { "id": 1, "name": "Cargador USB" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" }
+                  },
+                  "required": ["status", "code", "message"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: ID no encontrado",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró servicio con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" }
+                  },
+                  "required": ["status", "code", "message"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: Nombre repetido",
+                    "value": {
+                      "status": "fail",
+                      "code": 409,
+                      "message": "Ya existe un servicio con el nombre: Cargador USB"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "delete": {
+        "summary": "Eliminar servicio",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Amenities"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" }
+                  },
+                  "required": ["status", "code", "message"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Servicio eliminado con éxito!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" }
+                  },
+                  "required": ["status", "code", "message"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: ID no encontrado",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró servicio con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
       }
     }
   },

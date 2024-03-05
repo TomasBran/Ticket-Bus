@@ -84,13 +84,21 @@ module.exports = {
 
   create: catchAsync(async (req, res) => {
     try {
-      const passenger = await PassengerService.create(req.body);
+      const { dni } = req.body;
+
+      const passengerExists = await PassengerService.getByDni(dni);
+
+      if (passengerExists) {
+        throw new ErrorObject(`Ya existe un pasajero con el DNI: ${dni}`, 400);
+      }
+
+      const newPassenger = await PassengerService.create(req.body);
 
       endpointResponse({
         res,
         status: 'success',
         message: 'Pasajero creado con éxito!',
-        body: passenger
+        body: newPassenger
       });
     } catch (error) {
       endpointResponse({

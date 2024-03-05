@@ -10,13 +10,9 @@ const getAllByUserClientId = async (userClientId) => {
   return await Passenger.findAll({ where: { userClientId } });
 };
 
-// Obtener todos los pasajeros con su ruta y agrupar por fecha
-const getAllGroupByDate = async () => {
-  return await Passenger.findAll({
-    include: 'route',
-    group: ['date'],
-    attributes: ['date']
-  });
+// Obtener un pasajero por su DNI
+const getByDni = async (dni) => {
+  return await Passenger.findOne({ where: { dni } });
 };
 
 // Obtener un pasajero por su id
@@ -45,8 +41,8 @@ const remove = async (id) => {
 
 module.exports = {
   getAll,
+  getByDni,
   getAllByUserClientId,
-  getAllGroupByDate,
   getById,
   create,
   update,

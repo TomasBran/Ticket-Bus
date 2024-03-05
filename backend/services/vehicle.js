@@ -5,6 +5,7 @@ const {
   Seat,
   Schedule
 } = require('../database/models');
+const { Op } = require('sequelize');
 
 // Formated the return of vehicles whit amenities
 const formatVehicleData = (vehicle) => ({
@@ -62,7 +63,7 @@ const getVehicleByPlate = async (plate) =>
 // get vehicle by plate whit amenities
 const getVehicleAmenityByPlate = async (plate) => {
   const vehicle = await Vehicle.findOne({
-    where: { plate },
+    where: { plate: { [Op.iRegexp]: `${plate}` } },
     include: [
       {
         model: Amenity,
@@ -74,6 +75,7 @@ const getVehicleAmenityByPlate = async (plate) => {
       }
     ]
   });
+  if (!vehicle) return null;
   return formatVehicleData(vehicle);
 };
 
@@ -104,14 +106,6 @@ const createVehicleAmenity = async (vehicleId, amenityObjects) => {
   return formatVehicleData(createVehicle);
 };
 
-/* // update vehicle by id
-const updateVehicle = async (id, vehicle) =>
-  await Vehicle.update(vehicle, {
-    where: { id },
-    returning: true,
-    plain: true
-  }); */
-
 // update vehicle and amenity associated
 const updateVehicleAmenity = async (vehicleId, newData, amenityIds) => {
   const vehicle = await Vehicle.findByPk(vehicleId);
@@ -136,9 +130,6 @@ const updateVehicleAmenity = async (vehicleId, newData, amenityIds) => {
 
   return formatVehicleData(updatedVehicle);
 };
-
-// delete vehicle by id
-// const deleteVehicle = async (id) => await Vehicle.destroy({ where: { id } });
 
 // delete vehicle and amenity by id
 const deleteVehicleAmenity = async (vehicleId) => {
