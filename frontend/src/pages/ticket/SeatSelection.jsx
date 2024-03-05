@@ -9,8 +9,10 @@ import { useFetchScheduleById } from '../../hooks/useSchedules.js';
 import { useQueryParams } from '../../hooks/useQueryParams.js';
 import { calculateArrivalTime } from '../../utils/dateUtils.js';
 import { getScheduleTimeDetails } from '../../utils/timeUtils.js';
+import { useInitializeStateFromUrl } from '../../hooks/useInitializeStateFromUrl.js';
 
 function SeatSelection() {
+  useInitializeStateFromUrl(true);
   const seatQuantity = useSelector((state) => state.seat.seatQuantity);
   const queryParams = useQueryParams();
   const {

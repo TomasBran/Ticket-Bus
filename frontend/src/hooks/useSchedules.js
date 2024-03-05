@@ -11,6 +11,7 @@ export function useFetchSchedules({
   destinationCity,
   date,
   returnDate,
+  passengers,
   enabled
 }) {
   const navigate = useNavigate();
@@ -28,7 +29,8 @@ export function useFetchSchedules({
           originCity,
           destinationCity,
           date,
-          returnDate
+          returnDate,
+          passengers
         );
       },
       onError: (error) => {
@@ -109,13 +111,15 @@ function redirectToTicketPage(
   originCity,
   destinationCity,
   date,
-  returnDate
+  returnDate,
+  passengers
 ) {
   const newParams = {
     origin: originCity,
     destination: destinationCity,
     date: date,
-    returnDate: returnDate
+    returnDate: returnDate,
+    passengers: passengers
   };
 
   const newSearch = queryString.stringify(newParams);

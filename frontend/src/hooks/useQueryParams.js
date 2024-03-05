@@ -16,6 +16,7 @@ export function useQueryParams() {
       ? searchParams.get('returnDate') // Use get method to retrieve the value
       : '',
     returnScheduleId: searchParams.get('returnScheduleId'),
+    passengers: searchParams.get('passengers'),
     searchParams: searchParams
   };
 }

@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useQueryParams } from '../hooks/useQueryParams';
 import { useSelector } from 'react-redux';
@@ -15,6 +15,7 @@ function RequireScheduleData({ children }) {
     enabledCheckoutPage
   } = useSelector((state) => state.enabledPages);
   const [shouldRedirect, setShouldRedirect] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let requiredParams = [origin, destination, date];
@@ -63,7 +64,7 @@ function RequireScheduleData({ children }) {
   ]);
 
   if (shouldRedirect) {
-    return <Navigate to='/' />;
+    return navigate('/');
   }
 
   return children;

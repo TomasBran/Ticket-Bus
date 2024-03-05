@@ -107,6 +107,7 @@ const FormSearchTravels = () => {
     destinationCity: destination,
     date: formData.departure_date,
     returnDate: returnDate,
+    passengers: formData.passengers,
     enabled: isFormSubmitted
   });
 

@@ -4,9 +4,12 @@ import { useFetchSchedulesWithoutRedirect } from '../../hooks/useSchedules';
 import { formatDate } from '../../utils/dateUtils';
 import { useQueryParams } from '../../hooks/useQueryParams';
 import ScheduleList from './ScheduleList';
+import { useInitializeStateFromUrl } from '../../hooks/useInitializeStateFromUrl';
 // import MapRoute from '../MapRoute/MapRoute';
 
 export default function ChooseTravel() {
+  useInitializeStateFromUrl(false);
+
   // reads from URL Params to make the fetch, this is a way of
   // retaining the information through refreshes in a way that
   // doesn't use redux or localStorage for server side things, which avoids data duplication and issues with sync

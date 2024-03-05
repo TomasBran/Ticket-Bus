@@ -12,7 +12,7 @@ import MyPurchases from './pages/auth/user/MyPurchases.jsx';
 import UserSettings from './pages/auth/user/UserSettings.jsx';
 import UserTravelDistance from './pages/auth/user/UserTravelDistance.jsx';
 import Summary from './pages/ticket/Summary.jsx';
-import RedirectIfMissingRequiredParams from './hoc/RedirectIfMissingRequiredParams.jsx';
+import RequireScheduleData from './hoc/RequireScheduleData.jsx';
 import SeatSelection from './pages/ticket/SeatSelection.jsx';
 
 export const router = createBrowserRouter([
@@ -33,42 +33,42 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: (
-          <RedirectIfMissingRequiredParams>
+          <RequireScheduleData>
             <TravelSelection />
-          </RedirectIfMissingRequiredParams>
+          </RequireScheduleData>
         )
       },
       {
         path: 'seats',
         element: (
-          <RedirectIfMissingRequiredParams>
+          <RequireScheduleData>
             <SeatSelection />
-          </RedirectIfMissingRequiredParams>
+          </RequireScheduleData>
         )
       },
       {
         path: 'passengers',
         element: (
-          <RedirectIfMissingRequiredParams>
+          <RequireScheduleData>
             <TripReservation />
-          </RedirectIfMissingRequiredParams>
+          </RequireScheduleData>
         )
       },
       {
         path: 'summary',
 
         element: (
-          <RedirectIfMissingRequiredParams>
+          <RequireScheduleData>
             <Summary />
-          </RedirectIfMissingRequiredParams>
+          </RequireScheduleData>
         )
       },
       {
         path: 'payment',
         element: (
-          <RedirectIfMissingRequiredParams>
+          <RequireScheduleData>
             <Payment />
-          </RedirectIfMissingRequiredParams>
+          </RequireScheduleData>
         )
       }
     ]
