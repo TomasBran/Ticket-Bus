@@ -87,11 +87,15 @@ function Summary() {
 
           {/* Columna 2 */}
           <div className='lg:col-span-2 md:col-span-2 sm:col-span-2 col-span-1 relative order-1 md:order-2'>
+            <div className='mb-3 md:h-3'></div>
+
             <DataForm />
           </div>
 
           {/* Columna 3 */}
           <div className='md:col-span-1 sm:col-span-1 col-span-1 relative order-last'>
+            <div className='mb-3 md:h-16'></div>
+
             <div className=''>
               <div className='mb-4'>
                 <PaymentMethod />

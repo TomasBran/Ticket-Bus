@@ -1,5 +1,13 @@
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  enableCheckoutPage,
+  enablePassengersPage,
+  enablePaymentPage,
+  enableSeatPage,
+  enableSummaryPage,
+  resetPages
+} from '../store/EnabledPages/enabledPagesActions';
 import PropTypes from 'prop-types';
 
 ContinueButton.propTypes = {
@@ -10,6 +18,7 @@ function ContinueButton({ text }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
+  const dispatch = useDispatch();
 
   // Access states from the Redux store
   const seatSelected = useSelector((state) => state.seat.seatSelected);
@@ -35,6 +44,7 @@ function ContinueButton({ text }) {
   // Determine whether the button should be disabled
   let isButtonDisabled;
 
+  // Check if the button should be disabled depending on the route
   switch (location.pathname) {
     case '/ticket/seats':
       isButtonDisabled = !areSeatsSelected;
@@ -60,28 +70,36 @@ function ContinueButton({ text }) {
       break;
   }
 
+  // Redirect to different pages depending on the route
   function handleClick() {
     switch (location.pathname) {
       case '/ticket':
         if (!isScheduleIdEmpty && isReturnDateEmpty) {
+          dispatch(enableSeatPage());
           navigate(`/ticket/seats?${searchParams}`);
         } else if (!isScheduleIdEmpty && !isReturnScheduleIdEmpty) {
+          dispatch(enableSeatPage());
           navigate(`/ticket/seats?${searchParams}`);
         }
         break;
       case '/ticket/seats':
         if (areSeatsSelected) {
+          dispatch(enablePassengersPage());
           navigate(`/ticket/passengers?${searchParams}`);
         }
         break;
       case '/ticket/passengers':
+        dispatch(enableSummaryPage());
         navigate(`/ticket/summary?${searchParams}`);
         break;
       case '/ticket/summary':
+        dispatch(enablePaymentPage());
         navigate(`/ticket/payment?${searchParams}`);
         break;
       case '/ticket/payment':
-        navigate(`/ticket/checkout?`);
+        dispatch(enableCheckoutPage());
+        dispatch(resetPages());
+        navigate(`/ticket/checkout?${searchParams}`);
         break;
       default:
         break;

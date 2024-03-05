@@ -119,15 +119,15 @@ const FormSearchTravels = () => {
           )}
         </div>
         <form
-          className='bg-gray-200 rounded px-6 py-6 lg:flex md:w-auto w-full shadow-2xl shadow-slate-500/40'
+          className='bg-ocean-blue rounded px-6 py-6 lg:flex md:w-auto w-full shadow-2xl shadow-slate-500/40'
           onSubmit={(e) => {
             handleSubmit(e);
           }}
         >
-          <div className='grid lg:grid-cols-5 grid-cols-2 lg:divide-x-2 divide-gray-400 gap-4'>
+          <div className='grid lg:grid-cols-5 grid-cols-2 lg:divide-x-[1px] divide-midnight-slate gap-4'>
             <div className='mb-4 lg:ps-4 col-span-2 lg:col-span-1'>
               <label
-                className='block text-gray-700 text-sm font-bold mb-2 uppercase'
+                className='block text-color-dark tracking-tight font-bold mb-2 uppercase'
                 htmlFor='origin'
               >
                 Origen
@@ -142,7 +142,7 @@ const FormSearchTravels = () => {
             </div>
             <div className='mb-4 lg:ps-4 col-span-2 lg:col-span-1'>
               <label
-                className='block text-gray-700 text-sm font-bold mb-2 uppercase'
+                className='block text-color-dark tracking-tight font-bold mb-2 uppercase'
                 htmlFor='destination'
               >
                 Destino
@@ -157,7 +157,7 @@ const FormSearchTravels = () => {
             </div>
             <div className='mb-4 lg:ps-4 md:w-full box-border'>
               <label
-                className='block text-gray-700 text-sm font-bold mb-2 uppercase'
+                className='block text-color-dark tracking-tight font-bold mb-2 uppercase'
                 htmlFor='departure'
               >
                 Ida
@@ -171,7 +171,7 @@ const FormSearchTravels = () => {
             </div>
             <div className='mb-4 md:ps-4  md:w-full box-border whitespace-nowrap'>
               <label
-                className='block text-gray-700 text-sm font-bold mb-2 truncate'
+                className='block text-color-dark tracking-tight font-bold mb-2 truncate'
                 htmlFor='return'
               >
                 VUELTA (opcional)
@@ -185,7 +185,7 @@ const FormSearchTravels = () => {
             </div>
             <div className='mb-4 lg:ps-4 col-span-2 lg:col-span-1'>
               <label
-                className='block text-gray-700 text-sm font-bold mb-2 uppercase'
+                className='block text-color-dark tracking-tight font-bold mb-2 uppercase'
                 htmlFor='passengers'
               >
                 Pasajeros

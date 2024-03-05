@@ -93,6 +93,8 @@ function Payment() {
 
           {/* Columna 3 */}
           <div className='md:col-span-1 sm:col-span-1 col-span-1 relative order-last'>
+            <div className='mb-3 md:h-16'></div>
+
             <Timer />
             <ContinueButton text='Pagar' />
           </div>
