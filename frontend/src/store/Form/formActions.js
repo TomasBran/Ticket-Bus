@@ -17,3 +17,8 @@ export const setAcceptedTos = (accepted) => ({
   type: 'SET_ACCEPTED_TOS',
   payload: accepted
 });
+
+export const updatePassengerForm = (newSeatQuantity) => ({
+  type: 'UPDATE_PASSENGER_FORM',
+  payload: newSeatQuantity
+});

@@ -26,8 +26,8 @@ function ContinueButton({ text }) {
   const creditCardFormFilled = useSelector(
     (state) => state.form.creditCardForm.formFilled
   );
-  const passengerFormFilled = useSelector(
-    (state) => state.form.passengerForm.formFilled
+  const buyerFormFilled = useSelector(
+    (state) => state.form.buyerForm.formFilled
   );
 
   const paymentMethod = useSelector((state) => state.form.paymentMethod);
@@ -50,10 +50,10 @@ function ContinueButton({ text }) {
       isButtonDisabled = !areSeatsSelected;
       break;
     case '/ticket/summary':
-      isButtonDisabled = !passengerFormFilled || !paymentMethod || !acceptedTos;
+      isButtonDisabled = !buyerFormFilled || !paymentMethod || !acceptedTos;
       break;
     case '/ticket/payment':
-      isButtonDisabled = !(creditCardFormFilled && passengerFormFilled);
+      isButtonDisabled = !(creditCardFormFilled && buyerFormFilled);
       break;
     default:
       if (isReturnDateEmpty) {

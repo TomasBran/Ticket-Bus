@@ -1,7 +1,7 @@
 import TitleForm from '../PassengerForm/components/atoms/TitleForm';
 import TextInput from '../../components/CreditCardForm/TextInput';
-// import TextInput from '../PassengerForm/components/atoms/TextInput';
-// import SelectForm from '../PassengerForm/components/atoms/SelectForm';
+// import TextInput from '../buyerForm/components/atoms/TextInput';
+// import SelectForm from '../buyerForm/components/atoms/SelectForm';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import SelectForm from '../../components/CreditCardForm/SelectForm';
 import MailInput from '../../components/CreditCardForm/MailInput';
@@ -19,7 +19,7 @@ export default function DataForm() {
     { value: 'passport', option: 'Pasaporte' }
   ];
   const dispatch = useDispatch();
-  const formRedux = useSelector((state) => state.form.passengerForm);
+  const formRedux = useSelector((state) => state.form.buyerForm);
   const acceptedTos = useSelector((state) => state.form.acceptedTos);
 
   // State
@@ -71,9 +71,9 @@ export default function DataForm() {
     setFormValid(validateForm(form));
     // Dispatch an action if the form is valid
     if (formValid) {
-      dispatch(setFormFilled('passengerForm', true));
+      dispatch(setFormFilled('buyerForm', true));
     } else {
-      dispatch(setFormFilled('passengerForm', false));
+      dispatch(setFormFilled('buyerForm', false));
     }
   }, [form, validateForm, dispatch, formValid]);
 
@@ -87,7 +87,7 @@ export default function DataForm() {
       const prevForm = prevFormRef.current;
       for (const field in prevForm) {
         if (prevForm[field] !== formRedux[field]) {
-          dispatch(setFieldValue('passengerForm', field, prevForm[field]));
+          dispatch(setFieldValue('buyerForm', field, prevForm[field]));
         }
       }
     };
@@ -98,7 +98,7 @@ export default function DataForm() {
       const prevForm = prevFormRef.current;
       for (const field in prevForm) {
         if (prevForm[field] !== formRedux[field]) {
-          dispatch(setFieldValue('passengerForm', field, prevForm[field]));
+          dispatch(setFieldValue('buyerForm', field, prevForm[field]));
         }
       }
     };
