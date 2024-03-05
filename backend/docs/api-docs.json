@@ -282,7 +282,7 @@
         "deprecated": false,
         "description": "",
         "operationId": "getAllUsers",
-        "tags": ["Users", "Users"],
+        "tags": ["Users"],
         "parameters": [],
         "responses": {
           "200": {
@@ -759,7 +759,7 @@
         "deprecated": false,
         "description": "",
         "operationId": "registerPassenger",
-        "tags": ["Passengers", "Passengers"],
+        "tags": ["Passengers"],
         "parameters": [],
         "responses": {
           "200": {
@@ -823,7 +823,7 @@
         "deprecated": false,
         "description": "",
         "operationId": "registerPassenger",
-        "tags": ["Passengers", "Passengers"],
+        "tags": ["Passengers"],
         "parameters": [],
         "requestBody": {
           "content": {
@@ -1744,7 +1744,7 @@
         "summary": "GetAllRoutes",
         "deprecated": false,
         "description": "",
-        "tags": ["Routes", "Routes"],
+        "tags": ["Routes"],
         "parameters": [],
         "responses": {
           "200": {
@@ -1762,7 +1762,7 @@
         "summary": "CreateNewRoute",
         "deprecated": false,
         "description": "",
-        "tags": ["Routes", "Routes"],
+        "tags": ["Routes"],
         "parameters": [],
         "requestBody": {
           "content": {
@@ -1898,7 +1898,7 @@
         "summary": "GetAllSchedules",
         "deprecated": false,
         "description": "",
-        "tags": ["Schedules", "Schedules"],
+        "tags": ["Schedules"],
         "parameters": [],
         "responses": {
           "200": {
@@ -1918,7 +1918,7 @@
         "summary": "Obtener todas las terminales",
         "deprecated": false,
         "description": "",
-        "tags": ["Terminals", "Terminals"],
+        "tags": ["Terminals"],
         "parameters": [],
         "responses": {
           "200": {
@@ -2054,7 +2054,7 @@
         "summary": "Crear nueva terminal",
         "deprecated": false,
         "description": "",
-        "tags": ["Terminals", "Terminals"],
+        "tags": ["Terminals"],
         "parameters": [],
         "requestBody": {
           "content": {
@@ -2293,7 +2293,7 @@
         "summary": "Actualizar terminal",
         "deprecated": false,
         "description": "",
-        "tags": ["Terminals", "Terminals"],
+        "tags": ["Terminals"],
         "parameters": [
           {
             "name": "id",
@@ -2470,7 +2470,7 @@
         "summary": "Eliminar terminal",
         "deprecated": false,
         "description": "",
-        "tags": ["Terminals", "Terminals"],
+        "tags": ["Terminals"],
         "parameters": [
           {
             "name": "id",
@@ -3088,7 +3088,7 @@
         "summary": "Crear nuevo servicio",
         "deprecated": false,
         "description": "",
-        "tags": ["Amenities", "Amenities"],
+        "tags": ["Amenities"],
         "parameters": [],
         "requestBody": {
           "content": {
