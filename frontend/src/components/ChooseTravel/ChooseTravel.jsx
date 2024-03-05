@@ -62,41 +62,45 @@ export default function ChooseTravel() {
   }
 
   return (
-    <div className='flex items-center justify-evenly lg:flex-row flex-col md:mx-0 mx-2 mt-6'>
-      <div className='lg:w-2/5 w-full'>
-        <ScheduleList
-          title='Elige tu viaje de ida'
-          origin={queryParams.origin}
-          destination={queryParams.destination}
-          formattedDate={formattedDate}
-          schedules={departureSchedules}
-          isReturn={false}
-          isLoading={isLoadingDepartureSchedules}
-          error={errorDepartureSchedules}
-        />
+    <div className='bg-background-light flex-grow w-full relative'>
+      <div className='h-full mx-auto lg:max-w-screen-xl p-4 overflow-hidden'>
+        <div className='flex items-center justify-between gap-12  md:flex-row flex-col md:mx-0 mx-2 mt-6'>
+          <div className=' w-full md:w-3/5'>
+            <ScheduleList
+              title='Elige tu viaje de ida'
+              origin={queryParams.origin}
+              destination={queryParams.destination}
+              formattedDate={formattedDate}
+              schedules={departureSchedules}
+              isReturn={false}
+              isLoading={isLoadingDepartureSchedules}
+              error={errorDepartureSchedules}
+            />
 
-        <ScheduleList
-          title='Elige tu viaje de vuelta'
-          origin={queryParams.destination}
-          destination={queryParams.origin}
-          formattedDate={formattedReturnDate}
-          schedules={returnSchedules}
-          isReturn={true}
-          isLoading={isLoadingReturnSchedules}
-          error={errorReturnSchedules}
-        />
+            <ScheduleList
+              title='Elige tu viaje de vuelta'
+              origin={queryParams.destination}
+              destination={queryParams.origin}
+              formattedDate={formattedReturnDate}
+              schedules={returnSchedules}
+              isReturn={true}
+              isLoading={isLoadingReturnSchedules}
+              error={errorReturnSchedules}
+            />
 
-        <div className='flex justify-between mt-5'>
-          <BackButton />
-          <ContinueButton text='Continuar' />
-        </div>
-      </div>
-      <div className='lg:w-2/5 w-full'>
-        {/* Actualizar para obtener las coordenadas del store segun la ruta seleccionada [latitud, longitud] */}
-        {/* <MapRoute
+            <div className='flex justify-between mt-5'>
+              <BackButton />
+              <ContinueButton text='Continuar' />
+            </div>
+          </div>
+          <div className='lg:w-2/5 w-full'>
+            {/* Actualizar para obtener las coordenadas del store segun la ruta seleccionada [latitud, longitud] */}
+            {/* <MapRoute
           origin={[-58.3816, -34.6037]}
           destination={[-57.5575, -38.0023]}
         /> */}
+          </div>
+        </div>
       </div>
     </div>
   );

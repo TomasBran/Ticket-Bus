@@ -15,8 +15,8 @@ function TripReservation() {
 
   return (
     <div className='bg-background-light flex-grow w-full relative'>
-      <div className='h-full p-4 overflow-hidden'>
-        <div className='grid lg:grid-cols-4 md:grid-cols-5 sm:grid-cols-5 grid-cols-1 h-full lg:gap-8 gap-2 mx-auto relative'>
+      <div className='h-full mx-auto lg:max-w-screen-xl p-4 overflow-hidden'>
+        <div className='grid lg:grid-cols-4 md:grid-cols-5 sm:grid-cols-5 grid-cols-1 h-full lg:gap-4 gap-2 mx-auto relative'>
           {/* Columna 1 */}
           <div className='lg:col-span-1 md:col-span-2 sm:col-span-2 col-span-1 relative order-2 sm:order-1'>
             <BusTripDetails />

@@ -56,32 +56,33 @@ function Summary() {
         <div className='grid lg:grid-cols-4 md:grid-cols-5 sm:grid-cols-5 grid-cols-1 h-full lg:gap-4 gap-2 mx-auto relative'>
           {/* Columna 1 */}
           <div className='lg:col-span-1 md:col-span-2 sm:col-span-2 col-span-1 relative order-2 sm:order-1'>
-            <div className=''>
+            <div className='mb-3 md:h-16'></div>
+
+            <TripDetailsCard
+              title='Viaje de Ida'
+              startLocation={queryParams.origin}
+              endLocation={queryParams.destination}
+              arrowImage={ArrowRightSVG}
+              departureDate={departureTimeDetails.departureDate}
+              arrivalDate={departureTimeDetails.arrivalDate}
+              startTime={departureTimeDetails.formattedDepartureTime}
+              endTime={departureTimeDetails.calculatedArrivalTime}
+            />
+            {returnSchedules && (
               <TripDetailsCard
-                title='Viaje de Ida'
-                startLocation={queryParams.origin}
-                endLocation={queryParams.destination}
+                title='Viaje de Regreso'
+                startLocation={queryParams.destination}
+                endLocation={queryParams.origin}
                 arrowImage={ArrowRightSVG}
-                departureDate={departureTimeDetails.departureDate}
-                arrivalDate={departureTimeDetails.arrivalDate}
-                startTime={departureTimeDetails.formattedDepartureTime}
-                endTime={departureTimeDetails.calculatedArrivalTime}
+                departureDate={returnTimeDetails.departureDate}
+                arrivalDate={returnTimeDetails.arrivalDate}
+                startTime={returnTimeDetails.formattedDepartureTime}
+                endTime={returnTimeDetails.calculatedArrivalTime}
               />
-              {returnSchedules && (
-                <TripDetailsCard
-                  title='Viaje de Regreso'
-                  startLocation={queryParams.destination}
-                  endLocation={queryParams.origin}
-                  arrowImage={ArrowRightSVG}
-                  departureDate={returnTimeDetails.departureDate}
-                  arrivalDate={returnTimeDetails.arrivalDate}
-                  startTime={returnTimeDetails.formattedDepartureTime}
-                  endTime={returnTimeDetails.calculatedArrivalTime}
-                />
-              )}
-              <div className='flex md:justify-center'>
-                <BackButton />
-              </div>
+            )}
+
+            <div className='flex md:justify-center'>
+              <BackButton />
             </div>
           </div>
 
@@ -100,6 +101,16 @@ function Summary() {
               <div className='mb-4'>
                 <PaymentMethod />
               </div>
+              <TripDetailsCard
+                title='Viaje de Regreso'
+                startLocation='Buenos Aires'
+                endLocation='Mar del Plata'
+                arrowImage={ArrowRightSVG}
+                departureDate='Jueves 14 Mar'
+                arrivalDate='Jueves 14 Mar'
+                startTime='08:00'
+                endTime='12:00'
+              />
               <div className='flex md:justify-center'>
                 <ContinueButton text='Continuar' />
               </div>

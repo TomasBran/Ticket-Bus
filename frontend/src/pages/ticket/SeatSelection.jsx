@@ -80,61 +80,74 @@ function SeatSelection() {
   console.log(calculatedArrivalTimeReturn);
   console.log(calculatedArrivalTimeDeparture);
   return (
-    <main className='flex px-10 justify-between pt-8 max-w-[1440px] mx-auto flex-col md:flex-row items-center'>
-      <div className='md:flex flex-col justify-between items-center hidden'>
-        {departureSchedule && calculatedArrivalTimeDeparture && (
-          <Itinerary
-            departureTime={departureTimeDetails.formattedDepartureTime}
-            origin={queryParams.origin}
-            arrivalTime={calculatedArrivalTimeDeparture}
-            destination={queryParams.destination}
-            typeOfTravel={'Viaje de Ida'}
-            price={formattedPriceDeparture}
-            duration={departureSchedule.route.duration}
-            departureDay={departureTimeDetails.departureDate}
-            arrivalDay={departureTimeDetails.arrivalDate}
-          />
-        )}
-        {returnSchedule && calculatedArrivalTimeReturn && (
-          <Itinerary
-            departureTime={returnTimeDetails.formattedDepartureTime}
-            origin={queryParams.destination}
-            arrivalTime={calculatedArrivalTimeReturn}
-            destination={queryParams.origin}
-            typeOfTravel={'Viaje de Regreso'}
-            price={formattedPriceReturn}
-            duration={departureSchedule.route.duration}
-            departureDay={returnTimeDetails.departureDate}
-            arrivalDay={returnTimeDetails.arrivalDate}
-          />
-        )}
-        <div className='mt-6'>
-          <BackButton />
+    <div className='bg-background-light flex-grow w-full relative'>
+      <div className='h-full mx-auto lg:max-w-screen-xl p-4 overflow-hidden'>
+        <div className='grid lg:grid-cols-4 md:grid-cols-5 sm:grid-cols-5 grid-cols-1 h-full lg:gap-4 gap-2 mx-auto relative'>
+          {/* Columna 1 */}
+          <div className='lg:col-span-1 hidden md:block md:col-span-2 sm:col-span-2 col-span-1 relative order-2 sm:order-1'>
+            {departureSchedule && calculatedArrivalTimeDeparture && (
+              <Itinerary
+                departureTime={departureTimeDetails.formattedDepartureTime}
+                origin={queryParams.origin}
+                arrivalTime={calculatedArrivalTimeDeparture}
+                destination={queryParams.destination}
+                typeOfTravel={'Viaje de Ida'}
+                price={formattedPriceDeparture}
+                duration={departureSchedule.route.duration}
+                departureDay={departureTimeDetails.departureDate}
+                arrivalDay={departureTimeDetails.arrivalDate}
+              />
+            )}
+            {returnSchedule && calculatedArrivalTimeReturn && (
+              <Itinerary
+                departureTime={returnTimeDetails.formattedDepartureTime}
+                origin={queryParams.destination}
+                arrivalTime={calculatedArrivalTimeReturn}
+                destination={queryParams.origin}
+                typeOfTravel={'Viaje de Regreso'}
+                price={formattedPriceReturn}
+                duration={departureSchedule.route.duration}
+                departureDay={returnTimeDetails.departureDate}
+                arrivalDay={returnTimeDetails.arrivalDate}
+              />
+            )}
+            <div className='hidden sm:block absolute mt-5 left-1/2 transform -translate-x-1/2 bottom-md'>
+              <BackButton />
+            </div>
+          </div>
+
+          {/* Columna 2 */}
+          <div className='lg:col-span-2 md:col-span-2 sm:col-span-2 mx-auto col-span-1 relative order-1 md:order-2'>
+            <Seats tickets={seatQuantity} />
+          </div>
+
+          {/* Columna 3 */}
+          <div className='md:col-span-1 sm:col-span-1 col-span-1 relative order-last'>
+            <PricesCard />
+            <div className='md:hidden mt-2'>
+              <Schedule
+                id={departureSchedule.id}
+                departureTime={departureSchedule.departureTime}
+                arrivalTime={calculatedArrivalTimeDeparture}
+                origin={queryParams.origin}
+                destination={queryParams.destination}
+                price={formattedPriceDeparture}
+                duration={departureSchedule.route.duration}
+              />
+            </div>
+
+            <div className='hidden sm:block absolute mt-5 left-1/2 transform -translate-x-1/2 bottom-md'>
+              <ContinueButton text='Continuar' />
+            </div>
+
+            <div className='flex justify-between mt-5 w-full md:hidden'>
+              <BackButton />
+              <ContinueButton text='Continuar' />
+            </div>
+          </div>
         </div>
       </div>
-      <Seats tickets={seatQuantity} />
-      <div className='flex flex-col justify-between items-center'>
-        <PricesCard />
-        <div className='md:hidden mt-2'>
-          <Schedule
-            id={departureSchedule.id}
-            departureTime={departureSchedule.departureTime}
-            arrivalTime={calculatedArrivalTimeDeparture}
-            origin={queryParams.origin}
-            destination={queryParams.destination}
-            price={formattedPriceDeparture}
-            duration={departureSchedule.route.duration}
-          />
-        </div>
-        <div className='hidden md:block mt-6'>
-          <ContinueButton text='Continuar' />
-        </div>
-      </div>
-      <div className='flex justify-between mt-5 w-full md:hidden'>
-        <BackButton />
-        <ContinueButton text='Continuar' />
-      </div>
-    </main>
+    </div>
   );
 }
 export default SeatSelection;
