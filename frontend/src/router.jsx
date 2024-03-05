@@ -14,6 +14,7 @@ import UserTravelDistance from './pages/auth/user/UserTravelDistance.jsx';
 import Summary from './pages/ticket/Summary.jsx';
 import SeatSelection from './pages/ticket/SeatSelection.jsx';
 import LoginForm from './components/Login/LoginForm.jsx';
+import AdminLayout from './layouts/AdminLayout.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -77,6 +78,10 @@ export const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginForm />
+  },
+  {
+    path: '/admin',
+    element: <AdminLayout />
   }
 ]);
 

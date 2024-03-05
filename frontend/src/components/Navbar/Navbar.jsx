@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Logo } from './Logo';
+import Logo from './Logo';
 import { NavigationLinks } from './NavigationLinks';
 import { UserActions } from './UserActions';
 import person from '../../assets/Navbar/person.svg';
