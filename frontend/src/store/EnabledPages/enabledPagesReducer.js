@@ -2,7 +2,8 @@ const initialState = {
   enabledSeatPage: false,
   enabledPassengersPage: false,
   enabledSummaryPage: false,
-  enabledPaymentPage: false
+  enabledPaymentPage: false,
+  enabledCheckoutPage: false
 };
 
 export const enabledPagesReducer = (state = initialState, action) => {
@@ -15,13 +16,19 @@ export const enabledPagesReducer = (state = initialState, action) => {
       return { ...state, enabledSummaryPage: true };
     case 'ENABLE_PAYMENT_PAGE':
       return { ...state, enabledPaymentPage: true };
+    case 'ENABLE_CHECKOUT_PAGE':
+      return {
+        ...state,
+        enabledCheckoutPage: true
+      };
     case 'RESET_PAGES':
       return {
         ...state,
         enabledSeatPage: false,
         enabledPassengersPage: false,
         enabledSummaryPage: false,
-        enabledPaymentPage: false
+        enabledPaymentPage: false,
+        enabledCheckoutPage: true
       };
     default:
       return state;

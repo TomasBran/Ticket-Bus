@@ -14,6 +14,10 @@ export const enablePaymentPage = () => ({
   type: 'ENABLE_PAYMENT_PAGE'
 });
 
+export const enableCheckoutPage = () => ({
+  type: 'ENABLE_CHECKOUT_PAGE'
+});
+
 export const resetPages = () => ({
   type: 'RESET_PAGES'
 });
