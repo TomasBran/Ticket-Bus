@@ -70,6 +70,9 @@ app.use('/api-docs.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   res.send(specs);
 });
+app.use('/api-docs.html', (_, res) => {
+  res.render('redoc');
+});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
