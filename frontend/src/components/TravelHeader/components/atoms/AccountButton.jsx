@@ -13,8 +13,8 @@ function AccountButton({ iconSrc, iconAlt, buttonText, onClick }) {
 }
 
 AccountButton.propTypes = {
-  iconSrc: PropTypes.string.isRequired,
-  iconAlt: PropTypes.string.isRequired,
+  iconSrc: PropTypes.string,
+  iconAlt: PropTypes.string,
   buttonText: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired
 };
