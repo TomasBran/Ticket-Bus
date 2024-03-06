@@ -113,6 +113,10 @@ wsServer.on('connection', async (ws, req) => {
         }, Number(LOCK_SEAT_DELAY));
       }
     }
+
+    if (type === 'reservation') {
+      notifyClients();
+    }
   });
 });
 
