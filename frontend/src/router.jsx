@@ -15,6 +15,7 @@ import Summary from './pages/ticket/Summary.jsx';
 import SeatSelection from './pages/ticket/SeatSelection.jsx';
 import LoginForm from './components/Login/LoginForm.jsx';
 import AdminLayout from './layouts/AdminLayout.jsx';
+import CreateRoute from './components/Admin/components/CreateRoute.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -81,7 +82,29 @@ export const router = createBrowserRouter([
   },
   {
     path: '/admin',
-    element: <AdminLayout />
+    element: <AdminLayout />,
+    children: [
+      {
+        index: true,
+        element: <CreateRoute /> //Principal
+      },
+      {
+        path: 'createTerminal',
+        element: <SeatSelection />
+      },
+      {
+        path: 'createRoute',
+        element: <CreateRoute />
+      },
+      {
+        path: 'myRoutes',
+        element: <Summary />
+      },
+      {
+        path: 'myTerminals',
+        element: <Payment />
+      }
+    ]
   }
 ]);
 

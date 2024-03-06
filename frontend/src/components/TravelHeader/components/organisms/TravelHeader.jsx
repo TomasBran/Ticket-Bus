@@ -16,7 +16,7 @@ function TravelHeader() {
         <LogoTravel />
       </div>
       <TripLink link='/#' text='Mi Viaje' />
-      <div className='lg:col-span-6 md:col-span-8 sm:col-span-5 col-span-3 sm:flex grid grid-cols-2 md:text-base text-xs gap-2'>
+      <div className='lg:col-span-6 h md:col-span-8 sm:col-span-5 col-span-3 sm:flex grid grid-cols-2 md:text-base text-xs gap-2'>
         <TripDetails />
       </div>
       <div className='hidden lg:flex md:flex-1 items-center justify-center col-span-3 '>

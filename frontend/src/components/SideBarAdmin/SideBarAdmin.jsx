@@ -12,7 +12,7 @@ export default function SideBarAdmin() {
   const misterminales = '16';
   const misrutas = '8';
   return (
-    <div className='w-[283px] h-screen pl-6 pt-16 border-r-2 border-blue-gray-50 absolute mr-[52px]'>
+    <div className='w-full h-screen pl-6 pt-16 border-r-2 border-blue-gray-50  mr-[52px]'>
       <div className='my-[30px]'></div>
 
       <div className='flex my-[30px] ml-6 items-center mb-16'>
