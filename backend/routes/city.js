@@ -13,7 +13,7 @@ const router = Router();
 
 router.get('/', getAll);
 
-router.get('/id/:id', getCityById);
+router.get('/:id', getCityById);
 
 router.post('/', validateSchema(cityBodySchema), createCity);
 
