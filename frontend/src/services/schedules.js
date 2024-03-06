@@ -23,7 +23,7 @@ export async function fetchSpecificSchedules(
 }
 
 export async function fetchSpecificScheduleById(scheduleId) {
-  const url = new URL(`${SCHEDULES_URL}/id/${scheduleId}`);
+  const url = new URL(`${SCHEDULES_URL}/${scheduleId}`);
 
   const response = await fetch(url);
   const data = await response.json();
