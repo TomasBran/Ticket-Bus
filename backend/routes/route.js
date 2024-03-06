@@ -17,7 +17,7 @@ const router = Router();
 
 router.get('/', getAll);
 
-router.get('/id/:id', getById);
+router.get('/:id', getById);
 
 router.post('/', validateSchema(routeSchema), create);
 
