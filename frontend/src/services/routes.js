@@ -1,3 +1,5 @@
+// services/Routes.js
+
 import { ROUTES_URL } from './api';
 
 export async function fetchRoutes() {
@@ -9,4 +11,22 @@ export async function fetchRoutes() {
   }
 
   return data;
+}
+
+export async function createRoute(newRouteData) {
+  const apiUrl = ROUTES_URL;
+
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(newRouteData)
+  });
+
+  if (!response.ok) {
+    throw new Error('Could not create route');
+  }
+
+  return response.json();
 }

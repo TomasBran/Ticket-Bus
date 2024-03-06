@@ -1,15 +1,18 @@
 {
   "openapi": "3.1.0",
-  "info": { "title": "ticket-bus1", "description": "", "version": "1.0.0" },
+  "info": { "title": "ticket-bus", "description": "", "version": "1.0.0" },
   "tags": [
     { "name": "Auth" },
-    { "name": "Cities" },
     { "name": "Users" },
     { "name": "Passengers" },
+    { "name": "Cities" },
+    { "name": "Terminals" },
     { "name": "Vehicles" },
+    { "name": "Amenities" },
     { "name": "Routes" },
     { "name": "Schedules" },
-    { "name": "Terminals" }
+    { "name": "Reservation" },
+    { "name": "Tickets" }
   ],
   "paths": {
     "/auth/login": {
@@ -24,7 +27,10 @@
           "content": {
             "application/json": {
               "schema": { "$ref": "#/components/schemas/Login" },
-              "example": ""
+              "example": {
+                "email": "usuario@dominio.com",
+                "password": "C0ntr4s3ñ4s3gur4"
+              }
             }
           }
         },
@@ -59,6 +65,34 @@
               }
             }
           },
+          "400": {
+            "description": "Error de validación",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Solicitud incorrecta",
+                    "value": {
+                      "status": "fail",
+                      "code": 400,
+                      "message": "Error de validación",
+                      "body": {
+                        "errors": [
+                          {
+                            "validation": "email",
+                            "code": "invalid_string",
+                            "message": "Email inválido",
+                            "path": ["email"]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
           "401": {
             "description": "Acceso no autorizado",
             "content": {
@@ -66,7 +100,7 @@
                 "schema": { "$ref": "#/components/schemas/ApiResponse" },
                 "examples": {
                   "1": {
-                    "summary": "Success",
+                    "summary": "Unauthorized",
                     "value": {
                       "status": "fail",
                       "code": 401,
@@ -84,7 +118,7 @@
                 "schema": { "$ref": "#/components/schemas/ApiResponse" },
                 "examples": {
                   "1": {
-                    "summary": "Success",
+                    "summary": "Exception",
                     "value": {
                       "status": "error",
                       "code": 500,
@@ -111,7 +145,12 @@
           "content": {
             "application/json": {
               "schema": { "$ref": "#/components/schemas/Register" },
-              "example": ""
+              "example": {
+                "firstName": "Adrian",
+                "lastName": "Fernandez",
+                "email": "afernandez@mail.com",
+                "password": "123456"
+              }
             }
           }
         },
@@ -185,70 +224,27 @@
         "security": []
       }
     },
-    "/cities": {
-      "get": {
-        "summary": "Obtener todas las ciudades",
-        "deprecated": false,
-        "description": "",
-        "tags": ["Cities"],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ApiResponse" },
-                "examples": {
-                  "1": {
-                    "summary": "Success",
-                    "value": {
-                      "status": "success",
-                      "code": 200,
-                      "message": "Ciudades obtenidas con éxito!",
-                      "body": {
-                        "cities": [
-                          {
-                            "id": 1,
-                            "name": "Buenos Aires"
-                          },
-                          {
-                            "id": 2,
-                            "name": "Córdoba"
-                          }
-                        ]
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": []
-      },
+    "/auth/google": {
       "post": {
-        "summary": "Crear ciudad",
+        "summary": "Inicio de sesión con Google",
         "deprecated": false,
         "description": "",
-        "tags": ["Cities"],
+        "operationId": "loginGoogle",
+        "tags": ["Auth"],
         "parameters": [],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": { "type": "string", "description": "name" }
-                },
-                "required": ["name"]
-              },
-              "example": { "name": "Palpalá" }
+              "schema": { "$ref": "#/components/schemas/Google" },
+              "example": {
+                "token": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjIwY..."
+              }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "Operación exitosa",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ApiResponse" },
@@ -258,29 +254,18 @@
                     "value": {
                       "status": "success",
                       "code": 200,
-                      "message": "Ciudad creada con éxito!",
+                      "message": "Usuario autenticado con éxito!",
                       "body": {
-                        "id": 40,
-                        "name": "Palpalá"
+                        "user": {
+                          "id": 1,
+                          "dni": "01212120384",
+                          "firstName": "Adrian",
+                          "lastName": "Hueto",
+                          "email": "afernandez@mail.com",
+                          "miles": 0,
+                          "role": "USER"
+                        }
                       }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ApiResponse" },
-                "examples": {
-                  "1": {
-                    "summary": "Exception: Ciudad repetida",
-                    "value": {
-                      "status": "fail",
-                      "code": 409,
-                      "message": "Ya existe una ciudad con el nombre: Rosario"
                     }
                   }
                 }
@@ -360,9 +345,479 @@
           }
         },
         "security": []
+      },
+      "post": {
+        "summary": "Crear nuevo usuario",
+        "deprecated": false,
+        "description": "",
+        "operationId": "registerUser",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Adjuntar token JWT Bearer de autenticación",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Register" },
+              "example": {
+                "firstName": "Adrian",
+                "lastName": "Fernandez",
+                "email": "afernandez@mail.com",
+                "password": "123456"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Usuario creado con éxito!",
+                      "body": {
+                        "user": {
+                          "id": 1,
+                          "firstName": "Adrian",
+                          "lastName": "Fernandez",
+                          "email": "afernandez@mail.com",
+                          "miles": 0,
+                          "role": "USER"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto en el servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "fail",
+                      "code": 409,
+                      "message": "El usuario ya existe."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "No se pudo registrar el usuario."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
+    "/users/{id}": {
+      "get": {
+        "summary": "Obtener un usuario por su ID",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getUserByID",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del usuario",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Usuario obtenido con éxito!",
+                      "body": {
+                        "user": {
+                          "id": 1,
+                          "firstName": "Adrian",
+                          "lastName": "Hueto",
+                          "email": "ahueto@mail.com",
+                          "miles": 0,
+                          "role": "USER"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro no encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "ENo se encontró ningún usuario con el ID: 1",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró usuario con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "put": {
+        "summary": "Actualizar usuario",
+        "deprecated": false,
+        "description": "",
+        "operationId": "updateUser",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del usuario",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Register" },
+              "example": {
+                "firstName": "Adrian",
+                "lastName": "Fernandez",
+                "email": "afernandez@mail.com"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Usuario actualizado con éxito!",
+                      "body": {
+                        "user": {
+                          "id": 1,
+                          "firstName": "Adrian",
+                          "lastName": "Fernandez",
+                          "email": "afernandez@mail.com",
+                          "miles": 0,
+                          "role": "USER"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro no encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "ENo se encontró ningún usuario con el ID: 1",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró usuario con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "No se pudo actualizar el usuario."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "delete": {
+        "summary": "Eliminar usuario",
+        "deprecated": false,
+        "description": "",
+        "operationId": "deleteUser",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del usuario",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Usuario eliminado con éxito!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro no encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "ENo se encontró ningún usuario con el ID: 1",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró usuario con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "No se pudo eliminar el usuario."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/users/email/{email}": {
+      "get": {
+        "summary": "Obtener un usuario por su Email",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getUserByEmail",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "description": "Email con que se registró el usuario",
+            "required": true,
+            "example": "user@mail.com",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Usuario obtenido con éxito!",
+                      "body": {
+                        "user": {
+                          "id": 1,
+                          "firstName": "Adrian",
+                          "lastName": "Hueto",
+                          "email": "ahueto@mail.com",
+                          "miles": 0,
+                          "role": "USER"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro no encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "ENo se encontró ningún usuario con el email: 1",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró usuario con el email: 0"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "security": []
+    },
     "/passengers": {
+      "get": {
+        "summary": "Obtener todos los pasajeros",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getAllPassengers",
+        "tags": ["Passengers"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Pasajeros obtenidos con éxito!",
+                      "body": {
+                        "passengers": [
+                          {
+                            "id": 1,
+                            "dni": "01212120384",
+                            "firstName": "Adrian",
+                            "lastName": "Hueto",
+                            "userClientId": 1
+                          },
+                          {
+                            "id": 2,
+                            "dni": "01212120384",
+                            "firstName": "Lucas",
+                            "lastName": "Lorenzo",
+                            "userClientId": 2
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "Error al obtener los pasajeros!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "summary": "Registro de nuevo pasajero",
         "deprecated": false,
@@ -374,7 +829,12 @@
           "content": {
             "application/json": {
               "schema": { "$ref": "#/components/schemas/Passenger" },
-              "example": ""
+              "example": {
+                "dni": "01245420354",
+                "firstName": "Adrian",
+                "lastName": "Fernandez",
+                "userClientId": 1
+              }
             }
           }
         },
@@ -446,12 +906,335 @@
         "security": []
       }
     },
-    "/vehicles": {
+    "/passengers/{id}": {
       "get": {
-        "summary": "Obtener todos los vehiculos (buses) y sus amenities (servicios)",
+        "summary": "Obtener un pasajero por su ID",
         "deprecated": false,
         "description": "",
-        "operationId": "getVehiclesAmenities",
+        "operationId": "getPassengerByID",
+        "tags": ["Passengers"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del pasajero",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Pasajero obtenido con éxito!",
+                      "body": {
+                        "passenger": {
+                          "id": 1,
+                          "dni": "01212120384",
+                          "firstName": "Adrian",
+                          "lastName": "Hueto",
+                          "userClientId": 1
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro no encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "ENo se encontró ningún pasajero con el ID: 1",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró pasajero con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "Error al obtener al pasajero!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "put": {
+        "summary": "Actualizar pasajero",
+        "deprecated": false,
+        "description": "",
+        "operationId": "updatePassenger",
+        "tags": ["Passengers"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del pasajero",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Passenger" },
+              "example": {
+                "dni": "01245420354",
+                "firstName": "Adrian",
+                "lastName": "Fernandez",
+                "userClientId": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Pasajero actualizado con éxito!",
+                      "body": {
+                        "passenger": {
+                          "id": 1,
+                          "dni": "01245420354",
+                          "firstName": "Adrian",
+                          "lastName": "Fernandez",
+                          "userClientId": 1
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro no encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "ENo se encontró ningún pasajero con el ID: 1",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró pasajero con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "No se pudo actualizar el pasajero."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar pasajero",
+        "deprecated": false,
+        "description": "",
+        "operationId": "deletePassenger",
+        "tags": ["Passengers"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del pasajero",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Pasajero eliminado con éxito!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro no encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "No se encontró el pasajero",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró pasajero con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "No se pudo eliminar el pasajero."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/passengers/userClient/{id}": {
+      "get": {
+        "summary": "Obtener pasajeros del usuario registrado",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getPassengerByUserClientID",
+        "tags": ["Passengers"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del usuario",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Pasajero obtenido con éxito!",
+                      "body": {
+                        "passengers": [
+                          {
+                            "id": 1,
+                            "dni": "01212120384",
+                            "firstName": "Adrian",
+                            "lastName": "Hueto",
+                            "userClientId": 1
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Registro no encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "No se pudieron obtener los pasajeros",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "No se pudieron obtener los pasajeros"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/vehicles": {
+      "get": {
+        "summary": "Obtener todos los vehiculos y sus amenities",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getVehicles",
         "tags": ["Vehicles"],
         "parameters": [],
         "responses": {
@@ -515,13 +1298,453 @@
           }
         },
         "security": []
+      },
+      "post": {
+        "summary": "Registro de nuevo vehiculo",
+        "deprecated": false,
+        "description": "",
+        "operationId": "createVehicle",
+        "tags": ["Vehicles"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Vehicle" },
+              "example": {
+                "number": 3,
+                "plate": "ABCD12",
+                "totalSeats": 40,
+                "amenities": ["WiFi", "TV"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Vehiculo creado con éxito!",
+                      "body": {
+                        "vehicle": {
+                          "id": 3,
+                          "number": 3,
+                          "plate": "ABCD12",
+                          "totalSeats": 40,
+                          "amenities": ["WiFi", "TV"]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto en el servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "fail",
+                      "code": 409,
+                      "message": "El vehiculo ya existe."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "No se pudo registrar el vehiculo."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/vehicles/{id}": {
+      "get": {
+        "summary": "Obtener un vehiculo por su ID",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getVehicleByID",
+        "tags": ["Vehicles"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del vehiculo",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Vehiculo obtenido con éxito!",
+                      "body": {
+                        "vehicle": {
+                          "id": 1,
+                          "number": 1,
+                          "plate": "QRST90",
+                          "totalSeats": 60,
+                          "amenities": [
+                            "Cargador USB",
+                            "WiFi",
+                            "Aire Acondicionado"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro no encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "ENo se encontró ningún vehiculo con el ID: 1",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró vehiculo con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "Error al obtener el vehiculo!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "put": {
+        "summary": "Actualizar vehiculo",
+        "deprecated": false,
+        "description": "",
+        "operationId": "updateVehicle",
+        "tags": ["Vehicles"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del vehiculo",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Vehicle" },
+              "example": {
+                "number": 1,
+                "plate": "QRST90",
+                "totalSeats": 60,
+                "amenities": ["Cargador USB", "WiFi", "Aire Acondicionado"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Vehiculo actualizado con éxito!",
+                      "body": {
+                        "vehicle": {
+                          "id": 1,
+                          "number": 1,
+                          "plate": "QRST90",
+                          "totalSeats": 60,
+                          "amenities": [
+                            "Cargador USB",
+                            "WiFi",
+                            "Aire Acondicionado"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro no encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "ENo se encontró ningún vehiculo con el ID: 1",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró vehiculo con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "No se pudo actualizar el vehiculo."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "security": []
+        }
+      },
+      "delete": {
+        "summary": "Eliminar vehiculo",
+        "deprecated": false,
+        "description": "",
+        "operationId": "deleteVehicle",
+        "tags": ["Vehicles"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del vehiculo",
+            "required": true,
+            "example": 1,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Vehiculo eliminado con éxito!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro no encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "No se encontró el vehiculo",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró vehiculo con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "No se pudo eliminar el vehiculo."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/vehicles/plate/{plate}": {
+      "get": {
+        "summary": "Obtener un vehiculo por su placa",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getVehicleByPlate",
+        "tags": ["Vehicles"],
+        "parameters": [
+          {
+            "name": "plate",
+            "in": "path",
+            "description": "Placa del vehiculo",
+            "required": true,
+            "example": "QRST90",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Vehiculo obtenido con éxito!",
+                      "body": {
+                        "vehicle": {
+                          "id": 1,
+                          "number": 1,
+                          "plate": "QRST90",
+                          "totalSeats": 60,
+                          "amenities": [
+                            "Cargador USB",
+                            "WiFi",
+                            "Aire Acondicionado"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro no encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "No se encontró ningún vehiculo con la placa: QRST90",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró vehiculo con la placa: QRST90"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "Error al obtener el vehiculo!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
       }
     },
     "/routes": {
       "get": {
-        "summary": "GetAllRoutes",
+        "summary": "Obtener todas las rutas",
         "deprecated": false,
         "description": "",
+        "operationId": "getAllRoutes",
         "tags": ["Routes"],
         "parameters": [],
         "responses": {
@@ -529,7 +1752,37 @@
             "description": "Success",
             "content": {
               "application/json": {
-                "schema": { "type": "object", "properties": {} }
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Rutas obtenidas con éxito!",
+                      "body": {
+                        "routes": [
+                          {
+                            "id": 1,
+                            "originId": 1,
+                            "destinationId": 2,
+                            "duration": "09:15:00",
+                            "distance": "700.00",
+                            "price": "68900.00"
+                          },
+                          {
+                            "id": 2,
+                            "originId": 2,
+                            "destinationId": 3,
+                            "duration": "09:15:00",
+                            "distance": "700.00",
+                            "price": "68900.00"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -545,23 +1798,7 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "originId": { "type": "integer" },
-                  "destinationId": { "type": "integer" },
-                  "duration": { "type": "string" },
-                  "distance": { "type": "string" },
-                  "price": { "type": "string" }
-                },
-                "required": [
-                  "originId",
-                  "destinationId",
-                  "duration",
-                  "distance",
-                  "price"
-                ]
-              },
+              "schema": { "$ref": "#/components/schemas/Route" },
               "example": {
                 "originId": 1,
                 "destinationId": 2,
@@ -577,681 +1814,22 @@
             "description": "Success",
             "content": {
               "application/json": {
-                "schema": { "type": "object", "properties": {} }
-              }
-            }
-          }
-        },
-        "security": []
-      }
-    },
-
-    "/schedules/all": {
-      "get": {
-        "summary": "GetAllSchedules",
-        "deprecated": false,
-        "description": "",
-        "tags": ["Schedules"],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": { "type": "object", "properties": {} }
-              }
-            }
-          }
-        },
-        "security": []
-      }
-    },
-    "/terminals": {
-      "get": {
-        "summary": "Obtener todas las terminales",
-        "deprecated": false,
-        "description": "",
-        "tags": ["Terminals"],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": { "type": "string" },
-                    "code": { "type": "integer" },
-                    "message": { "type": "string" },
-                    "body": {
-                      "type": "object",
-                      "properties": {
-                        "terminals": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": { "type": "integer" },
-                              "lat": { "type": "number" },
-                              "lon": { "type": "number" },
-                              "cityId": { "type": "integer" },
-                              "terminalName": { "type": "string" },
-                              "terminalCode": { "type": "integer" },
-                              "createdAt": { "type": "string" },
-                              "updatedAt": { "type": "string" },
-                              "city": {
-                                "type": "object",
-                                "properties": {
-                                  "id": { "type": "integer" },
-                                  "name": { "type": "string" },
-                                  "createdAt": { "type": "string" },
-                                  "updatedAt": { "type": "string" }
-                                },
-                                "required": [
-                                  "id",
-                                  "name",
-                                  "createdAt",
-                                  "updatedAt"
-                                ]
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "lat",
-                              "lon",
-                              "cityId",
-                              "terminalName",
-                              "terminalCode",
-                              "createdAt",
-                              "updatedAt",
-                              "city"
-                            ]
-                          }
-                        }
-                      },
-                      "required": ["terminals"]
-                    }
-                  },
-                  "required": ["status", "code", "message", "body"]
-                },
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
                 "examples": {
                   "1": {
                     "summary": "Success",
                     "value": {
                       "status": "success",
                       "code": 200,
-                      "message": "Terminales obtenidas con éxito!",
+                      "message": "Ruta creada con éxito!",
                       "body": {
-                        "terminals": [
-                          {
-                            "id": 1,
-                            "lat": -34.586038978354786,
-                            "lon": -58.373904326868484,
-                            "cityId": 1,
-                            "terminalName": "Retiro",
-                            "terminalCode": 101,
-                            "createdAt": "2024-02-26T17:16:01.397Z",
-                            "updatedAt": "2024-02-26T17:16:01.397Z",
-                            "city": {
-                              "id": 1,
-                              "name": "Buenos Aires",
-                              "createdAt": "2024-02-26T17:16:01.354Z",
-                              "updatedAt": "2024-02-26T19:18:30.800Z"
-                            }
-                          },
-                          {
-                            "id": 2,
-                            "lat": -31.422642411115337,
-                            "lon": -64.1752754681699,
-                            "cityId": 2,
-                            "terminalName": "Cordoba",
-                            "terminalCode": 201,
-                            "createdAt": "2024-02-26T17:16:01.397Z",
-                            "updatedAt": "2024-02-26T17:16:01.397Z",
-                            "city": {
-                              "id": 2,
-                              "name": "Córdoba",
-                              "createdAt": "2024-02-26T17:16:01.354Z",
-                              "updatedAt": "2024-02-26T17:16:01.354Z"
-                            }
-                          },
-                          {
-                            "id": 3,
-                            "lat": -31.424131932362194,
-                            "lon": -64.17253998369662,
-                            "cityId": 2,
-                            "terminalName": "Nueva",
-                            "terminalCode": 202,
-                            "createdAt": "2024-02-26T17:16:01.397Z",
-                            "updatedAt": "2024-02-26T17:16:01.397Z",
-                            "city": {
-                              "id": 2,
-                              "name": "Córdoba",
-                              "createdAt": "2024-02-26T17:16:01.354Z",
-                              "updatedAt": "2024-02-26T17:16:01.354Z"
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": []
-      },
-      "post": {
-        "summary": "Crear nueva terminal",
-        "deprecated": false,
-        "description": "",
-        "tags": ["Terminals"],
-        "parameters": [],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "lat": { "type": "number" },
-                  "lon": { "type": "number" },
-                  "cityId": { "type": "integer" },
-                  "terminalName": { "type": "string" },
-                  "terminalCode": { "type": "integer" }
-                },
-                "required": [
-                  "lat",
-                  "lon",
-                  "cityId",
-                  "terminalName",
-                  "terminalCode"
-                ]
-              },
-              "example": {
-                "lat": -34.586038978354786,
-                "lon": -58.373904326868484,
-                "cityId": 1,
-                "terminalName": "Nueva Terminal",
-                "terminalCode": 211
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": { "type": "string" },
-                    "code": { "type": "integer" },
-                    "message": { "type": "string" },
-                    "body": {
-                      "type": "object",
-                      "properties": {
-                        "id": { "type": "integer" },
-                        "lat": { "type": "number" },
-                        "lon": { "type": "number" },
-                        "cityId": { "type": "integer" },
-                        "terminalName": { "type": "string" },
-                        "terminalCode": { "type": "integer" },
-                        "updatedAt": { "type": "string" },
-                        "createdAt": { "type": "string" },
-                        "city": {
-                          "type": "object",
-                          "properties": {
-                            "id": { "type": "integer" },
-                            "name": { "type": "string" },
-                            "createdAt": { "type": "string" },
-                            "updatedAt": { "type": "string" }
-                          },
-                          "required": ["id", "name", "createdAt", "updatedAt"]
-                        }
-                      },
-                      "required": [
-                        "id",
-                        "lat",
-                        "lon",
-                        "cityId",
-                        "terminalName",
-                        "terminalCode",
-                        "createdAt",
-                        "updatedAt",
-                        "city"
-                      ]
-                    }
-                  },
-                  "required": ["status", "code", "message", "body"]
-                },
-                "examples": {
-                  "1": {
-                    "summary": "Success",
-                    "value": {
-                      "status": "success",
-                      "code": 200,
-                      "message": "Terminal creada con éxito!",
-                      "body": {
-                        "id": 6,
-                        "lat": -34.586038978354786,
-                        "lon": -58.373904326868484,
-                        "cityId": 1,
-                        "terminalName": "Nueva Terminal",
-                        "terminalCode": 211,
-                        "createdAt": "2024-02-27T00:46:22.191Z",
-                        "updatedAt": "2024-02-27T00:46:22.191Z",
-                        "city": {
+                        "route": {
                           "id": 1,
-                          "name": "Buenos Aires",
-                          "createdAt": "2024-02-26T17:16:01.354Z",
-                          "updatedAt": "2024-02-26T19:18:30.800Z"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": { "type": "string" },
-                    "code": { "type": "integer" },
-                    "message": { "type": "string" }
-                  },
-                  "required": ["status", "code", "message"]
-                },
-                "examples": {
-                  "1": {
-                    "summary": "Exception: Código términal repetido",
-                    "value": {
-                      "status": "fail",
-                      "code": 409,
-                      "message": "Ya existe una terminal con el código: 101"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": []
-      }
-    },
-    "/cities/id/{id}": {
-      "get": {
-        "summary": "Obtener ciudad por ID",
-        "deprecated": false,
-        "description": "",
-        "tags": ["Cities"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID que identifica la ciudad",
-            "required": true,
-            "example": "1",
-            "schema": { "type": "integer" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ApiResponse" },
-                "examples": {
-                  "1": {
-                    "summary": "Success",
-                    "value": {
-                      "status": "success",
-                      "code": 200,
-                      "message": "Ciudad obtenida con éxito!",
-                      "body": {
-                        "id": 1,
-                        "name": "Buenos Aires",
-                        "createdAt": "2024-02-26T17:16:01.354Z",
-                        "updatedAt": "2024-02-26T17:16:01.354Z"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Record Not Found",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ApiResponse" },
-                "examples": {
-                  "1": {
-                    "summary": "Exception",
-                    "value": {
-                      "status": "fail",
-                      "code": 404,
-                      "message": "No se encontró ciudad con el ID: 0"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": []
-      }
-    },
-    "/schedules": {
-      "get": {
-        "summary": "GetAvailableSchedules",
-        "deprecated": false,
-        "description": "",
-        "tags": ["Schedules"],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": { "type": "object", "properties": {} }
-              }
-            }
-          }
-        },
-        "security": []
-      },
-      "post": {
-        "summary": "CreateNewSchedule",
-        "deprecated": false,
-        "description": "",
-        "tags": ["Schedules"],
-        "parameters": [],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "originId": { "type": "integer" },
-                  "destinationId": { "type": "integer" },
-                  "duration": { "type": "string" },
-                  "distance": { "type": "string" },
-                  "price": { "type": "string" }
-                },
-                "required": [
-                  "originId",
-                  "destinationId",
-                  "duration",
-                  "distance",
-                  "price"
-                ]
-              },
-              "example": {
-                "originId": 1,
-                "destinationId": 2,
-                "duration": "09:15:00",
-                "distance": "700.00",
-                "price": "68900.00"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": { "type": "object", "properties": {} }
-              }
-            }
-          }
-        },
-        "security": []
-      }
-    },
-    "/cities/{id}": {
-      "put": {
-        "summary": "Actualizar ciudad",
-        "deprecated": false,
-        "description": "",
-        "tags": ["Cities"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "",
-            "required": true,
-            "example": "1",
-            "schema": { "type": "integer" }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": { "type": "string", "description": "name" }
-                },
-                "required": ["name"]
-              },
-              "example": { "name": "Buenos Aires" }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ApiResponse" },
-                "examples": {
-                  "1": {
-                    "summary": "Success",
-                    "value": {
-                      "status": "success",
-                      "code": 200,
-                      "message": "Ciudad actualizada con éxito!",
-                      "body": {
-                        "id": 1,
-                        "name": "Buenos Aires",
-                        "createdAt": "2024-02-26T17:16:01.354Z",
-                        "updatedAt": "2024-02-26T19:18:30.800Z"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Record Not Found",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ApiResponse" },
-                "examples": {
-                  "1": {
-                    "summary": "Exception: ID no encontrado",
-                    "value": {
-                      "status": "fail",
-                      "code": 404,
-                      "message": "No se encontró ciudad con el ID: 0"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ApiResponse" },
-                "examples": {
-                  "1": {
-                    "summary": "Exception: Nombre repetido",
-                    "value": {
-                      "status": "fail",
-                      "code": 409,
-                      "message": "Ya existe una ciudad con el nombre: Buenos Aires"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": []
-      },
-      "delete": {
-        "summary": "Eliminar ciudad",
-        "deprecated": false,
-        "description": "",
-        "tags": ["Cities"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "",
-            "required": true,
-            "example": "39",
-            "schema": { "type": "integer" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ApiResponse" },
-                "examples": {
-                  "1": {
-                    "summary": "Success",
-                    "value": {
-                      "status": "success",
-                      "code": 200,
-                      "message": "Ciudad eliminada con éxito!"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Record Not Found",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ApiResponse" },
-                "examples": {
-                  "1": {
-                    "summary": "Exception: ID no encontrado",
-                    "value": {
-                      "status": "fail",
-                      "code": 404,
-                      "message": "No se encontró ciudad con el ID: 10000"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": []
-      }
-    },
-    "/terminals/id/{id}": {
-      "get": {
-        "summary": "Obtener terminal por ID",
-        "deprecated": false,
-        "description": "",
-        "tags": ["Terminals"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "",
-            "required": true,
-            "example": "1",
-            "schema": { "type": "integer" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": { "type": "string" },
-                    "code": { "type": "integer" },
-                    "message": { "type": "string" },
-                    "body": {
-                      "type": "object",
-                      "properties": {
-                        "id": { "type": "integer" },
-                        "lat": { "type": "number" },
-                        "lon": { "type": "number" },
-                        "cityId": { "type": "integer" },
-                        "terminalName": { "type": "string" },
-                        "terminalCode": { "type": "integer" },
-                        "createdAt": { "type": "string" },
-                        "updatedAt": { "type": "string" },
-                        "city": {
-                          "type": "object",
-                          "properties": {
-                            "id": { "type": "integer" },
-                            "name": { "type": "string" },
-                            "createdAt": { "type": "string" },
-                            "updatedAt": { "type": "string" }
-                          },
-                          "required": ["id", "name", "createdAt", "updatedAt"]
-                        }
-                      },
-                      "required": [
-                        "id",
-                        "lat",
-                        "lon",
-                        "cityId",
-                        "terminalName",
-                        "terminalCode",
-                        "createdAt",
-                        "updatedAt",
-                        "city"
-                      ]
-                    }
-                  },
-                  "required": ["status", "code", "message", "body"]
-                },
-                "examples": {
-                  "1": {
-                    "summary": "Success",
-                    "value": {
-                      "status": "success",
-                      "code": 200,
-                      "message": "Terminal obtenida con éxito!",
-                      "body": {
-                        "id": 1,
-                        "lat": -34.586038978354786,
-                        "lon": -58.373904326868484,
-                        "cityId": 1,
-                        "terminalName": "Retiro",
-                        "terminalCode": 101,
-                        "createdAt": "2024-02-26T17:16:01.397Z",
-                        "updatedAt": "2024-02-26T17:16:01.397Z",
-                        "city": {
-                          "id": 1,
-                          "name": "Buenos Aires",
-                          "createdAt": "2024-02-26T17:16:01.354Z",
-                          "updatedAt": "2024-02-26T19:18:30.800Z"
+                          "originId": 1,
+                          "destinationId": 2,
+                          "duration": "09:15:00",
+                          "distance": "700.00",
+                          "price": "68900.00"
                         }
                       }
                     }
@@ -1350,79 +1928,13 @@
         "security": []
       }
     },
-    "/schedules/{id}": {
-      "put": {
-        "summary": "UpdateScheduleById",
+    "/schedules/all": {
+      "get": {
+        "summary": "GetAllSchedules",
         "deprecated": false,
         "description": "",
         "tags": ["Schedules"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "",
-            "required": true,
-            "example": "5",
-            "schema": { "type": "integer" }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "originId": { "type": "integer" },
-                  "destinationId": { "type": "integer" },
-                  "duration": { "type": "string" },
-                  "distance": { "type": "string" },
-                  "price": { "type": "string" }
-                },
-                "required": [
-                  "originId",
-                  "destinationId",
-                  "duration",
-                  "distance",
-                  "price"
-                ]
-              },
-              "example": {
-                "originId": 1,
-                "destinationId": 2,
-                "duration": "22:15:00",
-                "distance": "750.00",
-                "price": "68900.00"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": { "type": "object", "properties": {} }
-              }
-            }
-          }
-        },
-        "security": []
-      },
-      "delete": {
-        "summary": "DeleteScheduleById",
-        "deprecated": false,
-        "description": "",
-        "tags": ["Schedules"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "",
-            "required": true,
-            "example": "5",
-            "schema": { "type": "integer" }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Success",
@@ -1436,7 +1948,343 @@
         "security": []
       }
     },
+    "/terminals": {
+      "get": {
+        "summary": "Obtener todas las terminales",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Terminals"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Terminales obtenidas con éxito!",
+                      "body": {
+                        "terminals": [
+                          {
+                            "id": 1,
+                            "lat": -34.586038978354786,
+                            "lon": -58.373904326868484,
+                            "cityId": 1,
+                            "terminalName": "Retiro",
+                            "terminalCode": 101,
+                            "city": {
+                              "id": 1,
+                              "name": "Buenos Aires"
+                            }
+                          },
+                          {
+                            "id": 2,
+                            "lat": -31.422642411115337,
+                            "lon": -64.1752754681699,
+                            "cityId": 2,
+                            "terminalName": "Cordoba",
+                            "terminalCode": 201,
+                            "city": {
+                              "id": 2,
+                              "name": "Córdoba"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "Error al obtener las terminales!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "Crear nueva terminal",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Terminals"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "lat": { "type": "number" },
+                  "lon": { "type": "number" },
+                  "cityId": { "type": "integer" },
+                  "terminalName": { "type": "string" },
+                  "terminalCode": { "type": "integer" }
+                },
+                "required": [
+                  "lat",
+                  "lon",
+                  "cityId",
+                  "terminalName",
+                  "terminalCode"
+                ]
+              },
+              "example": {
+                "lat": -34.586038978354786,
+                "lon": -58.373904326868484,
+                "cityId": 1,
+                "terminalName": "Nueva Terminal",
+                "terminalCode": 211
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Terminal creada con éxito!",
+                      "body": {
+                        "id": 6,
+                        "lat": -34.586038978354786,
+                        "lon": -58.373904326868484,
+                        "cityId": 1,
+                        "terminalName": "Nueva Terminal",
+                        "terminalCode": 211,
+                        "city": {
+                          "id": 1,
+                          "name": "Buenos Aires"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "errors": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "code": { "type": "string" },
+                              "expected": { "type": "string" },
+                              "received": { "type": "string" },
+                              "path": {
+                                "type": "array",
+                                "items": { "type": "string" }
+                              },
+                              "message": { "type": "string" }
+                            }
+                          }
+                        }
+                      },
+                      "required": ["errors"]
+                    }
+                  },
+                  "required": ["status", "code", "message", "body"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: ID inválido",
+                    "value": {
+                      "status": "fail",
+                      "code": 400,
+                      "message": "Error de validación",
+                      "body": {
+                        "errors": [
+                          {
+                            "code": "invalid_type",
+                            "expected": "number",
+                            "received": "string",
+                            "path": ["cityId"],
+                            "message": "Tipo ID Inválido, debe ser tipo INTEGER."
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: Código términal repetido",
+                    "value": {
+                      "status": "fail",
+                      "code": 409,
+                      "message": "Ya existe una terminal con el código: 101"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "Error al crear la terminal!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
     "/terminals/{id}": {
+      "get": {
+        "summary": "Obtener terminal por ID",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Terminals"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "integer" },
+                        "lat": { "type": "number" },
+                        "lon": { "type": "number" },
+                        "cityId": { "type": "integer" },
+                        "terminalName": { "type": "string" },
+                        "terminalCode": { "type": "integer" },
+                        "createdAt": { "type": "string" },
+                        "updatedAt": { "type": "string" },
+                        "city": {
+                          "type": "object",
+                          "properties": {
+                            "id": { "type": "integer" },
+                            "name": { "type": "string" },
+                            "createdAt": { "type": "string" },
+                            "updatedAt": { "type": "string" }
+                          },
+                          "required": ["id", "name", "createdAt", "updatedAt"]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "lat",
+                        "lon",
+                        "cityId",
+                        "terminalName",
+                        "terminalCode",
+                        "createdAt",
+                        "updatedAt",
+                        "city"
+                      ]
+                    }
+                  },
+                  "required": ["status", "code", "message", "body"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Terminal obtenida con éxito!",
+                      "body": {
+                        "id": 1,
+                        "lat": -34.586038978354786,
+                        "lon": -58.373904326868484,
+                        "cityId": 1,
+                        "terminalName": "Retiro",
+                        "terminalCode": 101,
+                        "createdAt": "2024-02-26T17:16:01.397Z",
+                        "updatedAt": "2024-02-26T17:16:01.397Z",
+                        "city": {
+                          "id": 1,
+                          "name": "Buenos Aires",
+                          "createdAt": "2024-02-26T17:16:01.354Z",
+                          "updatedAt": "2024-02-26T19:18:30.800Z"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
       "put": {
         "summary": "Actualizar terminal",
         "deprecated": false,
@@ -1552,6 +2400,65 @@
                           "createdAt": "2024-02-26T17:16:01.354Z",
                           "updatedAt": "2024-02-26T19:18:30.800Z"
                         }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "errors": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "code": { "type": "string" },
+                              "expected": { "type": "string" },
+                              "received": { "type": "string" },
+                              "path": {
+                                "type": "array",
+                                "items": { "type": "string" }
+                              },
+                              "message": { "type": "string" }
+                            }
+                          }
+                        }
+                      },
+                      "required": ["errors"]
+                    }
+                  },
+                  "required": ["status", "code", "message", "body"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: ID inválido",
+                    "value": {
+                      "status": "fail",
+                      "code": 400,
+                      "message": "Error de validación",
+                      "body": {
+                        "errors": [
+                          {
+                            "code": "invalid_type",
+                            "expected": "number",
+                            "received": "string",
+                            "path": ["cityId"],
+                            "message": "Tipo ID Inválido, debe ser tipo INTEGER."
+                          }
+                        ]
                       }
                     }
                   }
@@ -1685,45 +2592,1031 @@
         },
         "security": []
       }
+    },
+    "/schedules": {
+      "get": {
+        "summary": "Obtener todos los horarios",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Schedules"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "properties": {} }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "CreateNewSchedule",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Schedules"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "originId": { "type": "integer" },
+                  "destinationId": { "type": "integer" },
+                  "duration": { "type": "string" },
+                  "distance": { "type": "string" },
+                  "price": { "type": "string" }
+                },
+                "required": [
+                  "originId",
+                  "destinationId",
+                  "duration",
+                  "distance",
+                  "price"
+                ]
+              },
+              "example": {
+                "originId": 1,
+                "destinationId": 2,
+                "duration": "09:15:00",
+                "distance": "700.00",
+                "price": "68900.00"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "properties": {} }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/schedules/{id}": {
+      "put": {
+        "summary": "UpdateScheduleById",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Schedules"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "5",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "originId": { "type": "integer" },
+                  "destinationId": { "type": "integer" },
+                  "duration": { "type": "string" },
+                  "distance": { "type": "string" },
+                  "price": { "type": "string" }
+                },
+                "required": [
+                  "originId",
+                  "destinationId",
+                  "duration",
+                  "distance",
+                  "price"
+                ]
+              },
+              "example": {
+                "originId": 1,
+                "destinationId": 2,
+                "duration": "22:15:00",
+                "distance": "750.00",
+                "price": "68900.00"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "properties": {} }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "delete": {
+        "summary": "DeleteScheduleById",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Schedules"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "5",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "properties": {} }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/cities": {
+      "get": {
+        "summary": "Obtener todas las ciudades",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Cities"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Ciudades obtenidas con éxito!",
+                      "body": {
+                        "cities": [
+                          {
+                            "id": 1,
+                            "name": "Buenos Aires"
+                          },
+                          {
+                            "id": 2,
+                            "name": "Córdoba"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "Crear ciudad",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Cities"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string", "description": "name" }
+                },
+                "required": ["name"]
+              },
+              "example": { "name": "Palpalá" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Ciudad creada con éxito!",
+                      "body": { "id": 40, "name": "Palpalá" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "errors": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "code": { "type": "string" },
+                              "expected": { "type": "string" },
+                              "received": { "type": "string" },
+                              "path": {
+                                "type": "array",
+                                "items": { "type": "string" }
+                              },
+                              "message": { "type": "string" }
+                            }
+                          }
+                        }
+                      },
+                      "required": ["errors"]
+                    }
+                  },
+                  "required": ["status", "code", "message", "body"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: Nombre de tipo invalido",
+                    "value": {
+                      "status": "fail",
+                      "code": 400,
+                      "message": "Error de validación",
+                      "body": {
+                        "errors": [
+                          {
+                            "code": "invalid_type",
+                            "expected": "string",
+                            "received": "number",
+                            "path": ["name"],
+                            "message": "Nombre debe ser de tipo String"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "2": {
+                    "summary": "Exception: Name not sended",
+                    "value": {
+                      "status": "fail",
+                      "code": 400,
+                      "message": "Error de validación",
+                      "body": {
+                        "errors": [
+                          {
+                            "code": "invalid_type",
+                            "expected": "string",
+                            "received": "undefined",
+                            "path": ["name"],
+                            "message": "Nombre de Ciudad Requerido"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: Ciudad repetida",
+                    "value": {
+                      "status": "fail",
+                      "code": 409,
+                      "message": "Ya existe una ciudad con el nombre: Rosario"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/cities/{id}": {
+      "get": {
+        "summary": "Obtener ciudad por ID",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Cities"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID que identifica la ciudad",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Ciudad obtenida con éxito!",
+                      "body": {
+                        "id": 1,
+                        "name": "Buenos Aires",
+                        "createdAt": "2024-02-26T17:16:01.354Z",
+                        "updatedAt": "2024-02-26T17:16:01.354Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Exception",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró ciudad con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "put": {
+        "summary": "Actualizar ciudad",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Cities"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string", "description": "name" }
+                },
+                "required": ["name"]
+              },
+              "example": { "name": "Buenos Aires" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Ciudad actualizada con éxito!",
+                      "body": {
+                        "id": 1,
+                        "name": "Buenos Aires",
+                        "createdAt": "2024-02-26T17:16:01.354Z",
+                        "updatedAt": "2024-02-26T19:18:30.800Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "errors": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "code": { "type": "string" },
+                              "expected": { "type": "string" },
+                              "received": { "type": "string" },
+                              "path": {
+                                "type": "array",
+                                "items": { "type": "string" }
+                              },
+                              "message": { "type": "string" }
+                            }
+                          }
+                        }
+                      },
+                      "required": ["errors"]
+                    }
+                  },
+                  "required": ["status", "code", "message", "body"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: name not sended",
+                    "value": {
+                      "status": "fail",
+                      "code": 400,
+                      "message": "Error de validación",
+                      "body": {
+                        "errors": [
+                          {
+                            "code": "invalid_type",
+                            "expected": "string",
+                            "received": "undefined",
+                            "path": ["name"],
+                            "message": "Nombre de Ciudad Requerido"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: ID no encontrado",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró ciudad con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: Nombre repetido",
+                    "value": {
+                      "status": "fail",
+                      "code": 409,
+                      "message": "Ya existe una ciudad con el nombre: Buenos Aires"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "delete": {
+        "summary": "Eliminar ciudad",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Cities"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "39",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Ciudad eliminada con éxito!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: ID no encontrado",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró ciudad con el ID: 10000"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/amenities": {
+      "get": {
+        "summary": "Obtener todos los servicios",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getAmenities",
+        "tags": ["Amenities"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Operación exitosa",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Servicios obtenidos con éxito!",
+                      "body": {
+                        "amenities": [
+                          { "id": 1, "name": "Cargador USB" },
+                          { "id": 2, "name": "TV" },
+                          { "id": 3, "name": "Comida" },
+                          { "id": 4, "name": "WiFi" },
+                          { "id": 5, "name": "Aire Acondicionado" }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Exception",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontraron servicios"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Exception",
+                    "value": {
+                      "status": "error",
+                      "code": 500,
+                      "message": "No se pudieron obtener los servicios!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "Crear nuevo servicio",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Amenities"],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": { "name": { "type": "string" } },
+                "required": ["name"]
+              },
+              "example": { "name": "Agua premium" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Servicio creado con éxito!",
+                      "body": { "amenity": { "name": "Agua premium" } }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: ID no encontrado",
+                    "value": {
+                      "status": "fail",
+                      "code": 409,
+                      "message": "El servicio ya existe!"
+                    }
+                  }
+                }
+              }
+            },
+            "security": []
+          }
+        }
+      }
+    },
+    "/amenities/{id}": {
+      "get": {
+        "summary": "Obtener servicio por ID",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Amenities"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "integer" },
+                        "name": { "type": "string" }
+                      },
+                      "required": ["id", "name"]
+                    }
+                  },
+                  "required": ["status", "code", "message", "body"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Servicio obtenido con éxito!",
+                      "body": { "id": 1, "name": "Cargador USB" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" }
+                  },
+                  "required": ["status", "code", "message"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró servicio con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "put": {
+        "summary": "Actualizar servicio",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Amenities"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": { "name": { "type": "string" } },
+                "required": ["name"]
+              },
+              "example": { "name": "Cargador USB" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "integer" },
+                        "name": { "type": "string" }
+                      },
+                      "required": ["id", "name"]
+                    }
+                  },
+                  "required": ["status", "code", "message", "body"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Servicio actualizado con éxito!",
+                      "body": { "id": 1, "name": "Cargador USB" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" }
+                  },
+                  "required": ["status", "code", "message"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: ID no encontrado",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró servicio con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" }
+                  },
+                  "required": ["status", "code", "message"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: Nombre repetido",
+                    "value": {
+                      "status": "fail",
+                      "code": 409,
+                      "message": "Ya existe un servicio con el nombre: Cargador USB"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "delete": {
+        "summary": "Eliminar servicio",
+        "deprecated": false,
+        "description": "",
+        "tags": ["Amenities"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "1",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" }
+                  },
+                  "required": ["status", "code", "message"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "status": "success",
+                      "code": 200,
+                      "message": "Servicio eliminado con éxito!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" }
+                  },
+                  "required": ["status", "code", "message"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: ID no encontrado",
+                    "value": {
+                      "status": "fail",
+                      "code": 404,
+                      "message": "No se encontró servicio con el ID: 0"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
     }
   },
   "components": {
     "schemas": {
-      "ApiResponse": {
+      "Passenger": {
         "type": "object",
         "properties": {
-          "status": { "type": "string" },
-          "code": { "type": "integer" },
-          "message": { "type": "string" },
-          "body": { "type": "object", "properties": {} }
-        },
-        "required": ["status", "code", "message"]
-      },
-      "User": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "integer", "examples": [14] },
           "dni": { "type": "string", "examples": ["01245420384"] },
           "firstName": { "type": "string", "examples": ["Angel"] },
           "lastName": { "type": "string", "examples": ["Diaz"] },
-          "email": { "type": "string", "examples": ["a.diaz@example.com"] },
-          "miles": { "type": "integer", "examples": [0] },
-          "role": { "type": "string", "examples": ["USER"] }
-        }
-      },
-      "Login": {
-        "type": "object",
-        "properties": {
-          "email": { "type": "string", "examples": ["usuario@mail.com"] },
-          "password": {
-            "type": "string",
-            "format": "password",
-            "examples": ["C0ntr4s3ñ4s3gur4"]
-          }
+          "userClientId": { "type": "integer", "examples": [14] }
         },
-        "required": ["email", "password"]
+        "required": ["dni", "firstName", "lastName", "userClientId"]
       },
-      "LoginResponse": { "type": "object", "properties": {} },
       "Register": {
         "type": "object",
         "properties": {
@@ -1739,20 +3632,92 @@
         },
         "required": ["dni", "firstName", "lastName", "email", "password"]
       },
-      "Passenger": {
+      "LoginResponse": { "type": "object", "properties": {} },
+      "Login": {
         "type": "object",
         "properties": {
+          "email": { "type": "string", "examples": ["usuario@mail.com"] },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "examples": ["C0ntr4s3ñ4s3gur4"]
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "examples": [14] },
           "dni": { "type": "string", "examples": ["01245420384"] },
           "firstName": { "type": "string", "examples": ["Angel"] },
           "lastName": { "type": "string", "examples": ["Diaz"] },
-          "userClientId": { "type": "integer", "examples": [14] }
+          "email": { "type": "string", "examples": ["a.diaz@example.com"] },
+          "miles": { "type": "integer", "examples": [0] },
+          "role": { "type": "string", "examples": ["USER"] }
+        }
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" },
+          "code": { "type": "integer" },
+          "message": { "type": "string" },
+          "body": { "type": "object", "properties": {} }
         },
-        "required": ["dni", "firstName", "lastName", "userClientId"]
+        "required": ["status", "code", "message"]
+      },
+      "Terminal": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "lat": { "type": "number" },
+          "lon": { "type": "number" },
+          "cityId": { "type": "integer" },
+          "terminalName": { "type": "string" },
+          "terminalCode": { "type": "integer" },
+          "city": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer" },
+              "name": { "type": "string" }
+            }
+          }
+        },
+        "required": ["lat", "lon", "cityId", "terminalName", "terminalCode"]
+      },
+      "Route": {
+        "type": "object",
+        "properties": {
+          "originId": { "type": "integer" },
+          "destinationId": { "type": "integer" },
+          "duration": { "type": "string" },
+          "distance": { "type": "string" },
+          "price": { "type": "string" }
+        },
+        "example": {
+          "originId": 1,
+          "destinationId": 2,
+          "duration": "09:15:00",
+          "distance": "700.00",
+          "price": "68900.00"
+        },
+        "required": [
+          "originId",
+          "destinationId",
+          "duration",
+          "distance",
+          "price"
+        ]
       }
     },
     "securitySchemes": {}
   },
   "servers": [
-    { "url": "http://localhost:3000/api/v1", "description": "Develop Env" }
+    { "url": "http://localhost:3000/api/v1", "description": "Develop Env" },
+    {
+      "url": "https://ticket-bus-api-dev.up.railway.app/api/v1",
+      "description": "Production Env"
+    }
   ]
 }

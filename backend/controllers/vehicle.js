@@ -33,20 +33,22 @@ module.exports = {
   getVehicleAmenityById: catchAsync(async (req, res) => {
     try {
       const { id } = req.params;
-      const vehicle = await VehicleService.getVehicleAmenityById(id);
+      const vehicle = await VehicleService.getVehicleById(id);
 
       if (!vehicle) {
         throw new ErrorObject(
-          `No se encontro ningún vehiculo con el ID: ${id}`,
+          `No se encontro ningún vehiculo con el id: ${id}`,
           404
         );
       }
+
+      const vehicleAmenity = await VehicleService.getVehicleAmenityById(id);
 
       endpointResponse({
         res,
         status: 'success',
         message: 'Vehiculo obtenido con éxito!',
-        body: vehicle
+        body: vehicleAmenity
       });
     } catch (error) {
       endpointResponse({
@@ -111,7 +113,7 @@ module.exports = {
         res,
         status: error.status || 'error',
         code: error.statusCode || 500,
-        message: error.message || 'Error al obtener el vehiculo!'
+        message: error || 'Error al obtener el vehiculo!'
       });
     }
   }),
@@ -292,6 +294,11 @@ module.exports = {
   deleteVehicleAmenity: catchAsync(async (req, res) => {
     try {
       const { id } = req.params;
+      const existingVehicle = await VehicleService.getVehicleById(id);
+      if (!existingVehicle) {
+        throw new ErrorObject(`No se encontró vehiculo con el ID: ${id}`, 404);
+      }
+
       await VehicleService.deleteVehicleAmenity(id);
 
       endpointResponse({

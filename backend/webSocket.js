@@ -1,63 +1,84 @@
-const { parse } = require('node:path');
 const { WebSocketServer, OPEN } = require('ws');
 const {
   getSeatsByScheduleId,
-  toggleSeatState,
-  checkScheduleExistsById
+  checkScheduleExistsById,
+  isSeatLocked,
+  lockSeat,
+  unlockSeat
 } = require('./services/webSocket');
+const { querySchema, messageSchema } = require('./schemas/socketSchema');
 
-const WS_DIR = '/ws/v1/seats/schedule';
+const WS_HOST = process.env.WS_HOST || 'ws://localhost:3000';
+const WS_PATH = '/ws/v1/seats/schedule';
+const LOCK_SEAT_DELAY = process.env.LOCK_SEAT_DELAY || '5000'; // 5 seconds
 
 const wsServer = new WebSocketServer({ noServer: true });
 
-wsServer.on('error', console.error);
+const sendError = (message = 'Error desconocido') =>
+  JSON.stringify({ status: 'error', message });
 
-wsServer.on('connection', async (ws, req) => {
-  const address = req.socket.remoteAddress;
-  const { base } = parse(req.url);
+const getQuery = (url, onError) => {
+  try {
+    const { searchParams } = new URL(url, WS_HOST);
 
-  const scheduleId = Number(base);
+    if (!(searchParams.has('scheduleId') && searchParams.has('date'))) {
+      throw new Error('scheduleId and date are required');
+    }
 
-  const scheduleIdExists = await checkScheduleExistsById(scheduleId);
+    const query = {
+      scheduleId: Number(searchParams.get('scheduleId')),
+      date: searchParams.get('date')
+    };
 
-  if (!scheduleIdExists) {
-    ws.close();
-    return;
-  } else {
+    const result = querySchema.safeParse(query);
+    if (!result.success) {
+      throw new Error(
+        result.error.issues.map((issue) => issue.message).join('; ')
+      );
+    }
+
+    return {
+      scheduleId: query.scheduleId,
+      date: new Date(query.date)
+    };
+  } catch (error) {
+    onError(error);
+    return {
+      scheduleId: null,
+      date: null
+    };
+  }
+};
+
+const handleIncomingMessage = async (
+  ws,
+  message,
+  scheduleIdServer,
+  dateServer
+) => {
+  const data = JSON.parse(message);
+
+  const result = messageSchema.safeParse(data);
+
+  if (!result.success) {
     ws.send(
-      JSON.stringify({
-        status: 'success',
-        message: 'Conexión establecida, y se han enviado los asientos!',
-        body: { seats: await getSeatsByScheduleId(scheduleId) }
-      })
+      sendError(result.error.issues.map((issue) => issue.message).join('; '))
     );
+    return;
   }
 
-  console.log('Client connected: ', address);
+  const { scheduleId, seatId, type, date } = data;
 
-  ws.on('error', console.error);
+  const dateParsed = new Date(date);
 
-  ws.on('close', () => {
-    console.log('Client disconnected: ', address);
-  });
-
-  ws.on('message', async (data) => {
-    const { scheduleId: scheduleIdClient, seatId, type } = JSON.parse(data);
-
-    if (!scheduleIdClient || !seatId || !type) {
-      ws.send('Invalid data');
-      return;
-    }
-
-    if (type === 'lock') {
-      await toggleSeatState(scheduleIdClient, seatId);
-    }
-
-    const seats = await getSeatsByScheduleId(scheduleIdClient);
-
-    wsServer.clients.forEach(async (client) => {
-      //TODO prevent to send to the same client
-      if (client.readyState === OPEN && scheduleIdClient === scheduleId) {
+  const notifyClients = async () => {
+    const seats = await getSeatsByScheduleId(scheduleId, date);
+    wsServer.clients.forEach((client) => {
+      if (
+        client.readyState === OPEN &&
+        scheduleId === scheduleIdServer &&
+        dateParsed.getTime() === dateServer.getTime()
+      ) {
         client.send(
           JSON.stringify({
             status: 'update',
@@ -67,17 +88,95 @@ wsServer.on('connection', async (ws, req) => {
         );
       }
     });
+  };
+
+  if (type === 'lock') {
+    const isSeatLockedResponse = await isSeatLocked(
+      seatId,
+      scheduleId,
+      dateParsed
+    );
+
+    if (isSeatLockedResponse) {
+      await unlockSeat(seatId, scheduleId, dateParsed);
+      notifyClients();
+    } else {
+      await lockSeat(seatId, scheduleId, dateParsed);
+      notifyClients();
+
+      setTimeout(async () => {
+        await unlockSeat(seatId, scheduleId, dateParsed);
+        notifyClients();
+      }, Number(LOCK_SEAT_DELAY));
+    }
+  }
+
+  if (type === 'reservation') {
+    notifyClients();
+  }
+};
+
+const handleConnection = async (ws, req) => {
+  const address = req.socket.remoteAddress;
+  console.log('Client connected: ', address);
+
+  // Get and validate query
+  const { scheduleId, date } = getQuery(req.url, (err) => {
+    if (err) ws.send(sendError(err.message));
   });
-});
+  if (!scheduleId && !date) {
+    ws.close();
+    return;
+  }
+
+  // Check if schedule exists
+  console.log('scheduleId', scheduleId);
+  const scheduleExists = checkScheduleExistsById(scheduleId);
+  if (!scheduleExists) {
+    ws.send(sendError('No se encontró la ruta'));
+    ws.close();
+    return;
+  }
+
+  // Send seats to client
+  ws.send(
+    JSON.stringify({
+      status: 'success',
+      message: 'Conexión establecida, y se han enviado los asientos!',
+      body: {
+        seats: await getSeatsByScheduleId(scheduleId, date)
+      }
+    })
+  );
+
+  // Handle errors in the connection
+  ws.on('error', (err) => {
+    console.log(err);
+  });
+
+  // Handle connection close
+  ws.on('close', () => {
+    console.log('Client disconnected: ', address);
+  });
+
+  // Handle incoming messages
+  ws.on('message', (message) => {
+    handleIncomingMessage(ws, message, scheduleId, date);
+  });
+};
+
+wsServer.on('error', console.error);
+
+wsServer.on('connection', handleConnection);
 
 /**
  * Upgrade request to WebSocket for the path /api/v1/seats/live
  * Reference: https://www.npmjs.com/package/ws#multiple-servers-sharing-a-single-https-server
  */
-
 function upgradeHandler(req, socket, head) {
-  const { dir } = parse(req.url);
-  if (dir === WS_DIR) {
+  const { pathname } = new URL(req.url, WS_HOST);
+
+  if (pathname === WS_PATH) {
     //TODO add authentication, reference: https://www.npmjs.com/package/ws#client-authentication
     wsServer.handleUpgrade(req, socket, head, (socket) => {
       wsServer.emit('connection', socket, req);

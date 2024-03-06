@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-
+import LogoImage from '../../../../components/Navbar/Logo';
 function LogoTravel({ imagePath }) {
   return (
     <div className='hidden lg:flex items-center box-border'>
@@ -13,6 +13,7 @@ function LogoTravel({ imagePath }) {
         ) : (
           'Logo'
         )}
+        {imagePath ? <LogoImage /> : 'Logo'}
       </Link>
     </div>
   );

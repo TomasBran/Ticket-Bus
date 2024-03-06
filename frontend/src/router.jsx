@@ -15,6 +15,11 @@ import Summary from './pages/ticket/Summary.jsx';
 import RequireScheduleData from './hoc/RequireScheduleData.jsx';
 import SeatSelection from './pages/ticket/SeatSelection.jsx';
 import NotFoundPage from './pages/Error/NotFoundPage.jsx';
+import LoginForm from './components/Login/LoginForm.jsx';
+import AdminLayout from './layouts/AdminLayout.jsx';
+import HomeAdmin from './pages/auth/admin/HomeAdmin.jsx';
+import CreateRoutesPage from './pages/auth/admin/CreateRoutesPage.jsx';
+
 
 export const router = createBrowserRouter([
   {
@@ -99,6 +104,35 @@ export const router = createBrowserRouter([
   {
     path: '*',
     element: <NotFoundPage />
+  },
+    path: '/login',
+    element: <LoginForm />
+  },
+  {
+    path: '/admin',
+    element: <AdminLayout />,
+    children: [
+      {
+        index: true,
+        element: <HomeAdmin /> //Principal
+      },
+      {
+        path: 'createTerminal',
+        element: <SeatSelection />
+      },
+      {
+        path: 'createRoute',
+        element: <CreateRoutesPage />
+      },
+      {
+        path: 'myRoutes',
+        element: <Summary />
+      },
+      {
+        path: 'myTerminals',
+        element: <Payment />
+      }
+    ]
   }
 ]);
 

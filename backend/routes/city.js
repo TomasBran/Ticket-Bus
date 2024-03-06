@@ -6,16 +6,18 @@ const {
   updateCity,
   deleteCity
 } = require('../controllers/city');
+const { validateSchema } = require('../middlewares/validateSchema');
+const { cityBodySchema } = require('../schemas/citySchema');
 
 const router = Router();
 
 router.get('/', getAll);
 
-router.get('/id/:id', getCityById);
+router.get('/:id', getCityById);
 
-router.post('/', createCity);
+router.post('/', validateSchema(cityBodySchema), createCity);
 
-router.put('/:id', updateCity);
+router.put('/:id', validateSchema(cityBodySchema), updateCity);
 
 router.delete('/:id', deleteCity);
 

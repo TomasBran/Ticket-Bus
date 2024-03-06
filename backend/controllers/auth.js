@@ -6,6 +6,7 @@ const { catchAsync } = require('../helpers/catchAsync');
 const { endpointResponse } = require('../helpers/success');
 const { secretOrKey } = require('../config/keys');
 const { ErrorObject } = require('../helpers/error');
+const emailService = require('../services/mailer');
 
 module.exports = {
   register: catchAsync(async (req, res) => {
@@ -31,6 +32,16 @@ module.exports = {
 
       // Eliminamos la contraseña del usuario
       newUser.password = undefined;
+
+      // Enviamos un correo de confirmación
+      const mailOptions = {
+        from: process.env.MAIL_USERNAME,
+        to: newUser.email,
+        subject: 'Confirmación de registro',
+        html: `<h1>Bienvenido a Ticket Bus</h1><p>Gracias por registrarte en nuestra plataforma. Ahora puedes iniciar sesión con tu correo electrónico y tu contraseña.</p><><li>Correo: ${newUser.email}</li><li>Nombre: ${newUser.firstName} ${newUser.lastName}</li><li>Contraseña: ${user.password}</li></ul>`
+      };
+
+      await emailService.sendEmail(mailOptions);
 
       // Si se pudo crear el usuario, enviamos la respuesta
       endpointResponse({
@@ -72,7 +83,8 @@ module.exports = {
       }
 
       const payload = {
-        sub: user.id
+        sub: user.id,
+        role: user.role
       };
       const token = jwt.sign(payload, secretOrKey, { expiresIn: '24h' });
 
@@ -88,6 +100,52 @@ module.exports = {
       });
     } catch (error) {
       // Si hubo un error, lo capturamos y lo lanzamos
+      endpointResponse({
+        res,
+        status: error.status || 'error',
+        code: error.statusCode || 500,
+        message: error.message || 'No se pudo autenticar el usuario.'
+      });
+    }
+  }),
+
+  // login with google route
+  google: catchAsync(async (req, res) => {
+    try {
+      const { token } = req.body;
+      const decode = jwt.decode(token);
+      const user = await AuthService.getUser(decode.email);
+      if (user) {
+        const token = jwt.sign({ sub: user.id, role: user.role }, secretOrKey, {
+          expiresIn: '24h'
+        });
+        endpointResponse({
+          res,
+          status: 'success',
+          message: 'Usuario autenticado con éxito!',
+          body: { user, token }
+        });
+      } else {
+        const newUser = await UserService.create({
+          email: decode.email,
+          firstName: decode.given_name,
+          lastName: decode.family_name
+        });
+        const token = jwt.sign(
+          { sub: newUser.id, role: newUser.role },
+          secretOrKey,
+          {
+            expiresIn: '24h'
+          }
+        );
+        endpointResponse({
+          res,
+          status: 'success',
+          message: 'Usuario autenticado con éxito!',
+          body: { user: newUser, token }
+        });
+      }
+    } catch (error) {
       endpointResponse({
         res,
         status: error.status || 'error',

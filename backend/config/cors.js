@@ -11,7 +11,8 @@ const corsOptions = {
     'auth-token',
     'withcredentials',
     'Authorization',
-    'authorization'
+    'authorization',
+    'Access-Control-Allow-Origin'
   ]
 };
 

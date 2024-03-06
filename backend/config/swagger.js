@@ -20,8 +20,12 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: process.env.API_HOST || 'http://localhost:3000/api/v1',
+      url: 'http://localhost:3000/api/v1',
       description: 'Development server'
+    },
+    {
+      url: process.env.API_HOST || 'http://localhost:3000/api/v1',
+      description: 'Production server'
     }
   ]
 };
