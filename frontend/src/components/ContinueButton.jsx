@@ -1,47 +1,112 @@
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  enableCheckoutPage,
+  enablePassengersPage,
+  enablePaymentPage,
+  enableSeatPage,
+  enableSummaryPage,
+  resetPages
+} from '../store/EnabledPages/enabledPagesActions';
+import PropTypes from 'prop-types';
 
-function ContinueButton() {
+ContinueButton.propTypes = {
+  text: PropTypes.string.isRequired
+};
+
+function ContinueButton({ text }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const dispatch = useDispatch();
 
   // Access states from the Redux store
-  const travelSelected = useSelector((state) => state.travel.travelSelected);
   const seatSelected = useSelector((state) => state.seat.seatSelected);
   const seatQuantity = useSelector((state) => state.seat.seatQuantity);
+  const creditCardFormFilled = useSelector(
+    (state) => state.form.creditCardForm.formFilled
+  );
+  const buyerFormFilled = useSelector(
+    (state) => state.form.buyerForm.formFilled
+  );
+  const passengerForm = useSelector((state) => state.form.passengerForm);
 
-  // Check if the travelSelected object is empty
-  const isTravelSelectedEmpty = Object.keys(travelSelected).length === 0;
+  const paymentMethod = useSelector((state) => state.form.paymentMethod);
+  const acceptedTos = useSelector((state) => state.form.acceptedTos);
+
+  // Check if the scheduleId is empty
+  const isScheduleIdEmpty = searchParams.get('scheduleId') === '';
+  const isReturnScheduleIdEmpty = searchParams.get('returnScheduleId') === '';
+  const isReturnDateEmpty = searchParams.get('returnDate') === '';
 
   // Check if the required number of seats have been selected
   const areSeatsSelected = seatSelected.length == seatQuantity;
+  const areAllFormsFilled = passengerForm.every((form) => form.formFilled);
 
   // Determine whether the button should be disabled
-  const isButtonDisabled =
-    location.pathname === '/ticket/seats'
-      ? !areSeatsSelected
-      : location.pathname === '/ticket/summary'
-        ? false
-        : isTravelSelectedEmpty;
+  let isButtonDisabled;
 
-  //   TODO: agregar mas casos mientras vayamos agregando vistas
+  // Check if the button should be disabled depending on the route
+  switch (location.pathname) {
+    case '/ticket/seats':
+      isButtonDisabled = !areSeatsSelected;
+      break;
+    case '/ticket/summary':
+      isButtonDisabled = !buyerFormFilled || !paymentMethod || !acceptedTos;
+      break;
+    case '/ticket/payment':
+      isButtonDisabled = !(
+        creditCardFormFilled &&
+        buyerFormFilled &&
+        areAllFormsFilled
+      );
+      break;
+    default:
+      if (isReturnDateEmpty) {
+        // One-way trip: button is disabled if scheduleId is empty or does not exist in the URL
+        isButtonDisabled = isScheduleIdEmpty || !searchParams.has('scheduleId');
+      } else {
+        // Two-way trip: button is disabled if either scheduleId or returnScheduleId is empty or does not exist in the URL
+        isButtonDisabled =
+          isScheduleIdEmpty ||
+          isReturnScheduleIdEmpty ||
+          !searchParams.has('scheduleId') ||
+          !searchParams.has('returnScheduleId');
+      }
+      break;
+  }
+
+  // Redirect to different pages depending on the route
   function handleClick() {
     switch (location.pathname) {
       case '/ticket':
-        if (!isTravelSelectedEmpty) navigate('/ticket/seats');
+        if (!isScheduleIdEmpty && isReturnDateEmpty) {
+          dispatch(enableSeatPage());
+          navigate(`/ticket/seats?${searchParams}`);
+        } else if (!isScheduleIdEmpty && !isReturnScheduleIdEmpty) {
+          dispatch(enableSeatPage());
+          navigate(`/ticket/seats?${searchParams}`);
+        }
         break;
       case '/ticket/seats':
         if (areSeatsSelected) {
-          navigate('/ticket/passengers');
+          dispatch(enablePassengersPage());
+          navigate(`/ticket/passengers?${searchParams}`);
         }
         break;
-      case 'ticket/passengers':
-        navigate('/ticket/summary');
+      case '/ticket/passengers':
+        dispatch(enableSummaryPage());
+        navigate(`/ticket/summary?${searchParams}`);
         break;
       case '/ticket/summary':
-        navigate('/ticket/payment');
+        dispatch(enablePaymentPage());
+        navigate(`/ticket/payment?${searchParams}`);
         break;
-
+      case '/ticket/payment':
+        dispatch(enableCheckoutPage());
+        dispatch(resetPages());
+        navigate(`/ticket/checkout?${searchParams}`);
+        break;
       default:
         break;
     }
@@ -53,7 +118,7 @@ function ContinueButton() {
       onClick={() => handleClick()}
       disabled={isButtonDisabled}
     >
-      Continuar
+      {text}
     </button>
   );
 }

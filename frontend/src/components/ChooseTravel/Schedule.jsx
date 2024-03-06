@@ -1,29 +1,93 @@
 import './Schedule.css';
 import green from '../../assets/arrow-green.svg';
 import white from '../../assets/arrow-white.svg';
-
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
-import isEqual from 'lodash-es/isEqual';
+import { useSearchParams } from 'react-router-dom';
+import { formatDuration, formatTime } from '../../utils/dateUtils.js';
+import { useDispatch } from 'react-redux';
+import { cleanAllSeatsSelected } from '../../store/Seat/seatActions.js';
+// import { useQueryParams } from '../../hooks/useQueryParams.js';
+// import { createMessage } from '../../utils/websocketUtils.js';
+// import useWebSocket from 'react-use-websocket';
+// import { WEBSOCKET_URL } from '../../services/api.js';
 
-export default function Schedule({ departure, arrival, origin, destination }) {
+export default function Schedule({
+  id,
+  departureTime,
+  arrivalTime,
+  origin,
+  destination,
+  price,
+  duration,
+  isReturn
+}) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  // const queryParams = useQueryParams();
   const dispatch = useDispatch();
-  const travelSelected = useSelector((state) => state.travel.travelSelected);
 
-  // TODO: Adjust when back-end endpoint is available
-  const travel = {
-    departure: departure,
-    arrival: arrival,
-    origin: origin,
-    destination: destination
-  };
+  // Get the selected seats from the Redux store
+  // const selectedSeats = useSelector((state) => state.seat.seatSelected);
+
+  // websocket stuff
+  // const socketUrl = `${WEBSOCKET_URL}?scheduleId=${queryParams.scheduleId}&date=${queryParams.date}`;
+  // const { sendMessage } = useWebSocket(socketUrl);
 
   const handleSelect = () => {
-    dispatch({ type: 'SET_TRAVEL_SELECTED', payload: travel });
+    if (isReturn) {
+      // Get the current returnScheduleId from the search params
+      const currentReturnScheduleId = searchParams.get('returnScheduleId');
+
+      // Only call setSearchParams if the id has changed
+      if (currentReturnScheduleId !== id.toString()) {
+        // Update the returnScheduleId in the search params
+        searchParams.set('returnScheduleId', id);
+
+        // Update the search params in the URL
+        setSearchParams(searchParams);
+      }
+    } else {
+      // Get the current returnScheduleId from the search params
+      const currentScheduleId = searchParams.get('scheduleId');
+
+      // Only call setSearchParams if the id has changed
+      if (currentScheduleId !== id.toString()) {
+        // Update the returnScheduleId in the search params
+        searchParams.set('scheduleId', id);
+
+        // TODO: mini-bug when the user refreshes page, the selected seats remain locked,
+        // will fix this later when back-end adds validation
+        // When the user selects a new schedule, clear all seats and unlock them
+        // selectedSeats.forEach((seat) => {
+        //   const message = createMessage(
+        //     queryParams.scheduleId,
+        //     queryParams.date,
+        //     seat.seatId,
+        //     'lock'
+        //   );
+        //   sendMessage(JSON.stringify(message));
+        // });
+        dispatch(cleanAllSeatsSelected());
+
+        // Update the search params in the URL
+        setSearchParams(searchParams);
+      }
+    }
   };
 
-  // Check if the current Schedule component is active
-  const isActive = isEqual(travel, travelSelected); // Use _.isEqual to compare the objects
+  let isActive;
+
+  if (isReturn) {
+    // Check if the current Schedule component is active
+    isActive = searchParams.get('returnScheduleId') === id.toString();
+  } else {
+    // Check if the current Schedule component is active
+    isActive = searchParams.get('scheduleId') === id.toString();
+  }
+
+  //formatting
+  const formattedDepartureTime = formatTime(departureTime);
+  const formattedDuration = formatDuration(duration);
+  const formattedPrice = parseFloat(price).toString();
 
   return (
     // TODO: button encompasando cambia los estilos, son aplicados por defecto a los elementos button
@@ -34,23 +98,23 @@ export default function Schedule({ departure, arrival, origin, destination }) {
       >
         <div className='flex gap-12 mb-8 md:mb-0 '>
           <div className='gap-2 flex flex-col text-[#486284]'>
-            <p className='font-medium text-lg '>{departure}</p>
+            <p className='font-medium text-lg '>{formattedDepartureTime}</p>
             <p className='text-sm font-normal '> {origin}</p>
           </div>
 
           <div className='flex flex-col items-center gap-1'>
-            <p className='font-normal text-xs'>4 hrs 45min</p>
+            <p className='font-normal text-xs'>{formattedDuration}</p>
             <img src={isActive ? white : green} alt='' />
           </div>
 
           <div className='gap-2 flex flex-col text-[#486284]'>
-            <p className='font-medium text-lg'>{arrival}</p>
+            <p className='font-medium text-lg'>{arrivalTime}</p>
             <p className='text-sm font-normal'>{destination} </p>
           </div>
         </div>
 
         <div className='bg-emerald-500 px-5 py-0 rounded-[10px] h-11 flex items-center w-40 justify-center md:static absolute bottom-2 right-2 '>
-          <p> $00.000-</p>
+          <p> ${formattedPrice}</p>
         </div>
       </div>
     </button>
@@ -58,8 +122,12 @@ export default function Schedule({ departure, arrival, origin, destination }) {
 }
 
 Schedule.propTypes = {
-  departure: PropTypes.string.isRequired,
-  arrival: PropTypes.string.isRequired,
+  id: PropTypes.number.isRequired,
+  departureTime: PropTypes.string.isRequired,
+  arrivalTime: PropTypes.string.isRequired,
   origin: PropTypes.string.isRequired,
-  destination: PropTypes.string.isRequired
+  destination: PropTypes.string.isRequired,
+  price: PropTypes.string.isRequired,
+  duration: PropTypes.string.isRequired,
+  isReturn: PropTypes.bool.isRequired
 };

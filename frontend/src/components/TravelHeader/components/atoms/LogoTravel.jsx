@@ -8,6 +8,11 @@ function LogoTravel({ imagePath }) {
         to={'/'}
         className='font-semibold xl:text-4xl lg:text-3xl ml-1 lg:-ml-1'
       >
+        {imagePath ? (
+          <img src={imagePath} alt='Logo' className='w-full' />
+        ) : (
+          'Logo'
+        )}
         {imagePath ? <LogoImage /> : 'Logo'}
       </Link>
     </div>

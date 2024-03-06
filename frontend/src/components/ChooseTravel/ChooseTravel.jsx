@@ -1,56 +1,106 @@
-import bus from '../../assets/bus-icon.svg';
-import arrow from '../../assets/arrow.svg';
-import Schedule from './Schedule';
 import BackButton from '../BackButton';
 import ContinueButton from '../ContinueButton';
-import MapRoute from '../MapRoute/MapRoute';
+import { useFetchSchedulesWithoutRedirect } from '../../hooks/useSchedules';
+import { formatDate } from '../../utils/dateUtils';
+import { useQueryParams } from '../../hooks/useQueryParams';
+import ScheduleList from './ScheduleList';
+import { useInitializeStateFromUrl } from '../../hooks/useInitializeStateFromUrl';
+// import MapRoute from '../MapRoute/MapRoute';
 
 export default function ChooseTravel() {
+  useInitializeStateFromUrl(false);
+
+  // reads from URL Params to make the fetch, this is a way of
+  // retaining the information through refreshes in a way that
+  // doesn't use redux or localStorage for server side things, which avoids data duplication and issues with sync
+  const queryParams = useQueryParams();
+  console.log(queryParams.origin);
+
+  // Fetch the departure schedules
+  const {
+    data: departureSchedules,
+    error: errorDepartureSchedules,
+    isLoading: isLoadingDepartureSchedules
+  } = useFetchSchedulesWithoutRedirect({
+    originCity: queryParams.origin,
+    destinationCity: queryParams.destination,
+    date: queryParams.date,
+    returnDate: queryParams.returnDate,
+    enabled: true
+  });
+
+  // Fetch the return schedules if a return date is specified
+  const isReturnDateEmpty = queryParams.searchParams.get('returnDate') === '';
+  const {
+    data: returnSchedules,
+    error: errorReturnSchedules,
+    isLoading: isLoadingReturnSchedules
+  } = useFetchSchedulesWithoutRedirect({
+    originCity: queryParams.destination,
+    destinationCity: queryParams.origin,
+    date: queryParams.returnDate,
+    // If ReturnDate is empty then don't fetch ReturnSchedules
+    enabled: !isReturnDateEmpty
+  });
+
+  // formatting
+  const formattedDate = formatDate(queryParams.date);
+  let formattedReturnDate;
+  if (!isReturnDateEmpty) {
+    formattedReturnDate = formatDate(queryParams.returnDate);
+  }
+
+  // TODO: make real loading modals/placeholders
+  if (isLoadingDepartureSchedules) {
+    return <div>Loading...</div>;
+  }
+
+  if (isLoadingReturnSchedules) {
+    return <div>Loading...</div>;
+  }
+
+  if (errorDepartureSchedules) {
+    return <div>Error: {errorDepartureSchedules.message}</div>;
+  }
+
   return (
     <div className='bg-background-light flex-grow w-full relative'>
       <div className='h-full mx-auto lg:max-w-screen-xl p-4 overflow-hidden'>
         <div className='flex items-center justify-between gap-12  md:flex-row flex-col md:mx-0 mx-2 mt-6'>
           <div className=' w-full md:w-3/5'>
-            <div className='flex  my-7'>
-              <img src={bus} alt='' className='mr-5' />
-              <div>
-                <h2 className='font-bold text-xl tracking-tight'>
-                  Elige tu viaje de ida
-                </h2>
-                <p className='flex gap-4 justify-center text-[#486284] font-medium'>
-                  Buenos Aires <img src={arrow} alt='' /> Mar del Plata
-                </p>
-              </div>
-            </div>
+            <ScheduleList
+              title='Elige tu viaje de ida'
+              origin={queryParams.origin}
+              destination={queryParams.destination}
+              formattedDate={formattedDate}
+              schedules={departureSchedules}
+              isReturn={false}
+              isLoading={isLoadingDepartureSchedules}
+              error={errorDepartureSchedules}
+            />
 
-            <div>
-              <p className='font-semibold text-xl mb-4'>
-                Jueves 14 de Marzo 2024{' '}
-              </p>
-              <Schedule
-                departure={'8:00PM'}
-                arrival={'12:45PM'}
-                origin={'Buenos Aires'}
-                destination={'Mar del Plata'}
-              />
-              <Schedule
-                departure={'12:00PM'}
-                arrival={'4:45AM'}
-                origin={'Mar del Plata'}
-                destination={'Buenos Aires'}
-              />
-            </div>
+            <ScheduleList
+              title='Elige tu viaje de vuelta'
+              origin={queryParams.destination}
+              destination={queryParams.origin}
+              formattedDate={formattedReturnDate}
+              schedules={returnSchedules}
+              isReturn={true}
+              isLoading={isLoadingReturnSchedules}
+              error={errorReturnSchedules}
+            />
+
             <div className='flex justify-between mt-5'>
               <BackButton />
-              <ContinueButton />
+              <ContinueButton text='Continuar' />
             </div>
           </div>
           <div className='lg:w-2/5 w-full'>
             {/* Actualizar para obtener las coordenadas del store segun la ruta seleccionada [latitud, longitud] */}
-            <MapRoute
-              origin={[-58.3816, -34.6037]}
-              destination={[-57.5575, -38.0023]}
-            />
+            {/* <MapRoute
+          origin={[-58.3816, -34.6037]}
+          destination={[-57.5575, -38.0023]}
+        /> */}
           </div>
         </div>
       </div>

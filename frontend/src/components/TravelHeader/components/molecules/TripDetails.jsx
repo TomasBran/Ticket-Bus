@@ -4,30 +4,34 @@ import PersonSVG from '../../../../assets/TravelHeader/Person.svg';
 import CalendarSVG from '../../../../assets/TravelHeader/Calendar.svg';
 import SingleCityLink from '../atoms/SingleCityLink';
 import IconCityLink from '../atoms/IconCityLink';
+import { useQueryParams } from '../../../../hooks/useQueryParams';
+import { formatDateForTravelHeader } from '../../../../utils/dateUtils.js';
 
 function TripDetails() {
+  const queryParams = useQueryParams();
+  const date = formatDateForTravelHeader(queryParams.date);
+
   return (
     <>
-      <SingleCityLink href='/#' text='Buenos Aires' />
+      <SingleCityLink href='/#' text={queryParams.origin} />
       <IconCityLink
         iconSrc={ArrowRightSVG}
         iconAlt='Arrow Right'
         href='/#'
-        text='Mar del Plata'
+        text={queryParams.destination}
       />
       <LinkWithIcon
         link='/#'
         iconSrc={CalendarSVG}
         altText='Calendar'
-        text='14 de
-            Marzo'
+        text={date}
         position='start'
       />
       <LinkWithIcon
         link='/#'
         iconSrc={PersonSVG}
         altText='Person'
-        text='1 Adulto'
+        text={`${queryParams.passengers} Adulto`}
         position='end'
       />
     </>

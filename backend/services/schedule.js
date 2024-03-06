@@ -1,4 +1,4 @@
-const { Schedule } = require('../database/models');
+const { Schedule, sequelize } = require('../database/models');
 const { Route, Terminal, City } = require('../database/models');
 const { getDayName } = require('../helpers/getDayName');
 
@@ -65,22 +65,6 @@ const getAvailableSchedules = async (
 
   // Get schedules for the extracted route IDs and given day of the week
   const schedules = await Schedule.findAll({
-    include: [
-      {
-        model: Route,
-        as: 'route',
-        include: [
-          {
-            model: Terminal,
-            as: 'originTerminal'
-          },
-          {
-            model: Terminal,
-            as: 'destinationTerminal'
-          }
-        ]
-      }
-    ],
     where: {
       routeId: routeIds,
       day: getDayName(dayOfWeek)
