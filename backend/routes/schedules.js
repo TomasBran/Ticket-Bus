@@ -18,7 +18,7 @@ const router = Router();
 
 router.get('/all', getAll);
 
-router.get('/id/:id', getById);
+router.get('/:id', getById);
 
 router.get('/', getAvailableSchedules);
 

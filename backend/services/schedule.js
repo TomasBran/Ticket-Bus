@@ -1,6 +1,14 @@
-const { Schedule, sequelize } = require('../database/models');
-const { Route, Terminal, City } = require('../database/models');
+
+const { Schedule } = require('../database/models');
+const {
+  Route,
+  Vehicle,
+  Amenity,
+  Terminal,
+  City
+} = require('../database/models');
 const { getDayName } = require('../helpers/getDayName');
+const getArrivalTime = require('../helpers/getArrivalTime');
 
 // Obtener todos los horarios
 const getAll = async () => {
@@ -10,8 +18,65 @@ const getAll = async () => {
 // Obtener un horario por su id
 const getById = async (id) => {
   const schedule = await Schedule.findByPk(id, {
-    include: { all: true, nested: false }
+    include: [
+      {
+        model: Route,
+        as: 'route',
+        include: [
+          {
+            model: Terminal,
+            as: 'originTerminal',
+            attributes: { exclude: ['cityId'] },
+            include: { model: City, as: 'city' }
+          },
+          {
+            model: Terminal,
+            as: 'destinationTerminal',
+            attributes: { exclude: ['cityId'] },
+            include: { model: City, as: 'city' }
+          }
+        ],
+        attributes: { exclude: ['originId', 'destinationId'] }
+      },
+      {
+        model: Vehicle,
+        as: 'vehicles',
+        attributes: { exclude: ['routeId', 'vehicleId'] },
+        exclude: ['routeId', 'vehicleId'],
+        include: {
+          model: Amenity,
+          as: 'amenities',
+          attributes: { include: ['name'] }
+        }
+      }
+    ]
   });
+
+  if (schedule) {
+    const scheduleJSON = schedule.toJSON();
+
+    scheduleJSON.arrivalTime = getArrivalTime(
+      schedule.departureTime,
+      schedule.route.duration
+    );
+
+    if (
+      scheduleJSON.vehicles &&
+      Array.isArray(scheduleJSON.vehicles.amenities)
+    ) {
+      scheduleJSON.vehicles.amenities = scheduleJSON.vehicles.amenities.map(
+        (amenity) => amenity.name
+      );
+    } else if (scheduleJSON.vehicles) {
+      // Si 'vehicles' es un objeto y no un array, asumimos que cada horario tiene un solo vehículo
+      scheduleJSON.vehicles.amenities = scheduleJSON.vehicles.amenities.map(
+        (amenity) => amenity.name
+      );
+    }
+
+    return scheduleJSON; // Devuelve el objeto JSON modificado, no la instancia de Sequelize
+  }
+
   return schedule;
 };
 
@@ -65,13 +130,61 @@ const getAvailableSchedules = async (
 
   // Get schedules for the extracted route IDs and given day of the week
   const schedules = await Schedule.findAll({
+    include: [
+      {
+        model: Route,
+        as: 'route',
+        include: [
+          {
+            model: Terminal,
+            as: 'originTerminal',
+            attributes: { exclude: ['cityId'] },
+            include: { model: City, as: 'city' }
+          },
+          {
+            model: Terminal,
+            as: 'destinationTerminal',
+            attributes: { exclude: ['cityId'] },
+            include: { model: City, as: 'city' }
+          }
+        ],
+        attributes: { exclude: ['originId', 'destinationId'] }
+      },
+      {
+        model: Vehicle,
+        as: 'vehicles',
+        attributes: { exclude: ['routeId', 'vehicleId'] },
+        include: {
+          model: Amenity,
+          as: 'amenities',
+          attributes: { include: ['name'] }
+        }
+      }
+    ],
     where: {
       routeId: routeIds,
       day: getDayName(dayOfWeek)
-    },
-    include: { all: true, nested: false }
+    }
   });
-  return schedules;
+  schedules.forEach((schedule) => {
+    schedule.setDataValue(
+      'arrivalTime',
+      getArrivalTime(schedule.departureTime, schedule.route.duration)
+    );
+  });
+
+  const processedSchedules = schedules.map((schedule) => {
+    const scheduleJSON = schedule.toJSON();
+    if (scheduleJSON.vehicles && scheduleJSON.vehicles.amenities) {
+      // Transforma los amenities a un array de nombres
+      scheduleJSON.vehicles.amenities = scheduleJSON.vehicles.amenities.map(
+        (amenity) => amenity.name
+      );
+    }
+    return scheduleJSON;
+  });
+
+  return processedSchedules;
 };
 
 // Crear un horario
