@@ -6,6 +6,7 @@ import bus from '../../assets/AdminUsuario/bus.svg';
 import pasajeros from '../../assets/AdminUsuario/pasajeros.svg';
 import pagos from '../../assets/AdminUsuario/pagos.svg';
 import arrow from '../../assets/AdminUsuario/arrow-down.svg';
+import { Link } from 'react-router-dom';
 
 export default function SideBarAdmin() {
   const name = 'Ariel Mendez';
@@ -83,7 +84,9 @@ export default function SideBarAdmin() {
             <div className='flex items-center justify-between mb-5'>
               <div className='flex gap-2'>
                 <img className='w-[27px]' src={''} />
-                <p className='font-semibold text-lg'>Crear</p>
+                <Link to='/admin/CreateRoute'>
+                  <p className='font-semibold text-lg'>Crear</p>
+                </Link>{' '}
               </div>
               <div>
                 <img className='w-4' src={''} />
@@ -118,8 +121,10 @@ export default function SideBarAdmin() {
             <div className='flex items-center justify-between mb-5'>
               <div className='flex gap-2'>
                 <img className='w-[27px]' src={''} />
+
                 <p className='font-semibold text-lg'>Crear</p>
               </div>
+
               <div>
                 <img className='w-4' src={''} />
               </div>

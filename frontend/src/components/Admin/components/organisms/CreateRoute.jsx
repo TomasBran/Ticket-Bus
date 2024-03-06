@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import rutas from '../../../../assets/AdminUsuario/rutas.svg';
 import { useRoutes } from '../../../../hooks/useRoutes';
 import InputSelectAdmin from '../atoms/InputSelectAdmin';
@@ -7,6 +7,31 @@ import SubmitButton from '../atoms/SubmitButton';
 import CancelButton from '../atoms/CancelButton';
 
 function CreateRoute() {
+  const [cities, setCities] = useState([]);
+  const [durationError, setDurationError] = useState('');
+
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const response = await fetch(
+          'https://ticket-bus-api-dev.up.railway.app/api/v1/cities'
+        );
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        const cities = data.body.cities;
+        setCities(cities);
+
+        // Actualiza el estado con los datos de las ciudades
+      } catch (error) {
+        console.error('Error fetching cities:', error);
+      }
+    };
+
+    fetchCities();
+  }, []); // Ejecutar solo una vez al montar el componente
+
   const { createNewRoute } = useRoutes();
   const [selectedOption1, setSelectedOption1] = useState('');
   const [selectedOption2, setSelectedOption2] = useState('');
@@ -65,6 +90,15 @@ function CreateRoute() {
   };
 
   const handleCreateRoute = async () => {
+    // Validar el formato de la duración
+    const durationRegex = /^\d{2}:\d{2}:\d{2}$/; // Expresión regular para HH:MM:SS
+    if (!durationRegex.test(newRouteData.duration)) {
+      setDurationError('Ingrese la duración en el formato correcto(00:00:00)');
+      return;
+    } else {
+      setDurationError(''); // Limpiar el mensaje de error si la validación es exitosa
+    }
+
     try {
       await createNewRoute(newRouteData);
       console.log('Estado actual de newRouteData:', newRouteData);
@@ -85,21 +119,15 @@ function CreateRoute() {
     }
   };
 
-  const options1 = [
-    { value: 1, option: 'Bariloche' },
-    { value: 2, option: 'Mar de plata' },
-    { value: 3, option: 'Mar de plata' },
-    { value: 4, option: 'Mar de plata' },
-    { value: 5, option: 'Mar de plata' }
-  ];
-
-  const options2 = [
-    { value: 1, option: 'Bariloche' },
-    { value: 2, option: 'Mar de plata' },
-    { value: 3, option: 'Mar de plata' },
-    { value: 4, option: 'Mar de plata' },
-    { value: 5, option: 'Mar de plata' }
-  ];
+  // Mapeamos las ciudades a las opciones
+  const options1 = cities.map((city) => ({
+    value: city.id,
+    option: city.name
+  }));
+  const options2 = cities.map((city) => ({
+    value: city.id,
+    option: city.name
+  }));
 
   return (
     <div className='shadow border rounded-md border-[#00000040] w-full m-32 mb-72'>
@@ -131,6 +159,7 @@ function CreateRoute() {
             name='duration'
             type='text'
           />
+
           <InputTextAdmin
             text='Distancia'
             placeholder={'700km'}
@@ -148,6 +177,11 @@ function CreateRoute() {
             type='number'
           />
         </div>
+        {durationError && (
+          <p className='text-red-500 p-0 m-0 mt-3 text-center'>
+            {durationError}
+          </p>
+        )}
         <div className='flex flex-wrap gap-5 justify-center 2xl:justify-between mt-16 '>
           <CancelButton text='Cancelar' />
           <SubmitButton text='Crear ruta' onClick={handleCreateRoute} />
