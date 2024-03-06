@@ -6,6 +6,7 @@ import Toast from './Toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { useQueryParams } from '../../hooks/useQueryParams';
 import useWebSocket from 'react-use-websocket';
+import { WEBSOCKET_URL } from '../../services/api';
 
 const SectionA_SeatsId = [
   1, 2, 5, 6, 9, 10, 11, 12, 13, 14, 17, 18, 21, 22, 25, 26, 29, 30, 33, 34, 37,
@@ -35,9 +36,11 @@ const Seats = (props) => {
   const scheduleId = queryParams.scheduleId;
   const date = queryParams.date;
 
-  const socketUrl = `wss://ticket-bus-api-dev.up.railway.app/ws/v1/seats/schedule?scheduleId=${scheduleId}&date=${date}`;
+  const socketUrl = `${WEBSOCKET_URL}?scheduleId=${scheduleId}&date=${date}`;
 
-  const { lastMessage } = useWebSocket(socketUrl);
+  const { lastMessage, sendMessage } = useWebSocket(socketUrl);
+
+  console.log(lastMessage);
 
   // Create a map from the seats array for efficient lookup
   const seatsMap = new Map(seats.map((seat) => [seat.number, seat]));
@@ -118,6 +121,17 @@ const Seats = (props) => {
       return;
     }
 
+    // Construct the message
+    const message = {
+      scheduleId: queryParams.scheduleId,
+      date: queryParams.date,
+      seatId: currentSeat.seatId,
+      type: 'lock' //always lock, might change depending on back changes
+    };
+
+    // Send the message
+    sendMessage(JSON.stringify(message));
+
     setSeats((prevState) => {
       const newState = prevState.map((seat) => {
         if (seat.number === number) {
@@ -136,7 +150,7 @@ const Seats = (props) => {
         dispatch({
           type: 'ADD_SEAT_SELECTED',
           payload: {
-            seatId: newSeat.seatId, // Use id instead of seatId
+            seatId: newSeat.seatId,
             number: newSeat.number
           }
         });
@@ -144,7 +158,7 @@ const Seats = (props) => {
         dispatch({
           type: 'REMOVE_SEAT_SELECTED',
           payload: {
-            seatId: newSeat.seatId, // Use id instead of seatId
+            seatId: newSeat.seatId,
             number: newSeat.number
           }
         });

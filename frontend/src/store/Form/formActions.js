@@ -22,3 +22,18 @@ export const updatePassengerForm = (newSeatQuantity) => ({
   type: 'UPDATE_PASSENGER_FORM',
   payload: newSeatQuantity
 });
+
+export const setPassengerFieldValue = ({ field, value, seatId }) => ({
+  type: 'SET_PASSENGER_FIELD_VALUE',
+  payload: { field, value, seatId }
+});
+
+export const setPassengerFormFilled = (form, formFilled, seatId) => ({
+  type: 'SET_PASSENGER_FORM_FILLED',
+  payload: { form, formFilled, seatId }
+});
+
+export const setCurrentSeatId = (seatId) => ({
+  type: 'SET_CURRENT_SEAT_ID',
+  payload: seatId
+});

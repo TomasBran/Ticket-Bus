@@ -4,6 +4,12 @@ import white from '../../assets/arrow-white.svg';
 import PropTypes from 'prop-types';
 import { useSearchParams } from 'react-router-dom';
 import { formatDuration, formatTime } from '../../utils/dateUtils.js';
+import { useDispatch } from 'react-redux';
+import { cleanAllSeatsSelected } from '../../store/Seat/seatActions.js';
+// import { useQueryParams } from '../../hooks/useQueryParams.js';
+// import { createMessage } from '../../utils/websocketUtils.js';
+// import useWebSocket from 'react-use-websocket';
+// import { WEBSOCKET_URL } from '../../services/api.js';
 
 export default function Schedule({
   id,
@@ -16,6 +22,15 @@ export default function Schedule({
   isReturn
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
+  // const queryParams = useQueryParams();
+  const dispatch = useDispatch();
+
+  // Get the selected seats from the Redux store
+  // const selectedSeats = useSelector((state) => state.seat.seatSelected);
+
+  // websocket stuff
+  // const socketUrl = `${WEBSOCKET_URL}?scheduleId=${queryParams.scheduleId}&date=${queryParams.date}`;
+  // const { sendMessage } = useWebSocket(socketUrl);
 
   const handleSelect = () => {
     if (isReturn) {
@@ -38,6 +53,20 @@ export default function Schedule({
       if (currentScheduleId !== id.toString()) {
         // Update the returnScheduleId in the search params
         searchParams.set('scheduleId', id);
+
+        // TODO: mini-bug when the user refreshes page, the selected seats remain locked,
+        // will fix this later when back-end adds validation
+        // When the user selects a new schedule, clear all seats and unlock them
+        // selectedSeats.forEach((seat) => {
+        //   const message = createMessage(
+        //     queryParams.scheduleId,
+        //     queryParams.date,
+        //     seat.seatId,
+        //     'lock'
+        //   );
+        //   sendMessage(JSON.stringify(message));
+        // });
+        dispatch(cleanAllSeatsSelected());
 
         // Update the search params in the URL
         setSearchParams(searchParams);

@@ -19,10 +19,8 @@ export function useFetchSchedules({
     ['specificSchedule', originCity, destinationCity, date, returnDate],
     () => fetchSpecificSchedules(originCity, destinationCity, date, returnDate),
     {
-      retry: false,
       enabled: enabled,
       refetchOnWindowFocus: false,
-      staleTime: 1000 * 60 * 5, // data is fresh for 5 minutes
       onSuccess: () => {
         redirectToTicketPage(
           navigate,

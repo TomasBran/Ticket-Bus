@@ -13,7 +13,6 @@ export default function ChooseTravel() {
   // reads from URL Params to make the fetch, this is a way of
   // retaining the information through refreshes in a way that
   // doesn't use redux or localStorage for server side things, which avoids data duplication and issues with sync
-
   const queryParams = useQueryParams();
   console.log(queryParams.origin);
 

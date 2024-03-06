@@ -1,19 +1,42 @@
-import TitleSubtitle from '../molecules/TitleSubtitle';
-import SelectForm from '../atoms/SelectForm';
-import FormNavigation from '../molecules/FormNavigation';
-import TextInput from '../atoms/TextInput';
-import PassengerList from '../atoms/PassengerList';
-import { useEffect, useState } from 'react';
+import { useEffect, useCallback, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setPassengerFieldValue,
+  setPassengerFormFilled
+} from '../../../../store/Form/formActions.js';
+import TextInput from '../../../CreditCardForm/TextInput';
+import SelectForm from '../../../CreditCardForm/SelectForm';
+import PassengerList from '../atoms/PassengerList.jsx';
+import FormNavigation from '../molecules/FormNavigation.jsx';
+import TitleSubtitle from '../molecules/TitleSubtitle.jsx';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
 
-function PassengerForm({ auth }) {
+function PassengerForm({ auth, seatId }) {
+  const dispatch = useDispatch();
   const seatQuantity = useSelector((state) => state.seat.seatQuantity);
+  const formRedux =
+    useSelector((state) =>
+      state.form.passengerForm.find((form) => form.seatId === seatId)
+    ) || {};
+  const [form, setForm] = useState(formRedux);
   const [isToggled, setIsToggled] = useState(false);
+  const currentSeatId = useSelector((state) => state.form.currentSeatId);
+
+  useEffect(() => {
+    if (formRedux) {
+      setForm(formRedux);
+    } else {
+      // Reset form or set to initial state
+      setForm({
+        /* initial state */
+      });
+    }
+  }, [seatId]);
 
   // Controla la Lista de Pasajeros si Inicio Sesión
   const handleToggleChange = (value) => {
     setIsToggled(value);
+    console.log(value);
   };
 
   useEffect(() => {
@@ -32,6 +55,39 @@ function PassengerForm({ auth }) {
     { name: 'Benjamin', lastname: 'Fernandez', dni: '45678901' }
   ];
 
+  // Validation
+  const validateForm = useCallback((form) => {
+    const areAllFieldsFilled = Object.values(form).every(
+      (field) => field !== ''
+    );
+
+    return areAllFieldsFilled;
+  }, []);
+
+  // Handlers
+  const handleInputChange = (event) => {
+    const { id, value } = event.target;
+    setForm((prevForm) => ({ ...prevForm, [id]: value }));
+    dispatch(setPassengerFieldValue({ field: id, value, seatId }));
+  };
+
+  const handleDocumentTypeChange = (option) => {
+    setForm((prevForm) => ({ ...prevForm, documentType: option.value }));
+    dispatch(
+      setPassengerFieldValue({
+        field: 'documentType',
+        value: option.value,
+        seatId
+      })
+    );
+  };
+
+  // Use useEffect to monitor form validity
+  useEffect(() => {
+    const formValid = validateForm(form);
+    dispatch(setPassengerFormFilled('passengerForm', formValid, seatId));
+  }, [form, validateForm, dispatch, seatId]);
+
   const filteredPassengers = passengers.slice(0, seatQuantity);
 
   return (
@@ -47,22 +103,46 @@ function PassengerForm({ auth }) {
               passenger={seatQuantity}
               onClick={handleToggleChange}
               isAuth={auth}
+              currentSeatId={currentSeatId}
             />
             <PassengerList
               passengers={filteredPassengers}
               isToggled={isToggled}
             />
           </div>
-
-          <TextInput id='name' placeholder='NOMBRE' />
-
-          <TextInput id='lastname' placeholder='APELLIDO' />
-
           <div className='mb-4'>
-            <SelectForm options={options} />
+            <TextInput
+              id='name'
+              placeholder='NOMBRE'
+              value={form.name || ''}
+              onChange={handleInputChange}
+            />
           </div>
-
-          <TextInput id='dni' placeholder='N° DE DOCUMENTO' />
+          <div className='mb-4'>
+            <TextInput
+              id='lastname'
+              placeholder='APELLIDO'
+              value={form.lastname || ''}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className='mb-4'>
+            <SelectForm
+              options={options}
+              placeholder='TIPO DE DOCUMENTO'
+              className={'z-10'}
+              onChange={handleDocumentTypeChange}
+              value={form.documentType || ''}
+            />
+          </div>
+          <div className='mb-4'>
+            <TextInput
+              id='document'
+              placeholder='N° DE DOCUMENTO'
+              value={form.document || ''}
+              onChange={handleInputChange}
+            />
+          </div>
         </form>
       </div>
     </div>
@@ -70,7 +150,8 @@ function PassengerForm({ auth }) {
 }
 
 PassengerForm.propTypes = {
-  auth: PropTypes.bool.isRequired
+  auth: PropTypes.bool.isRequired,
+  seatId: PropTypes.string.isRequired
 };
 
 export default PassengerForm;

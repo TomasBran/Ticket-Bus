@@ -34,6 +34,11 @@ const seatReducer = (state = initialState, action) => {
           (seat) => !(seat.seatId === action.payload.seatId) // Use seatId instead of id
         )
       };
+    case 'CLEAN_ALL_SEATS_SELECTED':
+      return {
+        ...state,
+        seatSelected: []
+      };
     default:
       return state;
   }

@@ -8,8 +8,8 @@ const updatePassengerFormMiddleware =
       const newSeatQuantity = action.payload;
       dispatch({ type: 'UPDATE_PASSENGER_FORM', payload: newSeatQuantity });
     } else if (action.type === 'ADD_SEAT_SELECTED') {
-      const newSeatId = action.payload.id;
-      const passengerForm = getState().form.passengerForm; // Adjust this based on your state structure
+      const newSeatId = action.payload.seatId; // Use seatId instead of id
+      const passengerForm = getState().form.passengerForm;
 
       // Check if the seatId already exists in the passengerForm
       const seatIdExists = passengerForm.some(
@@ -17,13 +17,21 @@ const updatePassengerFormMiddleware =
       );
 
       if (!seatIdExists) {
-        dispatch({
-          type: 'UPDATE_PASSENGER_FORM_WITH_SEAT',
-          payload: newSeatId
-        });
+        // Find the index of the first passenger form without a seatId
+        const passengerIndexToUpdate = passengerForm.findIndex(
+          (passenger) => !passenger.seatId
+        );
+
+        if (passengerIndexToUpdate !== -1) {
+          // Dispatch an action to update the passenger form with the new seatId
+          dispatch({
+            type: 'UPDATE_PASSENGER_FORM_WITH_SEAT',
+            payload: { index: passengerIndexToUpdate, seatId: newSeatId }
+          });
+        }
       }
     } else if (action.type === 'REMOVE_SEAT_SELECTED') {
-      const removedSeatId = action.payload.id;
+      const removedSeatId = action.payload.seatId; // Use seatId instead of id
       dispatch({
         type: 'REMOVE_PASSENGER_FORM_WITH_SEAT',
         payload: removedSeatId

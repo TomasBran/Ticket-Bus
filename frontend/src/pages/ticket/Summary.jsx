@@ -101,16 +101,6 @@ function Summary() {
               <div className='mb-4'>
                 <PaymentMethod />
               </div>
-              <TripDetailsCard
-                title='Viaje de Regreso'
-                startLocation='Buenos Aires'
-                endLocation='Mar del Plata'
-                arrowImage={ArrowRightSVG}
-                departureDate='Jueves 14 Mar'
-                arrivalDate='Jueves 14 Mar'
-                startTime='08:00'
-                endTime='12:00'
-              />
               <div className='flex md:justify-center'>
                 <ContinueButton text='Continuar' />
               </div>

@@ -18,6 +18,7 @@ const initialState = {
   },
   passengerForm: [],
   // Other forms go here
+  currentSeatId: null,
   paymentMethod: '',
   acceptedTos: false
 };
@@ -78,24 +79,17 @@ const formReducer = (state = initialState, action) => {
       };
     }
     case 'UPDATE_PASSENGER_FORM_WITH_SEAT': {
-      const newSeatId = action.payload;
+      const { index, seatId } = action.payload;
       let newPassengerForm = [...state.passengerForm];
 
-      // Find the index of the first passenger form without a seatId
-      const passengerIndexToUpdate = newPassengerForm.findIndex(
-        (passenger) => !passenger.seatId
-      );
+      // Create a new passenger object with the updated seatId
+      const updatedPassenger = {
+        ...newPassengerForm[index],
+        seatId: seatId
+      };
 
-      if (passengerIndexToUpdate !== -1) {
-        // Create a new passenger object with the updated seatId
-        const updatedPassenger = {
-          ...newPassengerForm[passengerIndexToUpdate],
-          seatId: newSeatId
-        };
-
-        // Replace the old passenger object with the new one
-        newPassengerForm[passengerIndexToUpdate] = updatedPassenger;
-      }
+      // Replace the old passenger object with the new one
+      newPassengerForm[index] = updatedPassenger;
 
       return {
         ...state,
@@ -116,6 +110,60 @@ const formReducer = (state = initialState, action) => {
       return {
         ...state,
         passengerForm: newPassengerForm
+      };
+    }
+    case 'SET_PASSENGER_FIELD_VALUE': {
+      const { field, value, seatId } = action.payload;
+      let newPassengerForm = [...state.passengerForm];
+
+      // Find the passenger form with the seatId and update its field
+      const passengerIndexToUpdate = newPassengerForm.findIndex(
+        (passenger) => passenger.seatId === seatId
+      );
+
+      if (passengerIndexToUpdate !== -1) {
+        const updatedPassenger = {
+          ...newPassengerForm[passengerIndexToUpdate],
+          [field]: value
+        };
+
+        // Replace the old passenger object with the new one
+        newPassengerForm[passengerIndexToUpdate] = updatedPassenger;
+      }
+
+      return {
+        ...state,
+        passengerForm: newPassengerForm
+      };
+    }
+    case 'SET_PASSENGER_FORM_FILLED': {
+      const { formFilled, seatId } = action.payload;
+      let newPassengerForm = [...state.passengerForm];
+
+      // Find the passenger form with the seatId and update its formFilled status
+      const passengerIndexToUpdate = newPassengerForm.findIndex(
+        (passenger) => passenger.seatId === seatId
+      );
+
+      if (passengerIndexToUpdate !== -1) {
+        const updatedPassenger = {
+          ...newPassengerForm[passengerIndexToUpdate],
+          formFilled
+        };
+
+        // Replace the old passenger object with the new one
+        newPassengerForm[passengerIndexToUpdate] = updatedPassenger;
+      }
+
+      return {
+        ...state,
+        passengerForm: newPassengerForm
+      };
+    }
+    case 'SET_CURRENT_SEAT_ID': {
+      return {
+        ...state,
+        currentSeatId: action.payload
       };
     }
 

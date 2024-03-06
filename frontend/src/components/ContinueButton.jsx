@@ -29,6 +29,7 @@ function ContinueButton({ text }) {
   const buyerFormFilled = useSelector(
     (state) => state.form.buyerForm.formFilled
   );
+  const passengerForm = useSelector((state) => state.form.passengerForm);
 
   const paymentMethod = useSelector((state) => state.form.paymentMethod);
   const acceptedTos = useSelector((state) => state.form.acceptedTos);
@@ -40,6 +41,7 @@ function ContinueButton({ text }) {
 
   // Check if the required number of seats have been selected
   const areSeatsSelected = seatSelected.length == seatQuantity;
+  const areAllFormsFilled = passengerForm.every((form) => form.formFilled);
 
   // Determine whether the button should be disabled
   let isButtonDisabled;
@@ -53,7 +55,11 @@ function ContinueButton({ text }) {
       isButtonDisabled = !buyerFormFilled || !paymentMethod || !acceptedTos;
       break;
     case '/ticket/payment':
-      isButtonDisabled = !(creditCardFormFilled && buyerFormFilled);
+      isButtonDisabled = !(
+        creditCardFormFilled &&
+        buyerFormFilled &&
+        areAllFormsFilled
+      );
       break;
     default:
       if (isReturnDateEmpty) {
