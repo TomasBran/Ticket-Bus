@@ -1,5 +1,11 @@
+import RoutesComponent from '../../../components/RoutesComponent';
+
 function UserSettings() {
-  return <div>UserSettings</div>;
+  return (
+    <div>
+      <RoutesComponent />
+    </div>
+  );
 }
 
 export default UserSettings;

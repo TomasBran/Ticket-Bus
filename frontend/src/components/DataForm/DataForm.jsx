@@ -1,20 +1,116 @@
 import TitleForm from '../PassengerForm/components/atoms/TitleForm';
-import TextInput from '../PassengerForm/components/atoms/TextInput';
-// import SelectForm from '../PassengerForm/components/atoms/SelectForm';
-import { useState } from 'react';
-import SelectForm from '../PassengerForm/components/atoms/SelectForm';
+import TextInput from '../../components/CreditCardForm/TextInput';
+// import TextInput from '../buyerForm/components/atoms/TextInput';
+// import SelectForm from '../buyerForm/components/atoms/SelectForm';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import SelectForm from '../../components/CreditCardForm/SelectForm';
+import MailInput from '../../components/CreditCardForm/MailInput';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setAcceptedTos,
+  setFieldValue,
+  setFormFilled
+} from '../../store/Form/formActions';
 
 export default function DataForm() {
+  // Constants
   const options = [
     { value: 'dni', option: 'DNI' },
     { value: 'passport', option: 'Pasaporte' }
   ];
+  const dispatch = useDispatch();
+  const formRedux = useSelector((state) => state.form.buyerForm);
+  const acceptedTos = useSelector((state) => state.form.acceptedTos);
 
-  const [isChecked, setIsChecked] = useState(false);
+  // State
+  const [form, setForm] = useState({
+    name: formRedux.name || '',
+    lastname: formRedux.lastname || '',
+    document: formRedux.document || '',
+    email: formRedux.email || '',
+    documentType: formRedux.documentType || '',
+    confirmEmail: formRedux.confirmEmail || ''
+  });
+  const [isChecked, setIsChecked] = useState(acceptedTos || false);
+  const [formValid, setFormValid] = useState(false);
 
-  const handleCheckboxChange = () => {
-    setIsChecked(!isChecked);
+  // Handlers
+  const handleInputChange = (event) => {
+    const { id, value } = event.target;
+    setForm((prevForm) => ({ ...prevForm, [id]: value }));
   };
+
+  const handleDocumentTypeChange = (option) => {
+    setForm((prevForm) => ({ ...prevForm, documentType: option.value }));
+  };
+
+  const handleCheckboxChange = (event) => {
+    setIsChecked(event.target.checked);
+    dispatch(setAcceptedTos(event.target.checked));
+  };
+
+  function handleEmailChange(event) {
+    handleInputChange(event);
+  }
+
+  function handleConfirmEmailChange(event) {
+    handleInputChange(event);
+  }
+
+  // Validation
+  const validateForm = useCallback((form) => {
+    const areAllFieldsFilled = Object.values(form).every(
+      (field) => field !== ''
+    );
+    const areEmailsValid = form.email === form.confirmEmail;
+    return areAllFieldsFilled && areEmailsValid;
+  }, []);
+
+  // Use useEffect to monitor form validity
+  useEffect(() => {
+    setFormValid(validateForm(form));
+    // Dispatch an action if the form is valid
+    if (formValid) {
+      dispatch(setFormFilled('buyerForm', true));
+    } else {
+      dispatch(setFormFilled('buyerForm', false));
+    }
+  }, [form, validateForm, dispatch, formValid]);
+
+  // Save form state to Redux when component unmounts
+  const prevFormRef = useRef();
+  useEffect(() => {
+    prevFormRef.current = form;
+  });
+  useEffect(() => {
+    return () => {
+      const prevForm = prevFormRef.current;
+      for (const field in prevForm) {
+        if (prevForm[field] !== formRedux[field]) {
+          dispatch(setFieldValue('buyerForm', field, prevForm[field]));
+        }
+      }
+    };
+  }, [dispatch, formRedux]);
+
+  useEffect(() => {
+    return () => {
+      const prevForm = prevFormRef.current;
+      for (const field in prevForm) {
+        if (prevForm[field] !== formRedux[field]) {
+          dispatch(setFieldValue('buyerForm', field, prevForm[field]));
+        }
+      }
+    };
+  }, [dispatch, formRedux]);
+
+  const validateEmails = useCallback(() => {
+    return (
+      form.email !== '' &&
+      form.email === form.confirmEmail &&
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
+    );
+  }, [form.email, form.confirmEmail]);
 
   return (
     <div>
@@ -22,23 +118,52 @@ export default function DataForm() {
 
       <div>
         <form
-          className=' bg-[#D3DCE7] rounded-md lg:px-24 md:pt-12 md:pb-7 pt-4 pb-2 px-4 shadow font-medium'
+          className=' bg-[#D3DCE7] rounded-md lg:px-24 md:pt-12 md:pb-7 pt-4 pb-2 px-4 shadow font-medium space-y-4'
           autoComplete='off'
         >
-          <TextInput id='name' placeholder='NOMBRE' />
-
-          <TextInput id='lastname' placeholder='APELLIDO' />
-
-          <div className='mb-4'>
-            <SelectForm options={options} />
-          </div>
-          <TextInput id='document' placeholder='Nº DE DOCUMENTO' />
-
-          <TextInput id='email' placeholder='CORREO ELECTRONICO' />
+          <TextInput
+            id='name'
+            placeholder='NOMBRE'
+            value={form.name}
+            onChange={handleInputChange}
+          />
 
           <TextInput
-            id='confirmemail'
+            id='lastname'
+            placeholder='APELLIDO'
+            value={form.lastname}
+            onChange={handleInputChange}
+          />
+
+          <SelectForm
+            options={options}
+            placeholder='TIPO DE DOCUMENTO'
+            className={'z-10'}
+            onChange={handleDocumentTypeChange}
+            value={form.documentType}
+          />
+
+          <TextInput
+            id='document'
+            placeholder='Nº DE DOCUMENTO'
+            onChange={handleInputChange}
+            value={form.document}
+          />
+
+          <MailInput
+            id='email'
+            placeholder='CORREO ELECTRONICO'
+            value={form.email}
+            onChange={handleEmailChange}
+            isValid={validateEmails()}
+          />
+
+          <MailInput
+            id='confirmEmail'
             placeholder='CONFIRMA TU CORREO ELECTRONICO'
+            value={form.confirmEmail}
+            onChange={handleConfirmEmailChange}
+            isValid={validateEmails()}
           />
           <div className='pt-3'>
             <a

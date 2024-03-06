@@ -3,8 +3,54 @@ import BackButton from '../../components/BackButton.jsx';
 import CreditCardForm from '../../components/CreditCardForm/CreditCardForm.jsx';
 import TripDetailsCard from '../../components/TripDetailsCard.jsx';
 import Timer from '../../components/Timer/Timer.jsx';
+import ContinueButton from '../../components/ContinueButton.jsx';
+import { useQueryParams } from '../../hooks/useQueryParams.js';
+import { getScheduleTimeDetails } from '../../utils/timeUtils.js';
+import { useFetchScheduleById } from '../../hooks/useSchedules';
 
 function Payment() {
+  const queryParams = useQueryParams();
+
+  // Fetch the departure schedule by ID
+  const {
+    data: departureSchedules,
+    error: errorDepartureSchedules,
+    isLoading: isLoadingDepartureSchedules
+  } = useFetchScheduleById({
+    scheduleId: queryParams.scheduleId,
+    enabled: true
+  });
+
+  // Fetch the return schedule by ID if the returnDate in URL is not empty
+  const isReturnDateEmpty = queryParams.searchParams.get('returnDate') === '';
+  const {
+    data: returnSchedules,
+    error: errorReturnSchedules,
+    isLoading: isLoadingReturnSchedules
+  } = useFetchScheduleById({
+    scheduleId: queryParams.returnScheduleId,
+    // If ReturnDate is empty then don't fetch ReturnSchedules
+    enabled: !isReturnDateEmpty
+  });
+
+  //formatting
+  const departureTimeDetails = getScheduleTimeDetails(
+    departureSchedules,
+    queryParams.date
+  );
+  const returnTimeDetails = isReturnDateEmpty
+    ? null
+    : getScheduleTimeDetails(returnSchedules, queryParams.returnDate);
+
+  // TODO: make real loading modals/placeholders
+  if (isLoadingDepartureSchedules || isLoadingReturnSchedules) {
+    return <div>Loading...</div>;
+  }
+
+  if (errorDepartureSchedules || errorReturnSchedules) {
+    return <div>Error: {errorDepartureSchedules || errorReturnSchedules}</div>;
+  }
+
   return (
     <main className='bg-[#EFF0F0] flex-grow w-full relative'>
       <div className='h-full mx-auto lg:max-w-screen-xl p-4 overflow-hidden'>
@@ -12,27 +58,30 @@ function Payment() {
           {/* Columna 1 */}
           <div className='lg:col-span-1 md:col-span-2 sm:col-span-2 col-span-1 relative order-2 sm:order-1'>
             <div className='mb-3 md:h-16'></div>
-
-            <TripDetailsCard
-              title='Viaje de Ida'
-              startLocation='Buenos Aires'
-              endLocation='Mar del Plata'
-              arrowImage={ArrowRightSVG}
-              departureDate='Jueves 14 Mar'
-              arrivalDate='Jueves 14 Mar'
-              startTime='08:00'
-              endTime='12:00'
-            />
-            <TripDetailsCard
-              title='Viaje de Regreso'
-              startLocation='Buenos Aires'
-              endLocation='Mar del Plata'
-              arrowImage={ArrowRightSVG}
-              departureDate='Jueves 14 Mar'
-              arrivalDate='Jueves 14 Mar'
-              startTime='08:00'
-              endTime='12:00'
-            />
+            {departureSchedules && (
+              <TripDetailsCard
+                title='Viaje de Ida'
+                startLocation={queryParams.origin}
+                endLocation={queryParams.destination}
+                arrowImage={ArrowRightSVG}
+                departureDate={departureTimeDetails.departureDate}
+                arrivalDate={departureTimeDetails.arrivalDate}
+                startTime={departureTimeDetails.formattedDepartureTime}
+                endTime={departureTimeDetails.calculatedArrivalTime}
+              />
+            )}
+            {returnSchedules && (
+              <TripDetailsCard
+                title='Viaje de Regreso'
+                startLocation={queryParams.destination}
+                endLocation={queryParams.origin}
+                arrowImage={ArrowRightSVG}
+                departureDate={returnTimeDetails.departureDate}
+                arrivalDate={returnTimeDetails.arrivalDate}
+                startTime={returnTimeDetails.formattedDepartureTime}
+                endTime={returnTimeDetails.calculatedArrivalTime}
+              />
+            )}
             <div className='flex md:justify-center'>
               <BackButton />
             </div>
@@ -48,6 +97,7 @@ function Payment() {
             <div className='mb-3 md:h-16'></div>
 
             <Timer />
+            <ContinueButton text='Pagar' />
           </div>
         </div>
       </div>

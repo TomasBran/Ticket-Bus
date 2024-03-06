@@ -12,11 +12,14 @@ import MyPurchases from './pages/auth/user/MyPurchases.jsx';
 import UserSettings from './pages/auth/user/UserSettings.jsx';
 import UserTravelDistance from './pages/auth/user/UserTravelDistance.jsx';
 import Summary from './pages/ticket/Summary.jsx';
+import RequireScheduleData from './hoc/RequireScheduleData.jsx';
 import SeatSelection from './pages/ticket/SeatSelection.jsx';
+import NotFoundPage from './pages/Error/NotFoundPage.jsx';
 import LoginForm from './components/Login/LoginForm.jsx';
 import AdminLayout from './layouts/AdminLayout.jsx';
 import HomeAdmin from './pages/auth/admin/HomeAdmin.jsx';
 import CreateRoutesPage from './pages/auth/admin/CreateRoutesPage.jsx';
+
 
 export const router = createBrowserRouter([
   {
@@ -35,23 +38,44 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <TravelSelection />
+        element: (
+          <RequireScheduleData>
+            <TravelSelection />
+          </RequireScheduleData>
+        )
       },
       {
         path: 'seats',
-        element: <SeatSelection />
+        element: (
+          <RequireScheduleData>
+            <SeatSelection />
+          </RequireScheduleData>
+        )
       },
       {
         path: 'passengers',
-        element: <TripReservation />
+        element: (
+          <RequireScheduleData>
+            <TripReservation />
+          </RequireScheduleData>
+        )
       },
       {
         path: 'summary',
-        element: <Summary />
+
+        element: (
+          <RequireScheduleData>
+            <Summary />
+          </RequireScheduleData>
+        )
       },
       {
         path: 'payment',
-        element: <Payment />
+        element: (
+          <RequireScheduleData>
+            <Payment />
+          </RequireScheduleData>
+        )
       }
     ]
   },
@@ -76,6 +100,10 @@ export const router = createBrowserRouter([
   {
     path: '/register',
     element: <RegisterAlt />
+  },
+  {
+    path: '*',
+    element: <NotFoundPage />
   },
   {
     path: '/login',

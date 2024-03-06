@@ -4,8 +4,52 @@ import BackButton from '../../components/BackButton.jsx';
 import DataForm from '../../components/DataForm/DataForm.jsx';
 import ContinueButton from '../../components/ContinueButton.jsx';
 import { PaymentMethod } from '../../components/PaymentMethod/PaymentMethod.jsx';
+import { useQueryParams } from '../../hooks/useQueryParams.js';
+import { useFetchScheduleById } from '../../hooks/useSchedules.js';
+import { getScheduleTimeDetails } from '../../utils/timeUtils.js';
 
 function Summary() {
+  const queryParams = useQueryParams();
+  // Fetch the departure schedule by ID
+  const {
+    data: departureSchedules,
+    error: errorDepartureSchedules,
+    isLoading: isLoadingDepartureSchedules
+  } = useFetchScheduleById({
+    scheduleId: queryParams.scheduleId,
+    enabled: true
+  });
+
+  // Fetch the return schedule by ID if the returnDate in URL is not empty
+  const isReturnDateEmpty = queryParams.searchParams.get('returnDate') === '';
+  const {
+    data: returnSchedules,
+    error: errorReturnSchedules,
+    isLoading: isLoadingReturnSchedules
+  } = useFetchScheduleById({
+    scheduleId: queryParams.returnScheduleId,
+    // If ReturnDate is empty then don't fetch ReturnSchedules
+    enabled: !isReturnDateEmpty
+  });
+
+  //formatting
+  const departureTimeDetails = getScheduleTimeDetails(
+    departureSchedules,
+    queryParams.date
+  );
+  const returnTimeDetails = isReturnDateEmpty
+    ? null
+    : getScheduleTimeDetails(returnSchedules, queryParams.returnDate);
+
+  // TODO: make real loading modals/placeholders
+  if (isLoadingDepartureSchedules || isLoadingReturnSchedules) {
+    return <div>Loading...</div>;
+  }
+
+  if (errorDepartureSchedules || errorReturnSchedules) {
+    return <div>Error: {errorDepartureSchedules || errorReturnSchedules}</div>;
+  }
+
   return (
     <div className='bg-background-light flex-grow w-full relative'>
       <div className='h-full mx-auto lg:max-w-screen-xl p-4 overflow-hidden'>
@@ -16,24 +60,27 @@ function Summary() {
 
             <TripDetailsCard
               title='Viaje de Ida'
-              startLocation='Buenos Aires'
-              endLocation='Mar del Plata'
+              startLocation={queryParams.origin}
+              endLocation={queryParams.destination}
               arrowImage={ArrowRightSVG}
-              departureDate='Jueves 14 Mar'
-              arrivalDate='Jueves 14 Mar'
-              startTime='08:00'
-              endTime='12:00'
+              departureDate={departureTimeDetails.departureDate}
+              arrivalDate={departureTimeDetails.arrivalDate}
+              startTime={departureTimeDetails.formattedDepartureTime}
+              endTime={departureTimeDetails.calculatedArrivalTime}
             />
-            <TripDetailsCard
-              title='Viaje de Regreso'
-              startLocation='Buenos Aires'
-              endLocation='Mar del Plata'
-              arrowImage={ArrowRightSVG}
-              departureDate='Jueves 14 Mar'
-              arrivalDate='Jueves 14 Mar'
-              startTime='08:00'
-              endTime='12:00'
-            />
+            {returnSchedules && (
+              <TripDetailsCard
+                title='Viaje de Regreso'
+                startLocation={queryParams.destination}
+                endLocation={queryParams.origin}
+                arrowImage={ArrowRightSVG}
+                departureDate={returnTimeDetails.departureDate}
+                arrivalDate={returnTimeDetails.arrivalDate}
+                startTime={returnTimeDetails.formattedDepartureTime}
+                endTime={returnTimeDetails.calculatedArrivalTime}
+              />
+            )}
+
             <div className='flex md:justify-center'>
               <BackButton />
             </div>
@@ -54,18 +101,8 @@ function Summary() {
               <div className='mb-4'>
                 <PaymentMethod />
               </div>
-              <TripDetailsCard
-                title='Viaje de Regreso'
-                startLocation='Buenos Aires'
-                endLocation='Mar del Plata'
-                arrowImage={ArrowRightSVG}
-                departureDate='Jueves 14 Mar'
-                arrivalDate='Jueves 14 Mar'
-                startTime='08:00'
-                endTime='12:00'
-              />
               <div className='flex md:justify-center'>
-                <ContinueButton />
+                <ContinueButton text='Continuar' />
               </div>
             </div>
           </div>

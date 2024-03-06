@@ -16,8 +16,8 @@ const seatReducer = (state = initialState, action) => {
       if (
         state.seatSelected.some(
           (seat) =>
-            seat.id === action.payload.id &&
-            seat.section === action.payload.section
+            seat.seatId === action.payload.seatId &&
+            seat.number === action.payload.number
         )
       ) {
         // If the seat is already selected, ignore the action
@@ -31,12 +31,13 @@ const seatReducer = (state = initialState, action) => {
       return {
         ...state,
         seatSelected: state.seatSelected.filter(
-          (seat) =>
-            !(
-              seat.id === action.payload.id &&
-              seat.section === action.payload.section
-            )
+          (seat) => !(seat.seatId === action.payload.seatId) // Use seatId instead of id
         )
+      };
+    case 'CLEAN_ALL_SEATS_SELECTED':
+      return {
+        ...state,
+        seatSelected: []
       };
     default:
       return state;

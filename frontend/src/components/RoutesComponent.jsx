@@ -4,7 +4,7 @@ import { useRoutes } from '../hooks/useRoutes';
 function RoutesComponent() {
   const { createNewRoute, routes } = useRoutes();
 
-  console.log(routes, 'a');
+  console.log(routes);
 
   const [newRouteData, setNewRouteData] = useState({
     originId: '',

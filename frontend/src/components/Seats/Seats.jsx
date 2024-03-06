@@ -4,6 +4,9 @@ import wc from '../../assets/Seats/wc.svg';
 import PropTypes from 'prop-types';
 import Toast from './Toast';
 import { useDispatch, useSelector } from 'react-redux';
+import { useQueryParams } from '../../hooks/useQueryParams';
+import useWebSocket from 'react-use-websocket';
+import { WEBSOCKET_URL } from '../../services/api';
 
 const SectionA_SeatsId = [
   1, 2, 5, 6, 9, 10, 11, 12, 13, 14, 17, 18, 21, 22, 25, 26, 29, 30, 33, 34, 37,
@@ -24,61 +27,91 @@ const Seats = (props) => {
   const dispatch = useDispatch();
   const seatSelected = useSelector((state) => state.seat.seatSelected); // Read from Redux store
 
-  const [sectionA, setSectionA] = useState([]);
-  const [sectionB, setSectionB] = useState([]);
-  const [sectionC, setSectionC] = useState([]);
-  const [sectionD, setSectionD] = useState([]);
-  const [sectionE, setSectionE] = useState([]);
+  const [seats, setSeats] = useState([]);
   const [floor, setFloor] = useState('first');
   const [showToast, setShowToast] = useState(false);
   const { tickets = 1 } = props;
 
-  const initializeSection = (
-    setSection,
-    seatAmount,
-    seatsId,
-    sectionLetter
-  ) => {
-    const newArray = Array.from({ length: seatAmount }, (_, index) => {
+  const queryParams = useQueryParams();
+  const scheduleId = queryParams.scheduleId;
+  const date = queryParams.date;
+
+  const socketUrl = `${WEBSOCKET_URL}?scheduleId=${scheduleId}&date=${date}`;
+
+  const { lastMessage, sendMessage } = useWebSocket(socketUrl);
+
+  console.log(lastMessage);
+
+  // Create a map from the seats array for efficient lookup
+  const seatsMap = new Map(seats.map((seat) => [seat.number, seat]));
+
+  // Function to create a section
+  const createSection = (sectionSeatsId) => {
+    return sectionSeatsId.map((seatNumber) => {
+      const seat = seatsMap.get(seatNumber);
+      if (seat) {
+        // If the seat is in the JSON data, use it
+        return seat;
+      } else {
+        // If the seat is not in the JSON data, add it as 'locked'
+        return {
+          number: seatNumber,
+          id: seatNumber, // Use seatNumber as id for simplicity
+          status: 'locked'
+        };
+      }
+    });
+  };
+
+  // Create sections
+  const sectionA = createSection(SectionA_SeatsId);
+  const sectionB = createSection(SectionB_SeatsId);
+  const sectionC = createSection(SectionC_SeatsId);
+  const sectionD = createSection(SectionD_SeatsId);
+  const sectionE = createSection(SectionE_SeatsId);
+
+  const initializeSeats = (seatsData) => {
+    const newArray = seatsData.map((seatData) => {
       const isSelected = seatSelected.some(
-        (seat) => seat.id === seatsId[index] && seat.section === sectionLetter
+        (seat) => seat.number === seatData.number
       );
       return {
-        section: sectionLetter,
-        id: seatsId[index],
-        status: isSelected ? 'selected' : 'free'
+        number: seatData.number,
+        seatId: seatData.id,
+        status: isSelected ? 'selected' : seatData.status
       };
     });
 
-    setSection(newArray);
+    setSeats(newArray);
   };
 
+  // useEffect(() => {
+  //   // Assume fetchSeatsData is a function that fetches data from the endpoint
+  //   const seatsData = json.body.seats;
+  //   initializeSeats(seatsData);
+  // }, []);
+
   useEffect(() => {
-    initializeSection(setSectionA, 22, SectionA_SeatsId, 'A');
-    initializeSection(setSectionB, 4, SectionB_SeatsId, 'B');
-    initializeSection(setSectionC, 14, SectionC_SeatsId, 'C');
-    initializeSection(setSectionD, 8, SectionD_SeatsId, 'D');
-    initializeSection(setSectionE, 4, SectionE_SeatsId, 'E');
-  }, []);
+    if (lastMessage !== null) {
+      const seatsData = JSON.parse(lastMessage.data).body.seats;
+      initializeSeats(seatsData);
+    }
+  }, [lastMessage]);
 
   const toggleFloor = (floor) => {
     setFloor(floor === 1 ? 'first' : 'second');
   };
 
-  const toggleSeat = (id, section, setSection) => {
-    const currentSeat = section.find((seat) => seat.id === id);
+  const toggleSeat = (number) => {
+    const currentSeat = seats.find((seat) => seat.number === number);
 
-    if (currentSeat.status === 'occupied') {
+    if (currentSeat.status === 'locked') {
       return;
     }
 
-    const selectedSeats = [
-      ...sectionA,
-      ...sectionB,
-      ...sectionC,
-      ...sectionD,
-      ...sectionE
-    ].filter((seat) => seat.status === 'selected').length;
+    const selectedSeats = seats.filter(
+      (seat) => seat.status === 'selected'
+    ).length;
 
     if (selectedSeats >= tickets && currentSeat.status !== 'selected') {
       if (showToast) {
@@ -88,9 +121,20 @@ const Seats = (props) => {
       return;
     }
 
-    setSection((prevState) => {
+    // Construct the message
+    const message = {
+      scheduleId: Number(queryParams.scheduleId),
+      date: queryParams.date,
+      seatId: currentSeat.seatId,
+      type: 'lock' //always lock, might change depending on back changes
+    };
+
+    // Send the message
+    sendMessage(JSON.stringify(message));
+
+    setSeats((prevState) => {
       const newState = prevState.map((seat) => {
-        if (seat.id === id) {
+        if (seat.number === number) {
           const newStatus = seat.status === 'free' ? 'selected' : 'free';
           return {
             ...seat,
@@ -101,16 +145,22 @@ const Seats = (props) => {
       });
 
       // Dispatch action based on the new state
-      const newSeat = newState.find((seat) => seat.id === id);
+      const newSeat = newState.find((seat) => seat.number === number);
       if (newSeat.status === 'selected') {
         dispatch({
           type: 'ADD_SEAT_SELECTED',
-          payload: { id: newSeat.id, section: newSeat.section }
+          payload: {
+            seatId: newSeat.seatId,
+            number: newSeat.number
+          }
         });
       } else if (newSeat.status === 'free') {
         dispatch({
           type: 'REMOVE_SEAT_SELECTED',
-          payload: { id: newSeat.id, section: newSeat.section }
+          payload: {
+            seatId: newSeat.seatId,
+            number: newSeat.number
+          }
         });
       }
 
@@ -149,34 +199,34 @@ const Seats = (props) => {
             <div className='grid grid-cols-2 grid-rows-2 gap-4 w-full justify-items-center'>
               {sectionD.map((seat) => (
                 <div
-                  key={seat.id}
+                  key={seat.number}
                   className={`flex justify-center items-center w-10 h-10 rounded-lg transition ${
-                    seat.status === 'occupied'
+                    seat.status === 'locked'
                       ? 'bg-gray-400 cursor-default text-gray-300 '
                       : seat.status === 'free'
                         ? 'bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-200 cursor-pointer text-white'
                         : 'bg-orange-500 hover:bg-orange-400 active:bg-orange-300 cursor-pointer text-white'
                   }`}
-                  onClick={() => toggleSeat(seat.id, sectionD, setSectionD)}
+                  onClick={() => toggleSeat(seat.number)}
                 >
-                  {String(seat.id).padStart(2, '0')}
+                  {String(seat.number).padStart(2, '0')}
                 </div>
               ))}
             </div>
             <div className='grid grid-cols-1 grid-rows-4 gap-4 w-full justify-items-end'>
               {sectionE.map((seat) => (
                 <div
-                  key={seat.id}
+                  key={seat.number}
                   className={`flex justify-center items-center w-10 h-10 rounded-lg transition ${
-                    seat.status === 'occupied'
+                    seat.status === 'locked'
                       ? 'bg-gray-400 cursor-default text-gray-300 '
                       : seat.status === 'free'
                         ? 'bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-200 cursor-pointer text-white'
                         : 'bg-orange-500 hover:bg-orange-400 active:bg-orange-300 cursor-pointer text-white'
                   }`}
-                  onClick={() => toggleSeat(seat.id, sectionE, setSectionE)}
+                  onClick={() => toggleSeat(seat.number)}
                 >
-                  {String(seat.id).padStart(2, '0')}
+                  {String(seat.number).padStart(2, '0')}
                 </div>
               ))}
             </div>
@@ -189,17 +239,17 @@ const Seats = (props) => {
           <div className='grid grid-cols-2 grid-rows-8 gap-4 w-3/6 justify-items-center'>
             {sectionA.map((seat) => (
               <div
-                key={seat.id}
+                key={seat.number}
                 className={`flex justify-center items-center w-10 h-10 rounded-lg transition ${
-                  seat.status === 'occupied'
+                  seat.status === 'locked'
                     ? 'bg-gray-400 cursor-default text-gray-300 '
                     : seat.status === 'free'
                       ? 'bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-200 cursor-pointer text-white'
                       : 'bg-orange-500 hover:bg-orange-400 active:bg-orange-300 cursor-pointer text-white'
                 }`}
-                onClick={() => toggleSeat(seat.id, sectionA, setSectionA)}
+                onClick={() => toggleSeat(seat.number)}
               >
-                {String(seat.id).padStart(2, '0')}
+                {String(seat.number).padStart(2, '0')}
               </div>
             ))}
           </div>
@@ -207,34 +257,34 @@ const Seats = (props) => {
             <div className='grid grid-cols-2 grid-rows-2 gap-4 w-full justify-items-center'>
               {sectionB.map((seat) => (
                 <div
-                  key={seat.id}
+                  key={seat.number}
                   className={`flex justify-center items-center w-10 h-10 rounded-lg transition ${
-                    seat.status === 'occupied'
+                    seat.status === 'locked'
                       ? 'bg-gray-400 cursor-default text-gray-300 '
                       : seat.status === 'free'
                         ? 'bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-200 cursor-pointer text-white'
                         : 'bg-orange-500 hover:bg-orange-400 active:bg-orange-300 cursor-pointer text-white'
                   }`}
-                  onClick={() => toggleSeat(seat.id, sectionB, setSectionB)}
+                  onClick={() => toggleSeat(seat.number)}
                 >
-                  {String(seat.id).padStart(2, '0')}
+                  {String(seat.number).padStart(2, '0')}
                 </div>
               ))}
             </div>
             <div className='grid grid-cols-2 grid-rows-4 gap-4 w-full justify-items-center'>
               {sectionC.map((seat) => (
                 <div
-                  key={seat.id}
+                  key={seat.number}
                   className={`flex justify-center items-center w-10 h-10 rounded-lg transition ${
-                    seat.status === 'occupied'
+                    seat.status === 'locked'
                       ? 'bg-gray-400 cursor-default text-gray-300 '
                       : seat.status === 'free'
                         ? 'bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-200 cursor-pointer text-white'
                         : 'bg-orange-500 hover:bg-orange-400 active:bg-orange-300 cursor-pointer text-white'
                   }`}
-                  onClick={() => toggleSeat(seat.id, sectionC, setSectionC)}
+                  onClick={() => toggleSeat(seat.number)}
                 >
-                  {String(seat.id).padStart(2, '0')}
+                  {String(seat.number).padStart(2, '0')}
                 </div>
               ))}
             </div>
