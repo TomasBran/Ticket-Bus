@@ -123,7 +123,7 @@ const Seats = (props) => {
 
     // Construct the message
     const message = {
-      scheduleId: queryParams.scheduleId,
+      scheduleId: Number(queryParams.scheduleId),
       date: queryParams.date,
       seatId: currentSeat.seatId,
       type: 'lock' //always lock, might change depending on back changes
