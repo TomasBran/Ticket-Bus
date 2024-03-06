@@ -7,6 +7,7 @@ import PasswordInput from '../../components/Register/PasswordInput';
 import NumberInput from '../../components/Register/NumberInput';
 import { useRegister } from '../../hooks/useRegister';
 import ErrorAlert from '../../components/Register/ErrorAlert';
+import logo from '../../assets/Logo/logo-horizontal.svg';
 
 const Register = () => {
   const [errorMessage, setErrorMessage] = useState(null);
@@ -39,19 +40,17 @@ const Register = () => {
   return (
     <div className='flex flex-1 h-screen'>
       <div className='relative hidden w-0 flex-1 lg:block'>
-        <Link to='/'>
-          <img
-            className='absolute inset-0 h-full w-full object-cover'
-            src={registerPhoto}
-            alt='Logo'
-          />
-        </Link>
+        <img
+          className='absolute inset-0 h-full w-full object-cover'
+          src={registerPhoto}
+          alt='Logo'
+        />
       </div>
       <div className='flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
         <div className='mx-auto w-full max-w-sm lg:w-96'>
           <div>
             <Link to='/'>
-              <img className='h-10 w-auto' src='' alt='Logo' />
+              <img className='h-10 w-auto' src={logo} alt='Logo' />
             </Link>
             <h2 className='mt-8 text-2xl font-bold leading-9 tracking-tight text-gray-900 uppercase'>
               REGISTRO DE USUARIO
