@@ -2163,6 +2163,65 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "errors": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "code": { "type": "string" },
+                              "expected": { "type": "string" },
+                              "received": { "type": "string" },
+                              "path": {
+                                "type": "array",
+                                "items": { "type": "string" }
+                              },
+                              "message": { "type": "string" }
+                            }
+                          }
+                        }
+                      },
+                      "required": ["errors"]
+                    }
+                  },
+                  "required": ["status", "code", "message", "body"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: ID inválido",
+                    "value": {
+                      "status": "fail",
+                      "code": 400,
+                      "message": "Error de validación",
+                      "body": {
+                        "errors": [
+                          {
+                            "code": "invalid_type",
+                            "expected": "number",
+                            "received": "string",
+                            "path": ["cityId"],
+                            "message": "Tipo ID Inválido, debe ser tipo INTEGER."
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
           "409": {
             "description": "Bad Request",
             "content": {
@@ -2404,6 +2463,65 @@
                           "createdAt": "2024-02-26T17:16:01.354Z",
                           "updatedAt": "2024-02-26T19:18:30.800Z"
                         }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "code": { "type": "integer" },
+                    "message": { "type": "string" },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "errors": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "code": { "type": "string" },
+                              "expected": { "type": "string" },
+                              "received": { "type": "string" },
+                              "path": {
+                                "type": "array",
+                                "items": { "type": "string" }
+                              },
+                              "message": { "type": "string" }
+                            }
+                          }
+                        }
+                      },
+                      "required": ["errors"]
+                    }
+                  },
+                  "required": ["status", "code", "message", "body"]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception: ID inválido",
+                    "value": {
+                      "status": "fail",
+                      "code": 400,
+                      "message": "Error de validación",
+                      "body": {
+                        "errors": [
+                          {
+                            "code": "invalid_type",
+                            "expected": "number",
+                            "received": "string",
+                            "path": ["cityId"],
+                            "message": "Tipo ID Inválido, debe ser tipo INTEGER."
+                          }
+                        ]
                       }
                     }
                   }
