@@ -14,13 +14,6 @@ const LOCK_SEAT_DELAY = process.env.LOCK_SEAT_DELAY || '5000'; // 5 seconds
 
 const wsServer = new WebSocketServer({ noServer: true });
 
-class WSError extends Error {
-  constructor(message) {
-    super();
-    this.message = message;
-  }
-}
-
 const sendError = (message = 'Error desconocido') =>
   JSON.stringify({ status: 'error', message });
 
@@ -29,7 +22,7 @@ const getQuery = (url, onError) => {
     const { searchParams } = new URL(url, WS_HOST);
 
     if (!(searchParams.has('scheduleId') && searchParams.has('date'))) {
-      throw new WSError('scheduleId and date are required');
+      throw new Error('scheduleId and date are required');
     }
 
     const query = {
@@ -39,7 +32,7 @@ const getQuery = (url, onError) => {
 
     const result = querySchema.safeParse(query);
     if (!result.success) {
-      throw new WSError(
+      throw new Error(
         result.error.issues.map((issue) => issue.message).join('; ')
       );
     }
