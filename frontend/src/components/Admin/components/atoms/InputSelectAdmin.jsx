@@ -1,11 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
-// De esta manera pasan los valores del select
-// const options = [{ value: 'Bariloche', option: 'Bariloche' }, { value: 'Mar de Plata', option: 'Mar de plata' }];
-// <InputSelectAdmin options={options} text={"Ruta"} />
-
-function InputSelectAdmin({ options, text }) {
+function InputSelectAdmin({ options, text, onSelect }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
   const ref = useRef(null);
@@ -28,8 +24,9 @@ function InputSelectAdmin({ options, text }) {
   };
 
   const handleOptionSelect = (option) => {
-    setSelectedOption(option);
+    setSelectedOption(option.option);
     setIsOpen(false);
+    onSelect(option); // Llama a la función onSelect con la opción seleccionada
   };
 
   return (
@@ -61,13 +58,13 @@ function InputSelectAdmin({ options, text }) {
         </svg>
       </button>
       {isOpen && (
-        <div className='absolute flex flex-col md:w-96 w-48 mt-1 border border-[#E2E8F0] shadow-lg bg-white'>
+        <div className='absolute z-10 flex flex-col md:w-96 w-48 mt-1 border border-[#E2E8F0] shadow-lg bg-white'>
           {options.map((option, index) => (
             <button
               type='button'
               key={index}
               className='flex items-center h-8 px-3 text-sm hover:bg-gray-200'
-              onClick={() => handleOptionSelect(option.option)}
+              onClick={() => handleOptionSelect(option)}
             >
               {option.option}
             </button>
@@ -81,11 +78,12 @@ function InputSelectAdmin({ options, text }) {
 InputSelectAdmin.propTypes = {
   options: PropTypes.arrayOf(
     PropTypes.shape({
-      value: PropTypes.string.isRequired,
+      value: PropTypes.number.isRequired,
       option: PropTypes.string.isRequired
     })
   ).isRequired,
-  text: PropTypes.string.isRequired
+  text: PropTypes.string.isRequired,
+  onSelect: PropTypes.func.isRequired
 };
 
 export default InputSelectAdmin;

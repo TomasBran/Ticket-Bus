@@ -1,6 +1,6 @@
 import SideBarAdmin from '../components/SideBarAdmin/SideBarAdmin';
 import LogoImage from '../components/LogoImage/LogoImage';
-import { Link } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import AccountButton from '../components/TravelHeader/components/atoms/AccountButton.jsx';
 
 const AdminLayout = () => {
@@ -16,7 +16,14 @@ const AdminLayout = () => {
 
         <AccountButton buttonText='Mi Cuenta' onClick={loginHandler} />
       </div>
-      <SideBarAdmin />
+      <div className='flex'>
+        <div className='w-[25%] xl:w-[20%]'>
+          <SideBarAdmin />
+        </div>
+        <div className='w-[75%]  flex items-center justify-center'>
+          <Outlet />
+        </div>
+      </div>
     </div>
   );
 };
