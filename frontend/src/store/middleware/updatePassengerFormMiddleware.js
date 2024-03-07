@@ -8,7 +8,7 @@ const updatePassengerFormMiddleware =
       const newSeatQuantity = action.payload;
       dispatch({ type: 'UPDATE_PASSENGER_FORM', payload: newSeatQuantity });
     } else if (action.type === 'ADD_SEAT_SELECTED') {
-      const newSeatId = action.payload.seatId; // Use seatId instead of id
+      const newSeatId = action.payload.seat.seatId;
       const passengerForm = getState().form.passengerForm;
 
       // Check if the seatId already exists in the passengerForm
@@ -24,6 +24,7 @@ const updatePassengerFormMiddleware =
 
         if (passengerIndexToUpdate !== -1) {
           // Dispatch an action to update the passenger form with the new seatId
+          console.log();
           dispatch({
             type: 'UPDATE_PASSENGER_FORM_WITH_SEAT',
             payload: { index: passengerIndexToUpdate, seatId: newSeatId }

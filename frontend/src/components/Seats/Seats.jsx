@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+// TODO: temporary
 import { useEffect, useState } from 'react';
 import driver from '../../assets/Seats/driver.svg';
 import wc from '../../assets/Seats/wc.svg';
@@ -7,6 +9,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useQueryParams } from '../../hooks/useQueryParams';
 import useWebSocket from 'react-use-websocket';
 import { WEBSOCKET_URL } from '../../services/api';
+import {
+  addSeatSelected,
+  removeSeatSelected
+} from '../../store/Seat/seatActions';
 
 const SectionA_SeatsId = [
   1, 2, 5, 6, 9, 10, 11, 12, 13, 14, 17, 18, 21, 22, 25, 26, 29, 30, 33, 34, 37,
@@ -23,18 +29,15 @@ const SectionD_SeatsId = [41, 42, 44, 45, 47, 48, 50, 51];
 
 const SectionE_SeatsId = [43, 46, 49, 52];
 
-const Seats = (props) => {
+const Seats = ({ tickets, scheduleId, date, isSelectingReturnSeats }) => {
   const dispatch = useDispatch();
   const seatSelected = useSelector((state) => state.seat.seatSelected); // Read from Redux store
 
   const [seats, setSeats] = useState([]);
   const [floor, setFloor] = useState('first');
   const [showToast, setShowToast] = useState(false);
-  const { tickets = 1 } = props;
 
   const queryParams = useQueryParams();
-  const scheduleId = queryParams.scheduleId;
-  const date = queryParams.date;
 
   const socketUrl = `${WEBSOCKET_URL}?scheduleId=${scheduleId}&date=${date}`;
 
@@ -72,9 +75,11 @@ const Seats = (props) => {
 
   const initializeSeats = (seatsData) => {
     const newArray = seatsData.map((seatData) => {
-      const isSelected = seatSelected.some(
-        (seat) => seat.number === seatData.number
-      );
+      const isSelected = isSelectingReturnSeats
+        ? seatSelected.return.some((seat) => seat.number === seatData.number)
+        : seatSelected.departure.some(
+            (seat) => seat.number === seatData.number
+          );
       return {
         number: seatData.number,
         seatId: seatData.id,
@@ -144,24 +149,23 @@ const Seats = (props) => {
         return seat;
       });
 
-      // Dispatch action based on the new state
+      // Dispatch action based on isSelectingReturnSeats
       const newSeat = newState.find((seat) => seat.number === number);
+
       if (newSeat.status === 'selected') {
-        dispatch({
-          type: 'ADD_SEAT_SELECTED',
-          payload: {
-            seatId: newSeat.seatId,
-            number: newSeat.number
-          }
-        });
+        dispatch(
+          addSeatSelected(isSelectingReturnSeats ? 'return' : 'departure', {
+            ...newSeat,
+            isActive: false
+          })
+        );
       } else if (newSeat.status === 'free') {
-        dispatch({
-          type: 'REMOVE_SEAT_SELECTED',
-          payload: {
-            seatId: newSeat.seatId,
-            number: newSeat.number
-          }
-        });
+        dispatch(
+          removeSeatSelected(isSelectingReturnSeats ? 'return' : 'departure', {
+            ...newSeat,
+            isActive: false
+          })
+        );
       }
 
       return newState;
@@ -304,7 +308,10 @@ const Seats = (props) => {
 };
 
 Seats.propTypes = {
-  tickets: PropTypes.number.isRequired
+  tickets: PropTypes.number.isRequired,
+  scheduleId: PropTypes.number.isRequired,
+  date: PropTypes.string.isRequired,
+  isSelectingReturnSeats: PropTypes.bool.isRequired
 };
 
 export default Seats;

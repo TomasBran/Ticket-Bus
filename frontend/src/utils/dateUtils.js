@@ -98,6 +98,8 @@ export function calculateTravelDates(
     departureDay
   );
 
+  departureDate.setDate(departureDate.getDate() + 1);
+
   // Calculate the arrival time
   const arrivalTimeString = calculateArrivalTime(departureTimeString, duration);
 
@@ -119,23 +121,28 @@ export function calculateTravelDates(
 }
 
 function formatSpanishDate(dateString) {
+  console.log(dateString, 'dateString');
   const date = new Date(dateString);
-  const options = { weekday: 'long', day: 'numeric', month: 'long' };
-  let formattedDate = date.toLocaleDateString('es-ES', options);
+  const day = date.getDate();
+  const month = date.getMonth();
 
-  // Split the string into an array ['weekday', 'day', 'de', 'month']
-  let dateParts = formattedDate.split(' ');
+  // Array of Spanish month abbreviations
+  const months = [
+    'Ene',
+    'Feb',
+    'Mar',
+    'Abr',
+    'May',
+    'Jun',
+    'Jul',
+    'Ago',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dic'
+  ];
 
-  // Cut the first three letters of the weekday and month, and capitalize them
-  dateParts[0] =
-    dateParts[0].slice(0, 3).charAt(0).toUpperCase() + dateParts[0].slice(1, 3);
-  dateParts[3] =
-    dateParts[3].slice(0, 3).charAt(0).toUpperCase() + dateParts[3].slice(1, 3);
-
-  // Join the parts back together into a string
-  formattedDate = dateParts.join(' ');
-
-  return formattedDate;
+  return `${day} de ${months[month]}`;
 }
 
 export function formatDateForTravelHeader(dateString) {

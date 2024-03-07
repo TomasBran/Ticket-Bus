@@ -37,3 +37,7 @@ export const setCurrentSeatId = (seatId) => ({
   type: 'SET_CURRENT_SEAT_ID',
   payload: seatId
 });
+
+export const nukePassengerForm = () => ({
+  type: 'NUKE_PASSENGER_FORM'
+});

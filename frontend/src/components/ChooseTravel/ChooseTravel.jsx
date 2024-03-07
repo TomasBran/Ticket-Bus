@@ -5,7 +5,8 @@ import { formatDate } from '../../utils/dateUtils';
 import { useQueryParams } from '../../hooks/useQueryParams';
 import ScheduleList from './ScheduleList';
 import { useInitializeStateFromUrl } from '../../hooks/useInitializeStateFromUrl';
-// import MapRoute from '../MapRoute/MapRoute';
+import MapRoute from '../MapRoute/MapRoute';
+import { useMemo } from 'react';
 
 export default function ChooseTravel() {
   useInitializeStateFromUrl(false);
@@ -42,6 +43,27 @@ export default function ChooseTravel() {
     // If ReturnDate is empty then don't fetch ReturnSchedules
     enabled: !isReturnDateEmpty
   });
+
+  // stop re-rendering of mapbox
+  const origin = useMemo(() => {
+    if (departureSchedules && departureSchedules.length > 0) {
+      return [
+        departureSchedules[0].route.originTerminal.lon,
+        departureSchedules[0].route.originTerminal.lat
+      ];
+    }
+    return null;
+  }, [departureSchedules]);
+
+  const destination = useMemo(() => {
+    if (departureSchedules && departureSchedules.length > 0) {
+      return [
+        departureSchedules[0].route.destinationTerminal.lon,
+        departureSchedules[0].route.destinationTerminal.lat
+      ];
+    }
+    return null;
+  }, [departureSchedules]);
 
   // formatting
   const formattedDate = formatDate(queryParams.date);
@@ -97,11 +119,10 @@ export default function ChooseTravel() {
           </div>
           <div className='lg:w-2/5 w-full'>
             {/* Actualizar para obtener las coordenadas del store segun la ruta seleccionada [latitud, longitud] */}
-            {/* <MapRoute
-          origin={[-58.3816, -34.6037]}
-          destination={[-57.5575, -38.0023]}
-        /> */}
+            <MapRoute origin={origin} destination={destination} />
           </div>
+          {/* departureSchedules[0].route.originTerminal.lat, departureSchedules[0].route.originTerminal.lon  */}
+          {/* departureSchedules[0].route.destinationTerminal.lat, departureSchedules[0].route.destinationTerminal.lon  */}
         </div>
       </div>
     </div>

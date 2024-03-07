@@ -3,16 +3,26 @@ export const setSeatQuantity = (seat) => ({
   payload: seat
 });
 
-export const addSeatSelected = (seatSelected) => ({
+export const addSeatSelected = (trip, seatSelected) => ({
   type: 'ADD_SEAT_SELECTED',
-  payload: seatSelected
+  payload: { trip, seat: seatSelected }
 });
 
-export const removeSeatSelected = (seatSelected) => ({
+export const removeSeatSelected = (trip, seatSelected) => ({
   type: 'REMOVE_SEAT_SELECTED',
-  payload: seatSelected
+  payload: { trip, seat: seatSelected }
 });
 
 export const cleanAllSeatsSelected = () => ({
   type: 'CLEAN_ALL_SEATS_SELECTED'
+});
+
+export const setIsSelectingReturnSeats = (value) => ({
+  type: 'SET_IS_SELECTING_RETURN_SEATS',
+  payload: value
+});
+
+export const setSeatActive = (trip, seatId, isActive) => ({
+  type: 'SET_SEAT_ACTIVE',
+  payload: { trip, seatId, isActive }
 });

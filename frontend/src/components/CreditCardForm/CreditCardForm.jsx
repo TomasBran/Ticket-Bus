@@ -34,11 +34,11 @@ function CreditCardForm() {
 
   // State
   const [form, setForm] = useState({
-    cardHolder: formRedux.cardHolder || 'Pepe Pepe',
-    cardNumber: formRedux.cardNumber || '378282246310005',
-    ccv: formRedux.ccv || '749',
-    email: formRedux.email || 'pepe@pepe.com',
-    confirmEmail: formRedux.confirmEmail || 'pepe@pepe.com',
+    cardHolder: formRedux.cardHolder || '',
+    cardNumber: formRedux.cardNumber || '',
+    ccv: formRedux.ccv || '',
+    email: formRedux.email || '',
+    confirmEmail: formRedux.confirmEmail || '',
     month: formRedux.month || '',
     year: formRedux.year || ''
   });

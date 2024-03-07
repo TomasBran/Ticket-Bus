@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+// TODO: temporary
 import { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -32,6 +34,10 @@ function PassengerForm({ auth, seatId }) {
       });
     }
   }, [seatId]);
+
+  useEffect(() => {
+    setForm(formRedux);
+  }, [formRedux]);
 
   // Controla la Lista de Pasajeros si Inicio Sesión
   const handleToggleChange = (value) => {
@@ -91,7 +97,7 @@ function PassengerForm({ auth, seatId }) {
   const filteredPassengers = passengers.slice(0, seatQuantity);
 
   return (
-    <div className='bg-background-light flex flex-col h-full relative'>
+    <div className='bg-background-light  flex flex-col h-full relative'>
       <TitleSubtitle />
       <div className='w-full'>
         <form
@@ -114,7 +120,7 @@ function PassengerForm({ auth, seatId }) {
             <TextInput
               id='name'
               placeholder='NOMBRE'
-              value={form.name || ''}
+              value={form.name}
               onChange={handleInputChange}
             />
           </div>
@@ -122,7 +128,7 @@ function PassengerForm({ auth, seatId }) {
             <TextInput
               id='lastname'
               placeholder='APELLIDO'
-              value={form.lastname || ''}
+              value={form.lastname}
               onChange={handleInputChange}
             />
           </div>
@@ -132,14 +138,14 @@ function PassengerForm({ auth, seatId }) {
               placeholder='TIPO DE DOCUMENTO'
               className={'z-10'}
               onChange={handleDocumentTypeChange}
-              value={form.documentType || ''}
+              value={form.documentType}
             />
           </div>
           <div className='mb-4'>
             <TextInput
               id='document'
               placeholder='N° DE DOCUMENTO'
-              value={form.document || ''}
+              value={form.document}
               onChange={handleInputChange}
             />
           </div>
