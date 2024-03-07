@@ -5,21 +5,17 @@ const PurchaseDetails = () => {
       <div className='w-full flex flex-col gap-1'>
         <div className='flex justify-between w-full'>
           <span className='font-medium text-lg'>Pasaje 1 - Ida</span>
-          <span className='font-bold text-lg'>$00.000-</span>
+          <span className='font-bold text-lg'>$50.000</span>
         </div>
         <div className='flex justify-between w-full'>
           <span className='font-medium text-lg'>Pasaje 2 - Vuelta</span>
-          <span className='font-bold text-lg'>$00.000-</span>
-        </div>
-        <div className='flex justify-between w-full'>
-          <span className='font-medium text-lg'>Total Descuentos</span>
-          <span className='font-bold text-lg'>$00.000-</span>
+          <span className='font-bold text-lg'>$70.000</span>
         </div>
       </div>
       <div className='daisy-divider' />
       <div className='flex justify-between w-full'>
         <span className='font-medium text-lg'>Total a pagar</span>
-        <span className='font-bold text-xl'>$00.000-</span>
+        <span className='font-bold text-xl'>$120.000</span>
       </div>
     </div>
   );

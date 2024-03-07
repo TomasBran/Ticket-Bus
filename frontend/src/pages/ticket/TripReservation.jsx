@@ -1,5 +1,4 @@
 import { BusTripDetails } from '../../components/BusTripDetails';
-import ReturnButton from '../../components/BusTripDetails/components/atoms/ReturnButton';
 import { PassengerForm } from '../../components/PassengerForm';
 import ContinueButton from '../../components/PassengerForm/components/atoms/ContinueButton';
 import PassengersClub from '../../components/PassengersClub/PassengersClub';
@@ -18,9 +17,7 @@ function TripReservation() {
           {/* Columna 1 */}
           <div className='lg:col-span-1 md:col-span-2 sm:col-span-2 col-span-1 relative order-2 sm:order-1'>
             <BusTripDetails />
-            <div className='hidden sm:block absolute bottom-1/3 left-1/2 transform -translate-x-1/2 bottom-md'>
-              <ReturnButton to={`/ticket/seats${queryParams}`} label='Volver' />
-            </div>
+            <div className='hidden sm:block absolute bottom-1/3 left-1/2 transform -translate-x-1/2 bottom-md'></div>
           </div>
 
           {/* Columna 2 */}
