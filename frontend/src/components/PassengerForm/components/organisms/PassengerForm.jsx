@@ -93,11 +93,11 @@ function PassengerForm({ auth, seatId }) {
   const filteredPassengers = passengers.slice(0, seatQuantity);
 
   return (
-    <div className='bg-background-light flex flex-col h-full relative'>
+    <div className='bg-background-light  flex flex-col h-full relative'>
       <TitleSubtitle />
       <div className='w-full'>
         <form
-          className='bg-[#D3DCE7] rounded-md lg:px-24 lg:pt-[3.3rem] lg:pb-14 md:pt-11 md:pb-14 sm:px-6 sm:pt-6 sm:pb-7 pt-4 pb-5 px-4 shadow'
+          className='bg-[#DEE5ED] rounded-md lg:px-24 lg:pt-[3.3rem] lg:pb-14 md:pt-11 md:pb-14 sm:px-6 sm:pt-6 sm:pb-7 pt-4 pb-5 px-4 shadow'
           autoComplete='off'
         >
           <div className='mb-6 relative'>

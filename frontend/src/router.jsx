@@ -58,28 +58,16 @@ export const router = createBrowserRouter([
       },
       {
         path: 'passengers',
-        element: (
-          <RequireScheduleData>
-            <TripReservation />
-          </RequireScheduleData>
-        )
+        element: <TripReservation />
       },
       {
         path: 'summary',
 
-        element: (
-          <RequireScheduleData>
-            <Summary />
-          </RequireScheduleData>
-        )
+        element: <Summary />
       },
       {
         path: 'payment',
-        element: (
-          <RequireScheduleData>
-            <Payment />
-          </RequireScheduleData>
-        )
+        element: <Payment />
       },
       {
         path: 'checkout',
