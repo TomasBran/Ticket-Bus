@@ -45,21 +45,25 @@ export default function ChooseTravel() {
   });
 
   // stop re-rendering of mapbox
-  const origin = useMemo(
-    () => [
-      departureSchedules[0].route.originTerminal.lon,
-      departureSchedules[0].route.originTerminal.lat
-    ],
-    [departureSchedules]
-  );
+  const origin = useMemo(() => {
+    if (departureSchedules && departureSchedules.length > 0) {
+      return [
+        departureSchedules[0].route.originTerminal.lon,
+        departureSchedules[0].route.originTerminal.lat
+      ];
+    }
+    return null;
+  }, [departureSchedules]);
 
-  const destination = useMemo(
-    () => [
-      departureSchedules[0].route.destinationTerminal.lon,
-      departureSchedules[0].route.destinationTerminal.lat
-    ],
-    [departureSchedules]
-  );
+  const destination = useMemo(() => {
+    if (departureSchedules && departureSchedules.length > 0) {
+      return [
+        departureSchedules[0].route.destinationTerminal.lon,
+        departureSchedules[0].route.destinationTerminal.lat
+      ];
+    }
+    return null;
+  }, [departureSchedules]);
 
   // formatting
   const formattedDate = formatDate(queryParams.date);
