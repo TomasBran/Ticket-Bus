@@ -58,7 +58,7 @@ function InputSelectAdmin({ options, text, onSelect }) {
         </svg>
       </button>
       {isOpen && (
-        <div className='absolute z-10 flex flex-col md:w-96 w-48 mt-1 border border-[#E2E8F0] shadow-lg bg-white'>
+        <div className='absolute z-10 flex flex-col md:w-96 w-48 max-h-52 overflow-auto mt-1 border border-[#E2E8F0] shadow-lg bg-white'>
           {options.map((option, index) => (
             <button
               type='button'

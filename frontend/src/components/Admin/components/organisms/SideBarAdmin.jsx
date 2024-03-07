@@ -1,11 +1,11 @@
-import randomUserAvatar from '../../assets/UserNavbar/random-user-avatar.webp';
-import rutas from '../../assets/AdminUsuario/rutas.svg';
-import terminales from '../../assets/AdminUsuario/terminal.svg';
-import ajuste from '../../assets/AdminUsuario/ajuste.svg';
-import bus from '../../assets/AdminUsuario/bus.svg';
-import pasajeros from '../../assets/AdminUsuario/pasajeros.svg';
-import pagos from '../../assets/AdminUsuario/pagos.svg';
-import arrow from '../../assets/AdminUsuario/arrow-down.svg';
+import randomUserAvatar from '../../../../assets/UserNavbar/random-user-avatar.webp';
+import rutas from '../../../../assets/AdminUsuario/rutas.svg';
+import terminales from '../../../../assets/AdminUsuario/terminal.svg';
+import ajuste from '../../../../assets/AdminUsuario/ajuste.svg';
+import bus from '../../../../assets/AdminUsuario/bus.svg';
+import pasajeros from '../../../../assets/AdminUsuario/pasajeros.svg';
+import pagos from '../../../../assets/AdminUsuario/pagos.svg';
+import arrow from '../../../../assets/AdminUsuario/arrow-down.svg';
 import { Link } from 'react-router-dom';
 
 export default function SideBarAdmin() {
@@ -49,7 +49,9 @@ export default function SideBarAdmin() {
             <div className='flex items-center justify-between mb-5'>
               <div className='flex gap-2'>
                 <img className='w-[27px]' src={''} />
-                <p className='font-semibold text-lg'>Crear</p>
+                <Link to='/admin/createTerminal'>
+                  <p className='font-semibold text-lg'>Crear</p>
+                </Link>
               </div>
               <div>
                 <img className='w-4' src={''} />
@@ -59,7 +61,9 @@ export default function SideBarAdmin() {
             <div className='flex items-center justify-between'>
               <div className='flex gap-2'>
                 <img className='w-[27px]' src={''} />
-                <p className='font-semibold text-lg'>Mis terminales</p>
+                <Link to='/admin/myTerminals'>
+                  <p className='font-semibold text-lg'>Mis terminales</p>
+                </Link>
               </div>
               <div className='bg-[#007AFF1A] rounded-full w-7 h-6 text-center'>
                 <p>{misterminales}</p>
@@ -86,7 +90,7 @@ export default function SideBarAdmin() {
                 <img className='w-[27px]' src={''} />
                 <Link to='/admin/CreateRoute'>
                   <p className='font-semibold text-lg'>Crear</p>
-                </Link>{' '}
+                </Link>
               </div>
               <div>
                 <img className='w-4' src={''} />
@@ -96,7 +100,9 @@ export default function SideBarAdmin() {
             <div className='flex items-center justify-between'>
               <div className='flex gap-2'>
                 <img className='w-[27px]' src={''} />
-                <p className='font-semibold text-lg'>Mis rutas</p>
+                <Link to='/admin/myRoutes'>
+                  <p className='font-semibold text-lg'>Mis rutas</p>
+                </Link>
               </div>
               <div className='bg-[#007AFF1A] rounded-full w-7 h-6 text-center'>
                 <p>{misrutas}</p>
@@ -122,7 +128,9 @@ export default function SideBarAdmin() {
               <div className='flex gap-2'>
                 <img className='w-[27px]' src={''} />
 
-                <p className='font-semibold text-lg'>Crear</p>
+                <Link to='/admin/myServices'>
+                  <p className='font-semibold text-lg'>Crear</p>
+                </Link>
               </div>
 
               <div>

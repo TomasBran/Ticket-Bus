@@ -1,4 +1,4 @@
-import SideBarAdmin from '../components/SideBarAdmin/SideBarAdmin';
+import SideBarAdmin from '../components/Admin/components/organisms/SideBarAdmin.jsx';
 import LogoImage from '../components/LogoImage/LogoImage';
 import { Link, Outlet } from 'react-router-dom';
 import AccountButton from '../components/TravelHeader/components/atoms/AccountButton.jsx';
