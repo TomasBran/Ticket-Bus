@@ -1,6 +1,10 @@
 const initialState = {
   seatQuantity: 1,
-  seatSelected: [] // Default value
+  seatSelected: {
+    departure: [],
+    return: []
+  },
+  isSelectingReturnSeats: false
 };
 
 const seatReducer = (state = initialState, action) => {
@@ -10,14 +14,12 @@ const seatReducer = (state = initialState, action) => {
         ...state,
         seatQuantity: action.payload
       };
-    // TODO: se repite dos veces debido al componente con el useEffect
-    // agregue un atado con alambre mientras tanto
     case 'ADD_SEAT_SELECTED':
       if (
-        state.seatSelected.some(
+        state.seatSelected[action.payload.trip].some(
           (seat) =>
-            seat.seatId === action.payload.seatId &&
-            seat.number === action.payload.number
+            seat.seatId === action.payload.seat.seatId &&
+            seat.number === action.payload.seat.number
         )
       ) {
         // If the seat is already selected, ignore the action
@@ -25,19 +27,36 @@ const seatReducer = (state = initialState, action) => {
       }
       return {
         ...state,
-        seatSelected: [...state.seatSelected, action.payload]
+        seatSelected: {
+          ...state.seatSelected,
+          [action.payload.trip]: [
+            ...state.seatSelected[action.payload.trip],
+            action.payload.seat
+          ]
+        }
       };
     case 'REMOVE_SEAT_SELECTED':
       return {
         ...state,
-        seatSelected: state.seatSelected.filter(
-          (seat) => !(seat.seatId === action.payload.seatId) // Use seatId instead of id
-        )
+        seatSelected: {
+          ...state.seatSelected,
+          [action.payload.trip]: state.seatSelected[action.payload.trip].filter(
+            (seat) => !(seat.seatId === action.payload.seat.seatId)
+          )
+        }
       };
     case 'CLEAN_ALL_SEATS_SELECTED':
       return {
         ...state,
-        seatSelected: []
+        seatSelected: {
+          departure: [],
+          return: []
+        }
+      };
+    case 'SET_IS_SELECTING_RETURN_SEATS':
+      return {
+        ...state,
+        isSelectingReturnSeats: action.payload
       };
     default:
       return state;

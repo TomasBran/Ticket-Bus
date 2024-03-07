@@ -61,13 +61,15 @@ function BusTripDetails() {
   //   { seatNumber: 8, isActive: false }
   // ];
 
-  console.log(currentSeatId);
+  console.log(seatData);
   // Filtrar el array seatData para obtener solo la cantidad deseada según seatQuantity
-  const formattedSeatData = seatData.map((seat) => ({
-    seatId: seat.seatId,
-    seatNumber: seat.number,
-    isActive: seat.seatId === currentSeatId
-  }));
+  const formattedSeatData = [...seatData.departure, ...seatData.return].map(
+    (seat) => ({
+      seatId: seat.seatId,
+      seatNumber: seat.number,
+      isActive: seat.seatId === currentSeatId
+    })
+  );
 
   const location = useLocation();
 

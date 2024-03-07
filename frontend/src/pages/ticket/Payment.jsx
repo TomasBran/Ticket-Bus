@@ -4,6 +4,7 @@ import CreditCardForm from '../../components/CreditCardForm/CreditCardForm.jsx';
 import TripDetailsCard from '../../components/TripDetailsCard.jsx';
 import Timer from '../../components/Timer/Timer.jsx';
 import ContinueButton from '../../components/ContinueButton.jsx';
+import PurchaseDetails from '../../components/PurchaseDetails/PurchaseDetails.jsx';
 import { useQueryParams } from '../../hooks/useQueryParams.js';
 import { getScheduleTimeDetails } from '../../utils/timeUtils.js';
 import { useFetchScheduleById } from '../../hooks/useSchedules';
@@ -95,9 +96,13 @@ function Payment() {
           {/* Columna 3 */}
           <div className='md:col-span-1 sm:col-span-1 col-span-1 relative order-last'>
             <div className='mb-3 md:h-16'></div>
-
-            <Timer />
-            <ContinueButton text='Pagar' />
+            <div className='mb-8'>
+              <Timer />
+            </div>
+            <PurchaseDetails />
+            <div className='mt-10'>
+              <ContinueButton text='Pagar' />
+            </div>
           </div>
         </div>
       </div>

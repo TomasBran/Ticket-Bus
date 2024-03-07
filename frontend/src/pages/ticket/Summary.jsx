@@ -7,6 +7,7 @@ import { PaymentMethod } from '../../components/PaymentMethod/PaymentMethod.jsx'
 import { useQueryParams } from '../../hooks/useQueryParams.js';
 import { useFetchScheduleById } from '../../hooks/useSchedules.js';
 import { getScheduleTimeDetails } from '../../utils/timeUtils.js';
+import PurchaseDetails from '../../components/PurchaseDetails/PurchaseDetails.jsx';
 
 function Summary() {
   const queryParams = useQueryParams();
@@ -101,7 +102,8 @@ function Summary() {
               <div className='mb-4'>
                 <PaymentMethod />
               </div>
-              <div className='flex md:justify-center'>
+              <PurchaseDetails />
+              <div className='flex md:justify-center mt-10'>
                 <ContinueButton text='Continuar' />
               </div>
             </div>

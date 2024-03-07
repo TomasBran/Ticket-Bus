@@ -9,6 +9,7 @@ import {
   resetPages
 } from '../store/EnabledPages/enabledPagesActions';
 import PropTypes from 'prop-types';
+import { setIsSelectingReturnSeats } from '../store/Seat/seatActions';
 
 ContinueButton.propTypes = {
   text: PropTypes.string.isRequired
@@ -23,6 +24,9 @@ function ContinueButton({ text }) {
   // Access states from the Redux store
   const seatSelected = useSelector((state) => state.seat.seatSelected);
   const seatQuantity = useSelector((state) => state.seat.seatQuantity);
+  const isSelectingReturnSeats = useSelector(
+    (state) => state.seat.isSelectingReturnSeats
+  );
   const creditCardFormFilled = useSelector(
     (state) => state.form.creditCardForm.formFilled
   );
@@ -39,9 +43,18 @@ function ContinueButton({ text }) {
   const isReturnScheduleIdEmpty = searchParams.get('returnScheduleId') === '';
   const isReturnDateEmpty = searchParams.get('returnDate') === '';
 
-  // Check if the required number of seats have been selected
-  const areSeatsSelected = seatSelected.length == seatQuantity;
   const areAllFormsFilled = passengerForm.every((form) => form.formFilled);
+
+  // Check if the required number of seats have been selected
+  const areDepartureSeatsSelected =
+    seatSelected.departure.length == seatQuantity;
+  const areReturnSeatsSelected =
+    isReturnDateEmpty || seatSelected.return.length == seatQuantity;
+  const areSeatsSelected = areDepartureSeatsSelected && areReturnSeatsSelected;
+  console.log(areDepartureSeatsSelected);
+  console.log(areReturnSeatsSelected);
+  console.log(areSeatsSelected);
+  console.log('isReturnDateEmpty', isReturnDateEmpty);
 
   // Determine whether the button should be disabled
   let isButtonDisabled;
@@ -49,7 +62,12 @@ function ContinueButton({ text }) {
   // Check if the button should be disabled depending on the route
   switch (location.pathname) {
     case '/ticket/seats':
-      isButtonDisabled = !areSeatsSelected;
+      if (isReturnDateEmpty) {
+        console.log('returnDate is Empty');
+        isButtonDisabled = !areDepartureSeatsSelected;
+      } else if (!isReturnDateEmpty && !isReturnScheduleIdEmpty) {
+        console.log('returnDate not empty');
+      }
       break;
     case '/ticket/summary':
       isButtonDisabled = !buyerFormFilled || !paymentMethod || !acceptedTos;
@@ -62,17 +80,6 @@ function ContinueButton({ text }) {
       );
       break;
     default:
-      if (isReturnDateEmpty) {
-        // One-way trip: button is disabled if scheduleId is empty or does not exist in the URL
-        isButtonDisabled = isScheduleIdEmpty || !searchParams.has('scheduleId');
-      } else {
-        // Two-way trip: button is disabled if either scheduleId or returnScheduleId is empty or does not exist in the URL
-        isButtonDisabled =
-          isScheduleIdEmpty ||
-          isReturnScheduleIdEmpty ||
-          !searchParams.has('scheduleId') ||
-          !searchParams.has('returnScheduleId');
-      }
       break;
   }
 
@@ -89,11 +96,19 @@ function ContinueButton({ text }) {
         }
         break;
       case '/ticket/seats':
-        if (areSeatsSelected) {
+        // one way flow
+        if (!isSelectingReturnSeats && isReturnDateEmpty) {
+          dispatch(enablePassengersPage());
+          navigate(`/ticket/passengers?${searchParams}`);
+          // two way flow
+        } else if (!isSelectingReturnSeats && !isReturnDateEmpty) {
+          dispatch(setIsSelectingReturnSeats(true));
+        } else if (isSelectingReturnSeats) {
           dispatch(enablePassengersPage());
           navigate(`/ticket/passengers?${searchParams}`);
         }
         break;
+
       case '/ticket/passengers':
         dispatch(enableSummaryPage());
         navigate(`/ticket/summary?${searchParams}`);
@@ -114,7 +129,7 @@ function ContinueButton({ text }) {
 
   return (
     <button
-      className={`bg-[#D97706] px-5 rounded-[40px] h-11 flex items-center w-40 justify-center font-semibold text-white tracking-tight ${isButtonDisabled ? 'cursor-not-allowed bg-gray-600' : ''}`}
+      className={`bg-[#D97706] px-5 rounded-[40px] h-11 flex items-center w-40 justify-center font-semibold text-white tracking-tight mx-auto ${isButtonDisabled ? 'cursor-not-allowed bg-gray-600' : ''}`}
       onClick={() => handleClick()}
       disabled={isButtonDisabled}
     >

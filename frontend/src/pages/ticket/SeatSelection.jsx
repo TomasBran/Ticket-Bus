@@ -12,6 +12,9 @@ import { getScheduleTimeDetails } from '../../utils/timeUtils.js';
 import { useInitializeStateFromUrl } from '../../hooks/useInitializeStateFromUrl.js';
 
 function SeatSelection() {
+  const isSelectingReturnSeats = useSelector(
+    (state) => state.seat.isSelectingReturnSeats
+  );
   useInitializeStateFromUrl(true);
   const seatQuantity = useSelector((state) => state.seat.seatQuantity);
   const queryParams = useQueryParams();
@@ -79,6 +82,19 @@ function SeatSelection() {
     );
   }
 
+  const currentSchedule = isSelectingReturnSeats
+    ? returnSchedule
+    : departureSchedule;
+  const currentTimeDetails = isSelectingReturnSeats
+    ? returnTimeDetails
+    : departureTimeDetails;
+  const calculatedArrivalTime = isSelectingReturnSeats
+    ? calculatedArrivalTimeReturn
+    : calculatedArrivalTimeDeparture;
+  const formattedPrice = isSelectingReturnSeats
+    ? formattedPriceReturn
+    : formattedPriceDeparture;
+
   console.log(calculatedArrivalTimeReturn);
   console.log(calculatedArrivalTimeDeparture);
   return (
@@ -87,30 +103,27 @@ function SeatSelection() {
         <div className='grid lg:grid-cols-4 md:grid-cols-5 sm:grid-cols-5 grid-cols-1 h-full lg:gap-4 gap-2 mx-auto relative'>
           {/* Columna 1 */}
           <div className='lg:col-span-1 hidden md:block md:col-span-2 sm:col-span-2 col-span-1 relative order-2 sm:order-1'>
-            {departureSchedule && calculatedArrivalTimeDeparture && (
+            {currentSchedule && calculatedArrivalTime && (
               <Itinerary
-                departureTime={departureTimeDetails.formattedDepartureTime}
-                origin={queryParams.origin}
-                arrivalTime={calculatedArrivalTimeDeparture}
-                destination={queryParams.destination}
-                typeOfTravel={'Viaje de Ida'}
-                price={formattedPriceDeparture}
-                duration={departureSchedule.route.duration}
-                departureDay={departureTimeDetails.departureDate}
-                arrivalDay={departureTimeDetails.arrivalDate}
-              />
-            )}
-            {returnSchedule && calculatedArrivalTimeReturn && (
-              <Itinerary
-                departureTime={returnTimeDetails.formattedDepartureTime}
-                origin={queryParams.destination}
-                arrivalTime={calculatedArrivalTimeReturn}
-                destination={queryParams.origin}
-                typeOfTravel={'Viaje de Regreso'}
-                price={formattedPriceReturn}
-                duration={departureSchedule.route.duration}
-                departureDay={returnTimeDetails.departureDate}
-                arrivalDay={returnTimeDetails.arrivalDate}
+                departureTime={currentTimeDetails.formattedDepartureTime}
+                origin={
+                  isSelectingReturnSeats
+                    ? queryParams.destination
+                    : queryParams.origin
+                }
+                arrivalTime={calculatedArrivalTime}
+                destination={
+                  isSelectingReturnSeats
+                    ? queryParams.origin
+                    : queryParams.destination
+                }
+                typeOfTravel={
+                  isSelectingReturnSeats ? 'Viaje de Regreso' : 'Viaje de Ida'
+                }
+                price={formattedPrice}
+                duration={currentSchedule.route.duration}
+                departureDay={currentTimeDetails.departureDate}
+                arrivalDay={currentTimeDetails.arrivalDate}
               />
             )}
             <div className='hidden sm:block absolute mt-5 left-1/2 transform -translate-x-1/2 bottom-md'>
@@ -120,7 +133,20 @@ function SeatSelection() {
 
           {/* Columna 2 */}
           <div className='lg:col-span-2 md:col-span-2 sm:col-span-2 mx-auto col-span-1 relative order-1 md:order-2'>
-            <Seats tickets={seatQuantity} />
+            <Seats
+              tickets={seatQuantity}
+              scheduleId={
+                isSelectingReturnSeats
+                  ? queryParams.returnScheduleId
+                  : queryParams.scheduleId
+              }
+              date={
+                isSelectingReturnSeats
+                  ? queryParams.returnDate
+                  : queryParams.date
+              }
+              isSelectingReturnSeats={isSelectingReturnSeats}
+            />
           </div>
 
           {/* Columna 3 */}
@@ -128,13 +154,21 @@ function SeatSelection() {
             <PricesCard />
             <div className='md:hidden mt-2'>
               <Schedule
-                id={departureSchedule.id}
-                departureTime={departureSchedule.departureTime}
-                arrivalTime={calculatedArrivalTimeDeparture}
-                origin={queryParams.origin}
-                destination={queryParams.destination}
-                price={formattedPriceDeparture}
-                duration={departureSchedule.route.duration}
+                id={currentSchedule.id}
+                departureTime={currentSchedule.departureTime}
+                arrivalTime={calculatedArrivalTime}
+                origin={
+                  isSelectingReturnSeats
+                    ? queryParams.destination
+                    : queryParams.origin
+                }
+                destination={
+                  isSelectingReturnSeats
+                    ? queryParams.origin
+                    : queryParams.destination
+                }
+                price={formattedPrice}
+                duration={currentSchedule.route.duration}
               />
             </div>
 
