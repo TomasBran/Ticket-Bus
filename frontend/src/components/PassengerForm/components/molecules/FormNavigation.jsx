@@ -4,7 +4,10 @@ import LeftButton from '../atoms/LeftButton';
 import RightButton from '../atoms/RightButton';
 import PassengerNumber from '../atoms/PassengerNumber';
 import PassengerDropdownButton from '../molecules/PassengerDropdownButton';
-import { setCurrentSeatId } from '../../../../store/Form/formActions';
+import {
+  nukePassengerForm,
+  setCurrentSeatId
+} from '../../../../store/Form/formActions';
 import { useDispatch, useSelector } from 'react-redux';
 
 function FormNavigation({ passenger, onClick, isAuth }) {
@@ -23,6 +26,7 @@ function FormNavigation({ passenger, onClick, isAuth }) {
       const sortedSeats = [...seatSelected].sort((a, b) => a.number - b.number);
       const nextSeatId = sortedSeats[nextPassenger - 1].seatId;
       dispatch(setCurrentSeatId(nextSeatId));
+      dispatch(nukePassengerForm());
       return nextPassenger;
     });
   };

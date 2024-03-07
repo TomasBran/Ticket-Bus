@@ -166,6 +166,11 @@ const formReducer = (state = initialState, action) => {
         currentSeatId: action.payload
       };
     }
+    case 'NUKE_PASSENGER_FORM':
+      return {
+        ...state,
+        passengerForm: initialState.passengerForm
+      };
 
     default:
       return state;

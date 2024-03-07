@@ -35,6 +35,10 @@ function PassengerForm({ auth, seatId }) {
     }
   }, [seatId]);
 
+  useEffect(() => {
+    setForm(formRedux);
+  }, [formRedux]);
+
   // Controla la Lista de Pasajeros si Inicio Sesión
   const handleToggleChange = (value) => {
     setIsToggled(value);
@@ -97,7 +101,7 @@ function PassengerForm({ auth, seatId }) {
       <TitleSubtitle />
       <div className='w-full'>
         <form
-          className='bg-[#DEE5ED] rounded-md lg:px-24 lg:pt-[3.3rem] lg:pb-14 md:pt-11 md:pb-14 sm:px-6 sm:pt-6 sm:pb-7 pt-4 pb-5 px-4 shadow'
+          className='bg-[#D3DCE7] rounded-md lg:px-24 lg:pt-[3.3rem] lg:pb-14 md:pt-11 md:pb-14 sm:px-6 sm:pt-6 sm:pb-7 pt-4 pb-5 px-4 shadow'
           autoComplete='off'
         >
           <div className='mb-6 relative'>
@@ -116,7 +120,7 @@ function PassengerForm({ auth, seatId }) {
             <TextInput
               id='name'
               placeholder='NOMBRE'
-              value={form.name || ''}
+              value={form.name}
               onChange={handleInputChange}
             />
           </div>
@@ -124,7 +128,7 @@ function PassengerForm({ auth, seatId }) {
             <TextInput
               id='lastname'
               placeholder='APELLIDO'
-              value={form.lastname || ''}
+              value={form.lastname}
               onChange={handleInputChange}
             />
           </div>
@@ -134,14 +138,14 @@ function PassengerForm({ auth, seatId }) {
               placeholder='TIPO DE DOCUMENTO'
               className={'z-10'}
               onChange={handleDocumentTypeChange}
-              value={form.documentType || ''}
+              value={form.documentType}
             />
           </div>
           <div className='mb-4'>
             <TextInput
               id='document'
               placeholder='N° DE DOCUMENTO'
-              value={form.document || ''}
+              value={form.document}
               onChange={handleInputChange}
             />
           </div>
