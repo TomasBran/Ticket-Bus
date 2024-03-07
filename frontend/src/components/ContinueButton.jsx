@@ -33,7 +33,8 @@ function ContinueButton({ text }) {
   const buyerFormFilled = useSelector(
     (state) => state.form.buyerForm.formFilled
   );
-  const passengerForm = useSelector((state) => state.form.passengerForm);
+  // TODO: temp
+  // const passengerForm = useSelector((state) => state.form.passengerForm);
 
   const paymentMethod = useSelector((state) => state.form.paymentMethod);
   const acceptedTos = useSelector((state) => state.form.acceptedTos);
@@ -43,7 +44,8 @@ function ContinueButton({ text }) {
   const isReturnScheduleIdEmpty = searchParams.get('returnScheduleId') === '';
   const isReturnDateEmpty = searchParams.get('returnDate') === '';
 
-  const areAllFormsFilled = passengerForm.every((form) => form.formFilled);
+  // TODO: temp
+  // const areAllFormsFilled = passengerForm.every((form) => form.formFilled);
 
   // Check if the required number of seats have been selected
   const areDepartureSeatsSelected =
@@ -73,11 +75,8 @@ function ContinueButton({ text }) {
       isButtonDisabled = !buyerFormFilled || !paymentMethod || !acceptedTos;
       break;
     case '/ticket/payment':
-      isButtonDisabled = !(
-        creditCardFormFilled &&
-        buyerFormFilled &&
-        areAllFormsFilled
-      );
+      // TODO: removed allFormsFilled due to time constraints
+      isButtonDisabled = !(creditCardFormFilled && buyerFormFilled);
       break;
     default:
       break;
