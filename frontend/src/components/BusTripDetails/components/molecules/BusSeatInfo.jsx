@@ -1,63 +1,31 @@
 import PropTypes from 'prop-types';
 import BusSeatButton from '../atoms/BusSeatButton';
-import { useDispatch, useSelector } from 'react-redux';
-import { setSeatActive } from '../../../../store/Seat/seatActions';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { setCurrentSeatId } from '../../../../store/Form/formActions';
 
-function BusSeatInfo({ SeatIcon }) {
+function BusSeatInfo({ SeatIcon, seatData }) {
   const dispatch = useDispatch();
-  const seatData = useSelector((state) => state.seat.seatSelected);
+  const sortedSeatData = [...seatData].sort(
+    (a, b) => a.seatNumber - b.seatNumber
+  );
+  const [info, setInfo] = useState(sortedSeatData);
 
-  const handleSeatClick = (seatId, trip) => {
-    // Get the current isActive state of the clicked seat
-    const isActive = seatData[trip].find(
-      (seat) => seat.seatId === seatId
-    )?.isActive;
-
-    // If a seat from the other trip is already selected, deselect it
-    const otherTrip = trip === 'departure' ? 'return' : 'departure';
-
-    // Get the index of the clicked seat
-    const seatIndex = seatData[trip].findIndex(
-      (seat) => seat.seatId === seatId
-    );
-
-    // Get the corresponding seat from the other trip
-    const correspondingSeat = seatData[otherTrip][seatIndex];
-
-    // Deselect all other seats in the same trip
-    seatData[trip].forEach((seat) => {
-      if (seat.seatId !== seatId) {
-        dispatch(setSeatActive(trip, seat.seatId, false));
+  const handleSeatClick = (seatId) => {
+    const updatedSeatData = info.map((seat) => {
+      if (seat.seatId === seatId) {
+        dispatch(setCurrentSeatId(seatId)); // Dispatch the action here
+        return { ...seat, isActive: true }; // Actualizar el estado de isActive
+      } else {
+        return { ...seat, isActive: false }; // Desactivar otros asientos
       }
     });
-
-    // Deselect the previously selected seat from the other trip
-    const previouslySelectedSeat = seatData[otherTrip].find(
-      (seat) => seat.isActive
-    );
-
-    if (previouslySelectedSeat) {
-      dispatch(setSeatActive(otherTrip, previouslySelectedSeat.seatId, false));
-    }
-
-    // Only allow the seat to be toggled off if there is at least one other seat selected
-    if (isActive) {
-      // Toggle the isActive state of the clicked seat
-      dispatch(setSeatActive(trip, seatId, !isActive));
-    } else {
-      // Always allow the seat to be toggled on
-      dispatch(setSeatActive(trip, seatId, true));
-      if (correspondingSeat) {
-        dispatch(setSeatActive(otherTrip, correspondingSeat.seatId, true));
-      }
-    }
-
-    // If the seat is in the departure trip, set it as the current seat
-    if (trip === 'departure' && !isActive) {
-      dispatch(setCurrentSeatId(seatId));
-    }
+    setInfo(updatedSeatData);
   };
+
+  useEffect(() => {
+    setInfo(sortedSeatData);
+  }, [seatData]);
 
   return (
     <div className='grid grid-cols-5 text-[#1A202C] text-base font-bold box-border'>
@@ -65,22 +33,13 @@ function BusSeatInfo({ SeatIcon }) {
         <img src={SeatIcon} alt='Bus Icon' />
       </div>
       <div className='col-span-4 text-end'>
-        {seatData.departure.map((seat) => (
+        {info.map((seat) => (
           <BusSeatButton
-            key={seat.seatId}
+            key={seat.seatNumber}
             id={seat.seatId}
-            seatNumber={seat.number}
+            seatNumber={seat.seatNumber}
             isActive={seat.isActive}
-            onClick={() => handleSeatClick(seat.seatId, 'departure')}
-          />
-        ))}
-        {seatData.return.map((seat) => (
-          <BusSeatButton
-            key={seat.seatId}
-            id={seat.seatId}
-            seatNumber={seat.number}
-            isActive={seat.isActive}
-            onClick={() => handleSeatClick(seat.seatId, 'return')}
+            onClick={() => handleSeatClick(seat.seatId)}
           />
         ))}
       </div>
@@ -89,7 +48,13 @@ function BusSeatInfo({ SeatIcon }) {
 }
 
 BusSeatInfo.propTypes = {
-  SeatIcon: PropTypes.string.isRequired
+  SeatIcon: PropTypes.string.isRequired,
+  seatData: PropTypes.arrayOf(
+    PropTypes.shape({
+      seatNumber: PropTypes.number.isRequired,
+      isActive: PropTypes.bool.isRequired
+    })
+  ).isRequired
 };
 
 export default BusSeatInfo;

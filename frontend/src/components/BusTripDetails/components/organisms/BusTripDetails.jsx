@@ -11,6 +11,7 @@ import BusSeatInfo from '../molecules/BusSeatInfo';
 import ServiceLabel from '../atoms/ServiceLabel';
 import BackButton from '../atoms/BackButton';
 import ContinueButton from '../atoms/ContinueButton';
+import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useQueryParams } from '../../../../hooks/useQueryParams';
@@ -18,6 +19,8 @@ import { useFetchScheduleById } from '../../../../hooks/useSchedules';
 import { getScheduleTimeDetails } from '../../../../utils/timeUtils';
 
 function BusTripDetails() {
+  const seatData = useSelector((state) => state.seat.seatSelected);
+  const currentSeatId = useSelector((state) => state.form.currentSeatId);
   const queryParams = useQueryParams();
   const {
     data: departureSchedules,
@@ -30,26 +33,40 @@ function BusTripDetails() {
 
   // Fetch the return schedule by ID if the returnDate in URL is not empty
   const isReturnDateEmpty = queryParams.searchParams.get('returnDate') === '';
-  const {
-    data: returnSchedules,
-    error: errorReturnSchedules,
-    isLoading: isLoadingReturnSchedules
-  } = useFetchScheduleById({
-    scheduleId: queryParams.returnScheduleId,
-    // If ReturnDate is empty then don't fetch ReturnSchedules
-    enabled: !isReturnDateEmpty
-  });
+  const { error: errorReturnSchedules, isLoading: isLoadingReturnSchedules } =
+    useFetchScheduleById({
+      scheduleId: queryParams.returnScheduleId,
+      // If ReturnDate is empty then don't fetch ReturnSchedules
+      enabled: !isReturnDateEmpty
+    });
 
   //formatting
   const departureTimeDetails = getScheduleTimeDetails(
     departureSchedules,
     queryParams.date
   );
-  const returnTimeDetails = isReturnDateEmpty
-    ? null
-    : getScheduleTimeDetails(returnSchedules, queryParams.returnDate);
+  // const returnTimeDetails = isReturnDateEmpty
+  //   ? null
+  //   : getScheduleTimeDetails(returnSchedules, queryParams.returnDate);
 
   const formattedPrice = parseFloat(departureSchedules.route.price).toString();
+
+  // const seatData = [
+  //   { seatNumber: 10, isActive: true },
+  //   { seatNumber: 9, isActive: false },
+  //   { seatNumber: 7, isActive: false },
+  //   { seatNumber: 8, isActive: false }
+  // ];
+
+  console.log(seatData);
+  // Filtrar el array seatData para obtener solo la cantidad deseada según seatQuantity
+  const formattedSeatData = [...seatData.departure, ...seatData.return].map(
+    (seat) => ({
+      seatId: seat.seatId,
+      seatNumber: seat.number,
+      isActive: seat.seatId === currentSeatId
+    })
+  );
 
   const location = useLocation();
 
@@ -78,13 +95,8 @@ function BusTripDetails() {
   }
 
   if (errorDepartureSchedules || errorReturnSchedules) {
-    return (
-      <div>
-        Error: {errorDepartureSchedules} {errorReturnSchedules}
-      </div>
-    );
+    return <div>Error: {errorDepartureSchedules}</div>;
   }
-  console.log(returnSchedules);
 
   return (
     <div className='flex flex-col h-full'>
@@ -117,33 +129,9 @@ function BusTripDetails() {
 
           <BusPrice BusIcon={BusIcon} price={formattedPrice} />
         </div>
-        {returnSchedules && (
-          <div className='bg-ethereal-frost sm:bg-[#DEE5ED] rounded-md p-3 flex flex-col mt-2'>
-            <TripDetailsHeader title='Viaje de Regreso' />
-            <HorizontalLabelPair leftLabel='Salida' rightLabel='Llegada' />
-            <div className='grid grid-cols-3'>
-              <div className='col-span-3'>
-                <LocationArrowRow
-                  startLocation={queryParams.origin}
-                  endLocation={queryParams.destination}
-                  arrowImage={ArrowRightSVG}
-                />{' '}
-              </div>
-            </div>
-            <HorizontalLabelPair
-              leftLabel={returnTimeDetails.departureDate}
-              rightLabel={returnTimeDetails.arrivalDate}
-            />
-            <TimeRange
-              startTime={returnTimeDetails.formattedDepartureTime}
-              endTime={returnTimeDetails.calculatedArrivalTime}
-            />
-            <Divider />
-            <BusPrice BusIcon={BusIcon} price={formattedPrice} />
-          </div>
-        )}
+
         <div className='bg-[#DEE5ED] rounded-md p-3 flex flex-col mt-2'>
-          <BusSeatInfo SeatIcon={SeatIcon} />
+          <BusSeatInfo SeatIcon={SeatIcon} seatData={formattedSeatData} />
 
           <Divider />
 
