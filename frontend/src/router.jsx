@@ -21,6 +21,8 @@ import HomeAdmin from './pages/auth/admin/HomeAdmin.jsx';
 import CreateRoutesPage from './pages/auth/admin/CreateRoutesPage.jsx';
 import CreateTerminalsPage from './pages/auth/admin/CreateTerminalsPage.jsx';
 import CreateServicesPage from './pages/auth/admin/CreateServicesPage.jsx';
+import MyTerminals from './pages/auth/admin/MyTerminals.jsx';
+import MyRoutes from './pages/auth/admin/MyRoutes.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -128,11 +130,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'myRoutes',
-        element: <Summary />
+        element: <MyRoutes />
       },
       {
         path: 'myTerminals',
-        element: <Payment />
+        element: <MyTerminals />
       },
       {
         path: 'myServices',
