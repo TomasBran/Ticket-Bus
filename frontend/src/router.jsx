@@ -20,6 +20,7 @@ import AdminLayout from './layouts/AdminLayout.jsx';
 import HomeAdmin from './pages/auth/admin/HomeAdmin.jsx';
 import CreateRoutesPage from './pages/auth/admin/CreateRoutesPage.jsx';
 import CreateTerminalsPage from './pages/auth/admin/CreateTerminalsPage.jsx';
+import CreateServicesPage from './pages/auth/admin/CreateServicesPage.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -132,6 +133,10 @@ export const router = createBrowserRouter([
       {
         path: 'myTerminals',
         element: <Payment />
+      },
+      {
+        path: 'myServices',
+        element: <CreateServicesPage />
       }
     ]
   }
