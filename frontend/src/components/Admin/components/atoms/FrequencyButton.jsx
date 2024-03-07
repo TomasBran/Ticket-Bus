@@ -12,7 +12,7 @@ export const FrequencyButton = ({
   ]
 }) => {
   return (
-    <div className='bg-white border-2 border-[#212F5C] rounded-md md:w-96 h-[56px]'>
+    <div className='bg-white border-2 border-[#C4C4C4] rounded-md md:w-96 h-[56px]'>
       <div className='relative'>
         <label
           htmlFor='inputField'
@@ -26,7 +26,7 @@ export const FrequencyButton = ({
               key={dayObj.day}
               id='inputField'
               type='button'
-              className={`w-10 h-10 rounded m-1 text-white ${
+              className={`w-10 h-10 rounded-lg m-1  text-white ${
                 dayObj.frequent ? 'bg-[#FF5F00] ' : 'bg-[#68D79680]'
               }`}
             >
