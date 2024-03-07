@@ -8,7 +8,9 @@ import { setCurrentSeatId } from '../../../../store/Form/formActions';
 import { useDispatch, useSelector } from 'react-redux';
 
 function FormNavigation({ passenger, onClick, isAuth }) {
-  const seatSelected = useSelector((state) => state.seat.seatSelected);
+  const seatSelected = useSelector(
+    (state) => state.seat.seatSelected.departure
+  );
   const [currentPassenger, setCurrentPassenger] = useState(1);
   const dispatch = useDispatch();
   useEffect(() => {

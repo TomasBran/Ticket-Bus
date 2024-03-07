@@ -58,6 +58,20 @@ const seatReducer = (state = initialState, action) => {
         ...state,
         isSelectingReturnSeats: action.payload
       };
+    case 'SET_SEAT_ACTIVE':
+      return {
+        ...state,
+        seatSelected: {
+          ...state.seatSelected,
+          [action.payload.trip]: state.seatSelected[action.payload.trip].map(
+            (seat) =>
+              seat.seatId === action.payload.seatId
+                ? { ...seat, isActive: action.payload.isActive }
+                : seat
+          )
+        }
+      };
+
     default:
       return state;
   }

@@ -23,6 +23,7 @@ import CreateTerminalsPage from './pages/auth/admin/CreateTerminalsPage.jsx';
 import CreateServicesPage from './pages/auth/admin/CreateServicesPage.jsx';
 import MyTerminals from './pages/auth/admin/MyTerminals.jsx';
 import MyRoutes from './pages/auth/admin/MyRoutes.jsx';
+import Checkout from './pages/ticket/Checkout.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -79,6 +80,10 @@ export const router = createBrowserRouter([
             <Payment />
           </RequireScheduleData>
         )
+      },
+      {
+        path: 'checkout',
+        element: <Checkout />
       }
     ]
   },

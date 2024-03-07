@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+// TODO: temporary
 import { useEffect, useState } from 'react';
 import driver from '../../assets/Seats/driver.svg';
 import wc from '../../assets/Seats/wc.svg';
@@ -149,19 +151,20 @@ const Seats = ({ tickets, scheduleId, date, isSelectingReturnSeats }) => {
 
       // Dispatch action based on isSelectingReturnSeats
       const newSeat = newState.find((seat) => seat.number === number);
+
       if (newSeat.status === 'selected') {
         dispatch(
-          addSeatSelected(
-            isSelectingReturnSeats ? 'return' : 'departure',
-            newSeat
-          )
+          addSeatSelected(isSelectingReturnSeats ? 'return' : 'departure', {
+            ...newSeat,
+            isActive: false
+          })
         );
       } else if (newSeat.status === 'free') {
         dispatch(
-          removeSeatSelected(
-            isSelectingReturnSeats ? 'return' : 'departure',
-            newSeat
-          )
+          removeSeatSelected(isSelectingReturnSeats ? 'return' : 'departure', {
+            ...newSeat,
+            isActive: false
+          })
         );
       }
 

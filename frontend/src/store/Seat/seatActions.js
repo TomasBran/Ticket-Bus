@@ -21,3 +21,8 @@ export const setIsSelectingReturnSeats = (value) => ({
   type: 'SET_IS_SELECTING_RETURN_SEATS',
   payload: value
 });
+
+export const setSeatActive = (trip, seatId, isActive) => ({
+  type: 'SET_SEAT_ACTIVE',
+  payload: { trip, seatId, isActive }
+});
