@@ -1,5 +1,5 @@
 <div align="center">
-  <h2>🤖 Ticket Bus |  c13-06-t-node-react 💻</h2>
+  <h2>🤖 Ticket Bus |  Proyecto realizado para organizacion No Country 💻</h2>
 </div>
 
 <img width="1536" alt="Screenshot 2024-02-29 at 15 14 59" src="https://github.com/No-Country/s13-06-t-node-react/assets/12972468/c3894881-c21f-4c5b-9abf-9d3a24f8b6f3">
