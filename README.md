@@ -43,16 +43,6 @@ Comprometidos con la seguridad de los datos, la aplicación implementará protoc
 <div style="display: flex; justify-content: center; gap: 20px">
 <div align="center">
 
-### 👩‍💼 Project Manager
-
-|                                                                            <img src="https://media.licdn.com/dms/image/D4D35AQG9891gd4tOEA/profile-framedphoto-shrink_800_800/0/1689650277342?e=1709820000&v=beta&t=UchNRd_gqxfC4LLF6WCqDlekO1AlHU1TcIwF2rQVpwY" width=50>                                                                            |
-| :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|                                                                                                                                                                  **Carolina Saggio**                                                                                                                                                                  |
-| <a href="https://github.com/csaggio74"><img src="https://img.shields.io/badge/github-%23121011.svg?&style=for-the-badge&logo=github&logoColor=white"/></a> <a href="https://www.linkedin.com/in/carolina-saggio-78338923/"><img src="https://img.shields.io/badge/linkedin%20-%230077B5.svg?&style=for-the-badge&logo=linkedin&logoColor=white"/></a> |
-
-<hr/>
-</div>
-<div align="center">
 
 ### 🎨 Diseñadoras UX/UI
 
